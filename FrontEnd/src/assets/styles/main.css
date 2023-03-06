@@ -1,0 +1,75 @@
+@import './base.css';
+
+
+#app {
+  margin: 0 auto;
+}
+
+a,
+.black {
+  text-decoration: none;
+  color: #020202;
+  font-size: 1.2vw;
+}
+
+#welcome{
+  
+  font-size: 5vw;
+  line-height: 73px;
+  color: #000000;
+  text-align: center;
+
+}
+
+.line p {
+  display: inline-block;
+  position: relative;
+}
+
+.line p:after{
+  content: "";
+  height: 8px;
+  width: 50%;
+  background-color: #0079B3;
+  position: absolute;
+  bottom: -.5em;
+  left: 50%;
+  transform: translate(-50%);
+}
+
+.center {
+  margin: auto;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  color: white;
+
+}
+#Header {
+  margin: auto;
+  font-weight: 600;
+  font-size: 5vw;
+
+}
+
+/* @media (hover: hover) {
+  a:hover {
+    background-color: hsla(160, 100%, 37%, 0.2);
+  }
+} */
+
+/* @media (min-width: 1024px) {
+  body {
+    display: flex;
+    place-items: center;
+  }
+
+  #app {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0 2rem;
+  }
+
+
+} */
+
