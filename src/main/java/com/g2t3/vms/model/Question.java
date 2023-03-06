@@ -8,29 +8,29 @@ public class Question {
     @Id
     private String id;
 
-    private String title;
+    private String qnTitle;
     private String inputType;
 
-    public Question(String title, String inputType) {
-        this.title = title;
+    public Question(String qnTitle, String inputType) {
+        this.qnTitle = qnTitle;
         this.inputType = inputType;
     }
 
     @Override
     public String toString() {
-        return String.format("id='%s', title='%s', inputType='%s", id, title, inputType);
+        return String.format("{id='%s', qnTitle='%s', inputType='%s'}", id, qnTitle, inputType);
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setQnTitle(String qnTitle) {
+        this.qnTitle = qnTitle;
     }
 
     public void setInputType(String inputType) {
         this.inputType = inputType;
     }
 
-    public String getTitle() {
-        return title;
+    public String getQnTitle() {
+        return qnTitle;
     }
 
     public String getInputType() {
