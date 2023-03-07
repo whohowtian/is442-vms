@@ -1,22 +1,27 @@
 <script>
-    import Header from "../components/AdminHeader.vue";
+import NavBar from '../components/Navbar.vue';
 
     export default {
         name: "AdminView",
         components: {
-            Header,
-            },
+            NavBar,
+         },
         data() {
-        return {
-        };
+            return {
+            menuItems: [
+                { label: 'HOME', route: '/AdminView'  },
+                { label: 'ACCOUNT', route: '/AccountView'  },
+                { label: 'WORKFLOW', route: '/WorkflowView'  },
+                { label: 'LOGOUT', route: '/'  }
+            ]
+            }
         }
     };
-
 </script>
 
 <!-- admin home page -->
 <template >
-    <Header />
+    <NavBar :items="menuItems" />
     <div class="row mt-4 mb-5" id = 'welcome'>
         <div class="line">
             <p style = "font-weight:600;">WELCOME, JOHN</p>
@@ -32,7 +37,7 @@
                 <a href="">
                     <div class="card-body" >
                         
-                        <img src="../components/icons/adminEditAccount.png" class="mx-auto d-block img-fluid">
+                        <img src="../assets/icons/adminEditAccount.png" class="mx-auto d-block img-fluid">
                         <h4 class="card-title">Edit Account</h4>
                         <h6 class="card-text">Create/ Read/ Update/ Delete accounts of users</h6>
                     </div>
@@ -44,7 +49,7 @@
                 <!-- change the link to the correct page -->
                 <a href="">
                     <div class="card-body">
-                        <img src="../components/icons/adminEditWorkflow.png" class="mx-auto d-block img-fluid">
+                        <img src="../assets/icons/adminEditWorkflow.png" class="mx-auto d-block img-fluid">
                         <h4 class="card-title">Assign & Edit Workflow</h4>
                         <h6 class="card-text">
                             <ul>
@@ -60,4 +65,3 @@
 
     </div>
 </template>
-

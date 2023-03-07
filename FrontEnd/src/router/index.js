@@ -1,24 +1,42 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import AdminView from '../views/AdminView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView
-    },
-    {
-      path: '/about',
-      name: 'about',
-      component: () => import('../views/AboutView.vue')
+      name: 'login',
+      component: () => import('../views/LoginView.vue')
     },
     {
       path: '/AdminView',
       name: 'AdminView',
       component: () => import('../views/AdminView.vue')
+    },
+    {
+      path: '/AccountView',
+      name: 'AccountView',
+      component: () => import('../views/AccountView.vue')
+    },
+    {
+      path: '/WorkflowView',
+      name: 'WorkflowView',
+      component: () => import('../views/WorkflowView.vue')
+    },
+    {
+      path: '/VendorView',
+      name: 'VendorView',
+      component: () => import('../views/VendorView.vue')
+    },
+    {
+      path: '/ApprovalView',
+      name: 'ApprovalView',
+      component: () => import('../views/ApprovalView.vue')
+    },
+    {
+      path: '/VendorAssessmentForm',
+      name: 'VendorAssessmentForm',
+      component: () => import('../views/VendorAssessmentForm.vue')
     }
   ]
 })
