@@ -16,7 +16,6 @@ import java.time.format.DateTimeFormatter;
 public class FormTemplate {
     @Id
     private String id;
-
     private String formNo;
     private String formName;
     private String formEffDate;
@@ -38,15 +37,7 @@ public class FormTemplate {
 
     @Override
     public String toString() {
-        // return String.format("formTemplate: { formNo: '%s', formName: '%s', revNo: '%s', formEffDate: '%s'}", formNo, formName, revNo, formEffDate);
         return String.format("{ id: '%s' formNo: '%s', formName: '%s', revNo: '%s', formEffDate: '%s', isArchived: %s, formSections: %s}", id, formNo, formName, revNo, formEffDate, isArchived, formSections.toString());
     }
 
-    // public boolean getIsArchived() {
-    //     return isArchived;
-    // }
-
-    // public void setArchived(boolean isArchived) {
-    //     this.isArchived = isArchived;
-    // }
 }

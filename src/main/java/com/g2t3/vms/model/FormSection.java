@@ -15,27 +15,15 @@ import java.util.ArrayList;
 public class FormSection {
     @Id
     private String id;
-
     // section name may be optional?
     private String sectionName;
-
     private boolean adminUseOnly;
-
     private boolean doScoreCalculation;
-
     private ArrayList<Question> questions; 
 
     public FormSection (String sectionName, boolean doScoreCalculation, ArrayList<Question> questions) {
         this.sectionName = sectionName;
         this.questions = questions;
-        this.doScoreCalculation = doScoreCalculation;
-    }
-
-    public boolean isDoScoreCalculation() {
-        return doScoreCalculation;
-    }
-
-    public void setDoScoreCalculation(boolean doScoreCalculation) {
         this.doScoreCalculation = doScoreCalculation;
     }
 

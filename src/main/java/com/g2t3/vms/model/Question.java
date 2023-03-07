@@ -12,7 +12,6 @@ import lombok.Setter;
 public class Question {
     @Id
     private String id;
-
     private String qnTitle;
     private String inputType;
 
@@ -25,5 +24,5 @@ public class Question {
     public String toString() {
         return String.format("{id='%s', qnTitle='%s', inputType='%s'}", id, qnTitle, inputType);
     }
-    
+
 }
