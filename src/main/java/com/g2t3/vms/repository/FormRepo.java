@@ -1,4 +1,4 @@
-package com.g2t3.vms;
+package com.g2t3.vms.repository;
 
 import com.g2t3.vms.model.*;
 import org.springframework.data.mongodb.repository.MongoRepository;
