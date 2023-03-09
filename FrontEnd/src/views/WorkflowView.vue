@@ -3,45 +3,67 @@ import NavBar from '../components/Navbar.vue';
 import Header from '../components/Header.vue';
 import Button from '../components/Button.vue';
 import Table from "../components/Table.vue";
-import fakeDataWorkflow from './fakeDataWorkflow';
+import fakeWorkflowData from './fakeWorkflowData';
+import fakeTaskData from './fakeTaskData';
+import fakeEditFormData from './fakeEditFormData';
 
-
-    export default {
-        name: "WorkflowView",
-        components: {
-            NavBar,
-            Header,
-            Button,
-            Table,
-         },
-        data() {
-            return {
-            menuItems: [ //for top nav bar
-                { label: 'HOME', route: '/AdminView'  },
-                { label: 'ACCOUNT', route: '/AccountView'  },
-                { label: 'WORKFLOW', route: '/WorkflowView'  },
-                { label: 'LOGOUT', route: '/'  }
-            ],
-            activeOption:'workflowTable', //default table displaying
-            inactiveCount: 2, //hardcode for now
-            data:fakeDataWorkflow, //in future change to api endpoint
-            headers:["Task","Company Name","Form No.","Stage","Status","Date Assigned","Actions"],
-            fields:["task","company","formNo","stage","status","dateAssign"],
-            expandedItemId: null,
-
-        }
+export default {
+    name: "WorkflowView",
+    components: {
+        NavBar,
+        Header,
+        Button,
+        Table,
         },
-        methods: {
-            handleButton() {alert('what is workflow');},
-            expandDropdown(itemId) {
-                console.log(itemId)
-                if (this.expandedItemId === itemId) {
-                this.expandedItemId = null;
-                } else {
-                this.expandedItemId = itemId;
-                }}
-         }
-    };
+    data() {
+        return {
+        showDropdown: false,
+        menuItems: [ //for top nav bar
+            { label: 'HOME', route: '/AdminView'  },
+            { label: 'ACCOUNT', route: '/AccountView'  },
+            { label: 'WORKFLOW', route: '/WorkflowView'  },
+            { label: 'LOGOUT', route: '/'  }
+        ],
+        activeOption:'workflowTable', //default table displaying
+
+        //fake data -- in future change to api endpoint
+        data1:fakeWorkflowData.active, 
+        headers1:["Task","Company Name","Form No.","Stage","Status","Date Assigned","Actions"],
+        fields1:["task","company","formNo","stage","status","dateAssign","Actions"],
+
+        data2:fakeWorkflowData.inactive, 
+        headers2:["Task","Company Name","Form No.","Stage","Status","Date Assigned","Actions"],
+        fields2:["task","company","formNo","stage","status","dateAssign","Actions"],
+
+        data3:fakeTaskData.todo, 
+        headers3:["Task","Company Name","Form No.","Date Assigned","Actions"],
+        fields3:["task","company","formNo","dateAssign","Actions"],
+
+        data4:fakeTaskData.completed, 
+        headers4:["Task","Company Name","Form No.","Date Assigned","Actions"],
+        fields4:["task","company","formNo","dateAssign","Actions"],
+
+        data5:fakeEditFormData, 
+        headers5:["Form","Edited By","Last Edited","Actions"],
+        fields5:["form","editedby","lastEdited","Actions"],
+    }
+    },
+    methods: {
+        handleButton() {alert('what is workflow');},
+        InactiveClick(item) {
+    //         item.showDropdown = !item.showDropdown;
+    // },
+            alert("clicked for inactive item", item);
+            console.log("clicked for inactive item", item);
+        },
+        TaskToDoAction(){
+            window.open('https://media.makeameme.org/created/i-pray-to-5bed2f.jpg', '_blank');
+        },
+        TaskCompleted(){
+            window.open('http://i.imgflip.com/31fael.jpg', '_blank');
+        } 
+}
+};
 </script>
 
 <template>
@@ -49,7 +71,7 @@ import fakeDataWorkflow from './fakeDataWorkflow';
     <Header dept= "WORKFLOW MANAGEMENT" msg= "Create new or edit existing account within your business along with assigning each a specific role "/>
 
     <!-- sub nav bar [WORKFLOW / TASK/ EDIT FORM] -->
-    <div class="row">
+    <div class="row" style="margin-top: 10px;">
         <div class="col-1" @click="activeOption = 'workflowTable'">
             <a href="#">WORKFLOW</a>
         </div>
@@ -66,10 +88,10 @@ import fakeDataWorkflow from './fakeDataWorkflow';
         <!-- sub nav bar [Active / Inactive] -->
         <div class="row">
             <div class="col-1" @click="activeOption = 'workflowTable'">
-                <a href="#">Active</a><span>({{ data.length }})</span>
+                <a href="#">Active</a><span>({{ data1.length }})</span>
             </div>
             <div class="col-1" @click="activeOption = 'InActiveworkflowTable'"> 
-                <a href="#" >Inactive</a><span>({{ inactiveCount }})</span>
+                <a href="#" >Inactive</a><span>({{ data2.length }})</span>
             </div>
             <div class="col-lg-2 col-sm-4  ">
                 <input type="text" placeholder="Search Company Name">
@@ -80,6 +102,7 @@ import fakeDataWorkflow from './fakeDataWorkflow';
         </div>
 
         <!-- 1.1) Active Table content -->
+        <!-- previous way of hardcoding table, to be changed to table component -->
         <div v-if="activeOption === 'workflowTable'">
             <table class="my-table">
             <thead>
@@ -94,24 +117,26 @@ import fakeDataWorkflow from './fakeDataWorkflow';
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="item in data" :key="item.id">
-                <td>{{ item.id }}</td>
+                <tr v-for="item in data1" :key="item.id">
+                <td>{{ item.task }}</td>
                 <td>{{ item.company }}</td>
                 <td>{{ item.formNo }}</td>
                 <td>{{ item.stage }}</td>
                 <td>{{ item.status }}</td>
                 <td>{{ item.dateAssign }}</td>
-                <td><Button  button-style="none" @click="expandDropdown(item.id)">...</Button>
-                    <div v-if="expandedItemId === item.id" class="dropdown">
-                        <!-- Dropdown content-->
-                        <p>hahah</p>
-                        <!-- <p>Details for item {{ item.id }}:</p>
-                            <ul>
-                            <li>Details 1</li>
-                            <li>Details 2</li>
-                            <li>Details 3</li>
-                            </ul> -->
+                <td >
+                    <div  class="btn-group dropup">
+
+                        <Button buttonStyle="none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            ...
+                        </Button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Edit</a></li>
+                            <li><a class="dropdown-item" href="#">Delete</a></li>
+                            <li><a class="dropdown-item" href="#">Email</a></li>
+                        </ul>
                     </div>
+
                 </td>
                 </tr>
             </tbody>
@@ -120,29 +145,45 @@ import fakeDataWorkflow from './fakeDataWorkflow';
         
         <!-- 1.2) InActive Table content -->
         <div v-if="activeOption === 'InActiveworkflowTable'">
-            <Table :data="data" :headers="headers" :fields="fields" />
+            <Table :data="data2" :headers="headers2" :fields="fields2" icon-class="ellipsis" @action-click="InactiveClick" />
         </div>
-        
     </div>
 
     <!-- 2) taskTable -->
-    <div v-if="activeOption === 'taskTable'">
-      <h2>My Task</h2>
-      <p>Please review the checklist below to complete any assigned tasks.</p>
-      <table>
-        <!-- Table 2 content -->
+    <div v-if="activeOption === 'taskTable'|| activeOption === 'CompletedtaskTable'">
+        <h2>My Task</h2>
+        <p>Please review the checklist below to complete any assigned tasks.</p>
+        <!-- sub nav bar [ToDo / Completed] -->
+        <div class="row">
+            <div class="col-1" @click="activeOption = 'taskTable'">
+                <a href="#">To Do</a><span>({{ data3.length }})</span>
+            </div>
+            <div class="col-1" @click="activeOption = 'CompletedtaskTable'"> 
+                <a href="#" >Completed</a><span>({{ data4.length }})</span>
+            </div>
+            <div class="col-lg-2 col-sm-4">
+                <input type="text" placeholder="Search Company Name">
+            </div>
+        </div>
 
-      </table>
+        <!-- 2.1) To-do Table content -->
+        <div v-if="activeOption === 'taskTable'">
+            <Table :data="data3" :headers="headers3" :fields="fields3" icon-class="pen-square" @action-click="TaskToDoAction" />
+        </div>
+
+        <!-- 2.2) Completed Table content -->
+        <div v-if="activeOption === 'CompletedtaskTable'">
+            <Table :data="data4" :headers="headers4" :fields="fields4" icon-class="eye" @action-click="TaskCompleted" />
+        </div>
     </div>
 
     <!-- 3) formTable -->
     <div v-if="activeOption === 'formTable'">
-      <h2>Table 3</h2>
-      <table>
-        <!-- Table 3 content -->
-      </table>
+        <div>
+            <Button @click="handleButton">+ Add Form</Button>
+        </div>
+        <Table :data="data5" :headers="headers5" :fields="fields5" icon-class="pen-square" @action-click="TaskToDoAction" />
     </div>
-    <!-- table -->
 </template>
 
 <style scoped>
@@ -164,14 +205,16 @@ import fakeDataWorkflow from './fakeDataWorkflow';
   font-weight: bold;
 }
 
-.dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  z-index: 1;
-  padding: 10px;
-  width: 200px;
+.dropdown-menu {
+    min-width: 20px;
+    margin: 0;
+  padding: 0;
+}
+
+.dropdown-item {
+  white-space: nowrap; /* prevent text wrapping */
+  margin: 0;
+  padding: 0;
+  
 }
 </style>
