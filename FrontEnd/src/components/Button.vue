@@ -36,6 +36,8 @@
   }
   .none {
     color: #007bff;
+    background-color: #fff;
+
     font-weight: bold;
   }
   </style>
