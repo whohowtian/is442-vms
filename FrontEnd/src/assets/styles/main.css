@@ -6,6 +6,7 @@
 }
 
 a,
+span,
 .black {
   text-decoration: none;
   color: #020202;
@@ -50,6 +51,15 @@ a,
   font-weight: 600;
   font-size: 5vw;
 
+}
+
+input{
+  padding: 2px 8px;
+  border: 1px solid #0079B3;
+  border-radius: 10px;  
+}
+input::placeholder{
+  color:#0079B3 ;
 }
 
 /* @media (hover: hover) {

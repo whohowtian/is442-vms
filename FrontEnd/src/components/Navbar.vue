@@ -3,7 +3,7 @@
 <!-- CAN REFER TO AdminView.vue -->
 
 <template>
-    <nav class="navbar navbar-expand-lg ">
+    <nav class="row navbar navbar-expand-lg ">
       <div class="container-fluid">
 
         <a class="navbar-brand" href="#"><img src="../assets/icons/CompanyLogo.png" alt="Logo" class="logo" ></a>
@@ -38,7 +38,7 @@
 <style>
   .navbar {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    height:10vh;
+    height:8vh;
   }
   .logo {
   height: 50px;
@@ -69,8 +69,5 @@
   .active {
   font-weight: bold;
 }
-  .no-padding {
-    padding: 0;
-  }
 </style>
   
