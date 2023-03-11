@@ -37,6 +37,16 @@ const router = createRouter({
       path: '/VendorAssessmentForm',
       name: 'VendorAssessmentForm',
       component: () => import('../views/VendorAssessmentForm.vue')
+    },
+    {
+      path: '/PerformanceEvaluationForm',
+      name: 'PerformanceEvaluationForm',
+      component: () => import('../views/PerformanceEvaluationForm.vue')
+    },
+    {
+      path: '/PreEvaluationForm',
+      name: 'PreEvaluationForm',
+      component: () => import('../views/PreEvaluationForm.vue')
     }
   ]
 })
