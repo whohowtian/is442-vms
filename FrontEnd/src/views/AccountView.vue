@@ -43,7 +43,8 @@
             <input type="text" placeholder="Search Company Name">
         </div>
         <div class="col-lg-2 col-sm-4">
-            <Button @click="handleButton">+ Add Form</Button>
+            <a href ='CreateAccount'><Button>+ Add Account</Button></a>
+            
         </div>
 
         <Table :data="data" :headers="headers" :fields="fields" icon-class="pen-square" @action-click="handleButton" />

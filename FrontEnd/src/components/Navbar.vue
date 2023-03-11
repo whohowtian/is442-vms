@@ -39,6 +39,7 @@
   .navbar {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     height:8vh;
+    background-color: #fff;
   }
   .logo {
   height: 50px;

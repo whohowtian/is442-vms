@@ -37,6 +37,11 @@ const router = createRouter({
       path: '/VendorAssessmentForm',
       name: 'VendorAssessmentForm',
       component: () => import('../views/VendorAssessmentForm.vue')
+    },
+    {
+      path: '/CreateAccount',
+      name: 'CreateAccount',
+      component: () => import('../views/CreateAccount.vue')
     }
   ]
 })
