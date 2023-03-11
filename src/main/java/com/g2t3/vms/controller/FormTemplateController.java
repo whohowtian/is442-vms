@@ -40,7 +40,11 @@ public class FormTemplateController {
     @GetMapping("/form/view/{no}")
     @ResponseBody
     public FormTemplate get_ft_by_id(@PathVariable String no) {
-        return formRepo.getFormTemplateByNo(no);
+        FormTemplate getForm = formRepo.getFormTemplateByNo(no);
+        if (getForm == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Form Not Found");
+        }
+        return getForm;
     }
 
     // Edit existing form by FormNo

@@ -22,7 +22,7 @@ public class Question {
 
     @Override
     public String toString() {
-        return String.format("{id='%s', qnTitle='%s', inputType='%s'}", id, qnTitle, inputType);
+        return String.format("{ id='%s', qnTitle='%s', inputType='%s'}", id, qnTitle, inputType);
     }
 
 }
