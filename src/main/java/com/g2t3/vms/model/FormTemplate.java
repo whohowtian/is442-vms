@@ -37,7 +37,9 @@ public class FormTemplate {
 
     @Override
     public String toString() {
-        return String.format("{ id: '%s' formNo: '%s', formName: '%s', revNo: '%s', formEffDate: '%s', isArchived: %s, formSections: %s}", id, formNo, formName, revNo, formEffDate, isArchived, formSections.toString());
+        return String.format("{ \"formNo\": '%s', \"formName\": '%s', \"revNo\": '%s', \"formEffDate\": '%s', \"isArchived\": %s, \"formSections\": %s}", formNo, formName, revNo, formEffDate, isArchived, formSections.toString());
+
+        // return String.format("{ id: '%s' formNo: '%s', formName: '%s', revNo: '%s', formEffDate: '%s', isArchived: %s, formSections: %s}", id, formNo, formName, revNo, formEffDate, isArchived, formSections.toString());
     }
 
 }

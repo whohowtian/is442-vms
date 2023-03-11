@@ -29,7 +29,7 @@ public class FormSection {
 
     @Override
     public String toString() {
-        return String.format("{ sectionName: '%s', questions: %s", sectionName, questions + "}");
+        return String.format("{ \"sectionName\": '%s', \"questions\": %s", sectionName, questions + "}");
     }
 
 }

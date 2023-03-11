@@ -15,14 +15,19 @@ public class Question {
     private String qnTitle;
     private String inputType;
 
+    // possbily need QuestionController?
+    private String ans;
+
     public Question(String qnTitle, String inputType) {
         this.qnTitle = qnTitle;
         this.inputType = inputType;
+        this.ans = "";
     }
 
     @Override
     public String toString() {
-        return String.format("{ id='%s', qnTitle='%s', inputType='%s'}", id, qnTitle, inputType);
+        return String.format("{ \"qnTitle\"='%s', \"inputType\"='%s'}", qnTitle, inputType);
+        // return String.format("{ id='%s', qnTitle='%s', inputType='%s'}", id, qnTitle, inputType);
     }
 
 }

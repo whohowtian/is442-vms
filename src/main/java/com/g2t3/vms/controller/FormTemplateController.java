@@ -14,21 +14,21 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.g2t3.vms.model.FormTemplate;
-import com.g2t3.vms.repository.FormRepo;
+import com.g2t3.vms.repository.FormTemplateRepo;
 
 @RestController
-@RequestMapping(path="/v1/api", produces="application/json")
+@RequestMapping(path="/v1/api/formtemplate", produces="application/json")
 public class FormTemplateController {
     @Autowired
-    private FormRepo formRepo;
+    private FormTemplateRepo formTemplateRepo;
 
     // Returns all Forms
-    @GetMapping("/form/view")
+    @GetMapping("/view")
     @ResponseBody
     public ArrayList<FormTemplate> get_all_ft() {
         ArrayList<FormTemplate> result = new ArrayList<>();
 
-        for (FormTemplate form : formRepo.findAll()) {
+        for (FormTemplate form : formTemplateRepo.findAll()) {
             result.add(form);
         }
 
@@ -37,10 +37,10 @@ public class FormTemplateController {
 
     // Returns form by FormNo
     // returns 404 not found if invalid formNo
-    @GetMapping("/form/view/{no}")
+    @GetMapping("/view/{no}")
     @ResponseBody
     public FormTemplate get_ft_by_id(@PathVariable String no) {
-        FormTemplate getForm = formRepo.getFormTemplateByNo(no);
+        FormTemplate getForm = formTemplateRepo.getFormTemplateByNo(no);
         if (getForm == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Form Not Found");
         }
@@ -49,17 +49,17 @@ public class FormTemplateController {
 
     // Edit existing form by FormNo
     // returns form json obj if success, otherwise 400 or 500
-    @PostMapping("/form/edit")
+    @PostMapping("/edit")
     public FormTemplate edit_form_template(@RequestBody FormTemplate updatedFT) {
         try {
-            FormTemplate existingForm = formRepo.getFormTemplateByNo(updatedFT.getFormNo());
+            FormTemplate existingForm = formTemplateRepo.getFormTemplateByNo(updatedFT.getFormNo());
             existingForm.setFormEffDate(updatedFT.getFormEffDate());
             existingForm.setFormName(updatedFT.getFormName());
             existingForm.setArchived(updatedFT.isArchived());
             existingForm.setRevNo(existingForm.getRevNo() + 1);
             existingForm.setFormSections(updatedFT.getFormSections());
 
-            FormTemplate doUpdate = formRepo.save(existingForm); 
+            FormTemplate doUpdate = formTemplateRepo.save(existingForm); 
             return doUpdate;
         }
         catch (org.springframework.dao.DataIntegrityViolationException e){
@@ -73,10 +73,10 @@ public class FormTemplateController {
 
     // Creates new Form
     // returns 400 bad request if validation fails
-    @PostMapping("/form/create")
+    @PostMapping("/create")
     public FormTemplate new_form_template(@RequestBody FormTemplate newFT) {
         try {
-            FormTemplate writeResp = formRepo.save(newFT);
+            FormTemplate writeResp = formTemplateRepo.save(newFT);
             return writeResp;
         }
         catch (org.springframework.dao.DataIntegrityViolationException e){
