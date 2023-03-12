@@ -14,11 +14,13 @@
           "questions": [
             {
               "qnTitle": "is there written safety policy?",
-              "inputType": "radio: ['yes', 'no']"
+              "inputType": "radio: ['yes', 'no']",
+              "value" : ""
             },
             {
               "qnTitle": "num of accidents in the past 3 years",
-              "inputType": "num"
+              "inputType": "num",
+              "value" : ""
             }
           ]
         }
@@ -39,11 +41,13 @@
           "questions": [
             {
               "qnTitle": "is there written safety policy?",
-              "inputType": "textbox"
+              "inputType": "textbox",
+              "value" : ""
             },
             {
               "qnTitle": "do you agree to the t&c",
-              "inputType": "radio"
+              "inputType": "radio",
+              "value" : ""
             }
           ]
         }

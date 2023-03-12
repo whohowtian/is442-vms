@@ -16,17 +16,17 @@ public class Question {
     private String inputType;
 
     // possbily need QuestionController?
-    private String ans;
+    private String value;
 
     public Question(String qnTitle, String inputType) {
         this.qnTitle = qnTitle;
         this.inputType = inputType;
-        this.ans = "";
+        this.value = "";
     }
 
     @Override
     public String toString() {
-        return String.format("{ \"qnTitle\"='%s', \"inputType\"='%s'}", qnTitle, inputType);
+        return String.format("{ \"qnTitle\"='%s', \"inputType\"='%s', \"value\"='%s' }", qnTitle, inputType, value);
         // return String.format("{ id='%s', qnTitle='%s', inputType='%s'}", id, qnTitle, inputType);
     }
 

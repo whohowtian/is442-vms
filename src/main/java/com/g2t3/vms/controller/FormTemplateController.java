@@ -39,18 +39,18 @@ public class FormTemplateController {
     // returns 404 not found if invalid formNo
     @GetMapping("/view/{no}")
     @ResponseBody
-    public FormTemplate get_ft_by_id(@PathVariable String no) {
+    public String get_ft_by_id(@PathVariable String no) {
         FormTemplate getForm = formTemplateRepo.getFormTemplateByNo(no);
         if (getForm == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Form Not Found");
         }
-        return getForm;
+        return getForm.toString();
     }
 
     // Edit existing form by FormNo
     // returns form json obj if success, otherwise 400 or 500
     @PostMapping("/edit")
-    public FormTemplate edit_form_template(@RequestBody FormTemplate updatedFT) {
+    public String edit_form_template(@RequestBody FormTemplate updatedFT) {
         try {
             FormTemplate existingForm = formTemplateRepo.getFormTemplateByNo(updatedFT.getFormNo());
             existingForm.setFormEffDate(updatedFT.getFormEffDate());
@@ -60,7 +60,7 @@ public class FormTemplateController {
             existingForm.setFormSections(updatedFT.getFormSections());
 
             FormTemplate doUpdate = formTemplateRepo.save(existingForm); 
-            return doUpdate;
+            return doUpdate.toString();
         }
         catch (org.springframework.dao.DataIntegrityViolationException e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad Request", e);

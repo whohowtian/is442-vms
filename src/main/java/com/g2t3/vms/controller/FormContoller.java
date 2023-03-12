@@ -6,7 +6,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.g2t3.vms.model.Form;
 import com.g2t3.vms.repository.FormRepo;
 import com.g2t3.vms.model.FormTemplate;
@@ -45,7 +43,7 @@ public class FormContoller {
     // Creates new Form
     // returns 400 bad request if validation fails
     @PostMapping("/create")
-    public String new_form_template(@RequestBody Map<String,String> newFormJSON) {
+    public Form new_form_template(@RequestBody Map<String,String> newFormJSON) {
         try {
             String assigned_vendor_uid = newFormJSON.get("assigned_vendor_uid");
             String formNo = newFormJSON.get("form_no");
@@ -55,7 +53,8 @@ public class FormContoller {
             Form newForm = new Form(assigned_vendor_uid, formTemplate);
 
             Form writeResp = formRepo.save(newForm);
-            return writeResp.toString();
+            return writeResp;
+            // return writeResp.toString();
         }
         catch (org.springframework.dao.DataIntegrityViolationException e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad Request", e);
