@@ -1,0 +1,103 @@
+{
+    "formNo": "QHSP-10-F01",
+    "formName": "New Vendor Assessment Form",
+    "formEffDate": "20.03.2023",
+    "formSections": [
+        {
+            "sectionName": "Company Details",
+            "adminUseOnly": false,
+            "doScoreCalculation": false,
+            "questions": [
+                {
+                    "qnTitle": "Entity Name: ",
+                    "inputType": "String"
+                },
+                {
+                    "qnTitle": "UEN: ",
+                    "inputType": "String"
+                },
+                {
+                    "qnTitle": "GST Registered: ",
+                    "inputType": "boolean"
+                },
+                {
+                    "qnTitle": "Business Address: ",
+                    "inputType": "String"
+                },
+                {
+                    "qnTitle": "Tel: ",
+                    "inputType": "PhoneNumber"
+                },
+                {
+                    "qnTitle": "Fax: ",
+                    "inputType": "PhoneNumber"
+                },
+                {
+                    "qnTitle": "Company Type Description: ",
+                    "inputType": "radio"
+                },
+                {
+                    "qnTitle": "Contact Person: ",
+                    "inputType": "ArrayList<contactPerson>"
+                },
+                {
+                    "qnTitle": "Nature of Business: ",
+                    "inputType": "ArrayList<SSICCode>"
+                },
+                {
+                    "qnTitle": "Product / Services: ",
+                    "inputType": "String"
+                }
+            ]
+        },
+        {
+            "id": null,
+            "sectionName": "Company Evaluation",
+            "adminUseOnly": true,
+            "doScoreCalculation": false,
+            "questions": [
+                {
+                    "qnTitle": "ISO 9001 Certification: ",
+                    "inputType": "Certification"
+                },
+                {
+                    "qnTitle": "Accreditation of Laboratory: ",
+                    "inputType": "Certification"
+                },
+                {
+                    "qnTitle": "Product Certification: ",
+                    "inputType": "Certification"
+                },
+                {
+                    "qnTitle": "Site Evaluation Results: ",
+                    "inputType": "boolean"
+                },
+                {
+                    "qnTitle": "Results of Samples/Product Evaluation: ",
+                    "inputType": "boolean"
+                },
+                {
+                    "qnTitle": "Results of First Deal: ",
+                    "inputType": "boolean"
+                },
+                {
+                    "qnTitle": "Track Record Review/Customer Reference: ",
+                    "inputType": "boolean"
+                },
+                {
+                    "qnTitle": "Others: ",
+                    "inputType": "String"
+                },
+                {
+                    "qnTitle": "Director Approval: ",
+                    "inputType": "ApprovalBlock"
+                },
+                {
+                    "qnTitle": "Evaluator Approval: ",
+                    "inputType": "ApprovalBlock"
+                }
+            ]
+        }
+    ],
+    "archived": false
+}
