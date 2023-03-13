@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.2</version>
+		<version>3.0.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.g2t3.vms</groupId>
@@ -19,11 +19,11 @@
 		<lombok.version>1.18.24</lombok.version>
 		<jsoup>1.15.4</jsoup>
 		<poi-ooxml.version>5.2.3</poi-ooxml.version>
-		<open-html-pdfbox.version>1.0.6</open-html-pdfbox.version>
+		<openhtmltopdf-pdfbox.version>1.0.10</openhtmltopdf-pdfbox.version>
         <flying-saucer-pdf-openpdf.version>9.1.22</flying-saucer-pdf-openpdf.version>
-		<springdoc-openapi-starter-webmvc-ui.version>2.0.2</springdoc-openapi-starter-webmvc-ui.version>
-		<spring-boot-starter-mail.version>2.5.6</spring-boot-starter-mail.version>
+		<spring-boot-starter-mail.version>3.0.4</spring-boot-starter-mail.version>
 		<jakarta.mail.version>2.0.1</jakarta.mail.version>
+		<springdoc-openapi-ui.version>2.0.0</springdoc-openapi-ui.version>
 	</properties>
 
 	<dependencies>
@@ -68,13 +68,18 @@
 		<dependency>
             <groupId>com.openhtmltopdf</groupId>
             <artifactId>openhtmltopdf-pdfbox</artifactId>
-            <version>${open-html-pdfbox.version}</version>
+            <version>${openhtmltopdf-pdfbox.version}</version>
         </dependency>
 		<dependency>
             <groupId>org.xhtmlrenderer</groupId>
             <artifactId>flying-saucer-pdf-openpdf</artifactId>
             <version>${flying-saucer-pdf-openpdf.version}</version>
         </dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${springdoc-openapi-ui.version}</version>
+    	</dependency>
 	</dependencies>
 
 	<build>
