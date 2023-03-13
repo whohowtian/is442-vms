@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.g2t3.vms</groupId>
-	<artifactId>vms-demo</artifactId>
+	<artifactId>vms</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>vms-demo</name>
+	<name>vms</name>
 	<description>Vendor Management System for Quantum Leap Incorporation</description>
 
 	<properties>
@@ -75,11 +75,6 @@
             <artifactId>flying-saucer-pdf-openpdf</artifactId>
             <version>${flying-saucer-pdf-openpdf.version}</version>
         </dependency>
-		<!-- <dependency>
-			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>${springdoc-openapi-starter-webmvc-ui.version}</version>
-		</dependency> -->
 	</dependencies>
 
 	<build>
