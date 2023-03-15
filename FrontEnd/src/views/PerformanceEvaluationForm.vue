@@ -80,6 +80,7 @@ export default {
 </script>
 <template >
     <NavBar :items="menuItems" />
+    
 
     <div class="shadow p-3 mt-5 mb-5 bg-white rounded " style="margin: auto; width: 90%;">
             <!-- button -->

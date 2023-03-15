@@ -47,6 +47,11 @@ const router = createRouter({
       path: '/PreEvaluationForm',
       name: 'PreEvaluationForm',
       component: () => import('../views/PreEvaluationForm.vue')
+    },
+    {
+      path: '/EditableForm',
+      name: 'EditableForm',
+      component: () => import('../views/EditableForm.vue')
     }
   ]
 })

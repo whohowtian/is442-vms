@@ -1,5 +1,8 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import Vueform from '@vueform/vueform/plugin'
+import vueformConfig from './../vueform.config'
+import './index.scss'
 import router from './router'
 import './assets/styles/main.css'
 
@@ -17,6 +20,7 @@ library.add(faTrash, faEllipsis,faPenSquare,faEye)
 const app = createApp(App)
 app.component('font-awesome-icon', FontAwesomeIcon);
 app.component('VueDatePicker', VueDatePicker);
+app.use(Vueform, vueformConfig)
 
 app.use(router)
 
