@@ -257,13 +257,36 @@ export default {
                     </div>
             </div>
             <div class="row">
-                    <div class="col border text-white bg-dark">
+                    <div class="col-1 border text-white bg-dark">
+                        <div>
+                            <input class="form-check-input" type="checkbox" id="checkboxNoLabel" value="" aria-label="...">
+                        </div>
+                    </div>
+                    <div class="col-4 border text-white bg-dark">
                         ISO 9001 Certification:
                     </div>
                     <div class = "col border">
-                        <input name="C1tel" type="text" class="form-control">
+                        <label for="inputName" class="form-label">Certification Body</label>
+                        <input name="C1tel" type="text" id="inputName" class="form-control">
                     </div>
-            </div>        
+            </div> 
+
+            <div class="row">
+                    <div class="col-1 border text-white bg-dark">
+                        <div>
+                            <input class="form-check-input" type="checkbox" id="checkboxNoLabel" value="" aria-label="...">
+                        </div>
+                    </div>
+                    <div class="col-4 border text-white bg-dark">
+                         Accreditation of Laboratory
+                    </div>
+                    <div class = "col border">
+                        <label for="inputName" class="form-label">Accreditation Body</label>
+                        <input name="C1tel" type="text" id="inputName" class="form-control">
+                    </div>
+            </div>  
+
+                 
             
             
             <!-- Acknowledgement-->
