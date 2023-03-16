@@ -1,8 +1,10 @@
 <!-- JUST A SAMPLE LOGIN FORM TEMPLATE  -->
 <template>
+    <NavBar :items="menuItems" />
+
     <div class="login-page">
       <h1>Login</h1>
-      <p>Right now is hardcoded function, login by enter {usertype} as Username ; password: pw; login the same usertype</p>
+      <p>hardcoded function, login by enter {usertype} as Username ; password: pw; login the same usertype</p>
       <h6>e.g. username: admin ; password: pw ; login as admin</h6>
       <form @submit.prevent="submitForm">
         <div>
@@ -28,8 +30,13 @@
   </template>
   
   <script>
+  import NavBar from '../components/Navbar.vue';
+    
   export default {
-    name: 'LoginPage',
+    name: 'LoginView',
+    components: {
+      NavBar
+    },
     data() {
       return {
         username: '',
@@ -62,12 +69,16 @@
   </script>
   
   <style>
+  #app {
+    background-color:rgb(0, 121, 179);
+  }
   .login-page {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    color: #fff;
   }
   form {
     display: flex;
@@ -75,7 +86,7 @@
     align-items: center;
     gap: 10px;
     padding: 20px;
-    border: 1px solid #ccc;
+    border: 1px solid #fff;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   }
@@ -87,7 +98,7 @@
     width: 100%;
     padding: 10px;
     font-size: 16px;
-    border: 1px solid #ccc;
+    border: 1px solid #fff;
     border-radius: 5px;
     box-sizing: border-box;
     outline: none;
