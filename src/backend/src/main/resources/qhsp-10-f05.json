@@ -1,0 +1,78 @@
+{
+    "formNo": "QHSP-10-F05",
+    "formName": "Subcontractors Safety - Health Performance Evaluation",
+    "formEffDate": "25.03.2023",
+    "formSections": [
+        {
+            "sectionName": "Subcontractor Details",
+            "adminUseOnly": false,
+            "doScoreCalculation": false,
+            "questions": [
+                {
+                    "qnTitle": "Name of Contractor: ",
+                    "inputType": null
+                },
+                {
+                    "qnTitle": "Trade: ",
+                    "inputType": "radio"
+                },
+                {
+                    "qnTitle": "Project/Worksite: ",
+                    "inputType": "radio"
+                },
+                {
+                    "qnTitle": "Date of Evaluation: ",
+                    "inputType": "radio"
+                }
+            ]
+        },
+        {
+            "sectionName": "Part I: Participation in Safety",
+            "adminUseOnly": true,
+            "doScoreCalculation": false,
+            "questions": [
+                {
+                    "qnTitle": "ISO 9001 Certification: ",
+                    "inputType": "Certification"
+                },
+                {
+                    "qnTitle": "Accreditation of Laboratory: ",
+                    "inputType": ""
+                },
+                {
+                    "qnTitle": "Product Certification: ",
+                    "inputType": ""
+                },
+                {
+                    "qnTitle": "Site Evaluation Results: ",
+                    "inputType": "boolean"
+                },
+                {
+                    "qnTitle": "Results of Samples/Product Evaluation: ",
+                    "inputType": "boolean"
+                },
+                {
+                    "qnTitle": "Results of First Deal: ",
+                    "inputType": "boolean"
+                },
+                {
+                    "qnTitle": "Track Record Review/Customer Reference: ",
+                    "inputType": "boolean"
+                },
+                {
+                    "qnTitle": "Others: ",
+                    "inputType": ""
+                },
+                {
+                    "qnTitle": "Director Approval: ",
+                    "inputType": "ApprovalBlock"
+                },
+                {
+                    "qnTitle": "Evaluator Approval: ",
+                    "inputType": "ApprovalBlock"
+                }
+            ]
+        }
+    ],
+    "archived": false
+}
