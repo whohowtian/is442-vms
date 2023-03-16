@@ -19,6 +19,7 @@
     "@vuepic/vue-datepicker": "^4.2.0",
     "awesome-vue-star-rating": "^1.0.9",
     "bootstrap": "^5.2.3",
+    "element-plus": "^2.3.0",
     "primeicons": "^6.0.1",
     "primevue": "^3.23.0",
     "vue": "^3.2.47",
