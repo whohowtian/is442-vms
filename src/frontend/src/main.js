@@ -1,5 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
 import Vueform from '@vueform/vueform/plugin'
 import vueformConfig from './../vueform.config'
 import './index.scss'
@@ -23,6 +25,7 @@ app.component('VueDatePicker', VueDatePicker);
 app.use(Vueform, vueformConfig)
 
 app.use(router)
+app.use(ElementPlus)
 
 
 app.mount('#app')
