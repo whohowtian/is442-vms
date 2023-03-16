@@ -71,36 +71,33 @@ export default {
     <Header dept= "WORKFLOW MANAGEMENT" msg= "Create new or edit existing account within your business along with assigning each a specific role "/>
 
     <!-- sub nav bar [WORKFLOW / TASK/ EDIT FORM] -->
-    <div class="row" style="margin-top: 10px;">
-        <div class="col-1" @click="activeOption = 'workflowTable'">
-            <a href="#">WORKFLOW</a>
-        </div>
-        <div class="col-1" @click="activeOption = 'taskTable'"> 
-            <a href="#" >MY TASK</a>
-        </div>
-        <div class="col-2" @click="activeOption = 'formTable'">
-            <a  href="#">EDIT FORM</a>
-        </div>
-    </div>
+    <el-tabs v-model="activeOption" @tab-click="activeOption">
+        <el-tab-pane label="WORKFLOW" name="workflowTable"></el-tab-pane>
+        <el-tab-pane label="MY TASK" name="taskTable"></el-tab-pane>
+        <el-tab-pane label="EDIT FORM" name="formTable"></el-tab-pane>
+    </el-tabs>
 
     <!-- 1) workflowTable -->
     <div v-if="activeOption === 'workflowTable' || activeOption === 'InActiveworkflowTable'">
         <!-- sub nav bar [Active / Inactive] -->
-        <div class="row">
-            <div class="col-1" @click="activeOption = 'workflowTable'">
-                <a href="#">Active</a><span>({{ data1.length }})</span>
-            </div>
-            <div class="col-1" @click="activeOption = 'InActiveworkflowTable'"> 
-                <a href="#" >Inactive</a><span>({{ data2.length }})</span>
-            </div>
-            <div class="col-lg-2 col-sm-4  ">
-                <input type="text" placeholder="Search Company Name">
-            </div>
-            <div class="col-lg-2 col-sm-3">
-                <Button @click="handleButton">+ Add Workflow</Button>
+        <el-tabs v-model="activeOption"  type="card" @tab-click="activeOption">
+            <el-tab-pane label="Active" name="workflowTable"   @tab-click="activeOption = 'workflowTable'">
+                <template #label><span>Active({{ data1.length }})</span></template>
+            </el-tab-pane>
+            <el-tab-pane label="Inactive" name="InActiveworkflowTable"  @tab-click="activeOption = 'InActiveworkflowTable'">
+                <template #label><span>Inctive({{ data2.length }})</span></template>
+            </el-tab-pane>
+        </el-tabs>
+                
+    <div class="row">
+        <div class="col-lg-2 col-sm-4  ">
+            <input type="text" placeholder="Search Company Name">
+        </div>
+        <div class="col-lg-2 col-sm-3">
+            <Button @click="handleButton">+ Add Workflow</Button>
             </div>
         </div>
-
+        
         <!-- 1.1) Active Table content -->
         <!-- previous way of hardcoding table, to be changed to table component -->
         <div v-if="activeOption === 'workflowTable'">
