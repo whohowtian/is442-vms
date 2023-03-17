@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import store from './store'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import Vueform from '@vueform/vueform/plugin'
@@ -23,6 +24,7 @@ const app = createApp(App)
 app.component('font-awesome-icon', FontAwesomeIcon);
 app.component('VueDatePicker', VueDatePicker);
 app.use(Vueform, vueformConfig)
+app.use(store)
 
 app.use(router)
 app.use(ElementPlus)
