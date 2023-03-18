@@ -18,12 +18,13 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 
 library.add(faTrash, faEllipsis,faPenSquare,faEye)
-  library.add(far);
+library.add(far);
 
 const app = createApp(App)
 app.component('font-awesome-icon', FontAwesomeIcon);
 app.component('VueDatePicker', VueDatePicker);
 app.use(Vueform, vueformConfig)
+
 app.use(store)
 
 app.use(router)

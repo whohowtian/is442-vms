@@ -20,7 +20,7 @@
                     <el-input placeholder="Please input section title" v-model="eachFormObj.title" style="width: 100%;"></el-input>
                   </el-col>
                   <el-col :span="6">
-                    <el-button type="danger" round style="float: right" @click="deleteSection(eachFormIndex, eachFormObj.title)">Delete Section</el-button>
+                    <el-button type="danger" round style="float: right" @click="deleteSection(eachFormIndex,eachFormObj.title)">Delete Section</el-button>
                   </el-col>
                 </el-row>
               </div>
@@ -75,11 +75,22 @@
 
 <script>
 import { FormBuilder } from './formbuilder';
+import { store } from '../../store.js';
+
 
 export default {
   name: 'Home',
-  store: ['forms', 'activeField', 'activeTabForFields'],
+  // store: ['forms', 'activeField', 'activeTabForFields'],
+  // store:[store._state.data.forms,store._state.data.activeField ],
+  data(){
+    return{
+      forms: store._state.data.forms,
+      activeField: store._state.data.activeField,
+      activeTabForFields: store._state.data.activeTabForFields
+    }
+  },
   mounted() {
+    // console.log(store._state.data.forms)
     console.log("form ->", this.forms)
     console.log("activeField ->", this.activeField)
   },
@@ -91,8 +102,10 @@ export default {
       FormBuilder.cloneElement(index, field, form)
     },
     editElementProperties(field) {
+      
       console.log("form ->", this.forms)
       console.log("activeField ->", this.activeField)
+      
       FormBuilder.editElementProperties(field)
     },
     addSection() {
@@ -100,15 +113,20 @@ export default {
         title: "",
         fields: []
       };
+      
       this.forms.push(formObj);
+      console.log("form ->", this.forms);
     },
-    deleteSection(formIndex, formTitle) {
-      this.$confirm(`Are you sure to delete the section ${formTitle}?`, 'Warning', {
+    deleteSection(formIndex,formTitle ) {
+      console.log("form ->", this.forms);
+      console.log("formindex", formIndex);
+      this.$confirm(`Are you sure to delete the section ${formTitle} ?`, 'Warning', {
           confirmButtonText: 'OK',
           cancelButtonText: 'Cancel',
           type: 'warning'
         }).then(() => {
-          this.$delete(this.forms, formIndex);
+          console.log("formindex", formIndex);
+          this.forms.splice(formIndex, 1)
         });
       
     }

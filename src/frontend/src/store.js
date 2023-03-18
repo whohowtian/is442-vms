@@ -1,6 +1,6 @@
 import { createStore } from 'vuex'
 
-const store = createStore({
+export const store = createStore({
   state: {
     forms: [],
     activeField: [],
