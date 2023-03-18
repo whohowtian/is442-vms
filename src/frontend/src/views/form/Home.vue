@@ -26,6 +26,7 @@
               </div>
               <div class="meta">
                 <el-row>
+                  
                   <draggable :list="eachFormObj.fields" class="dragArea" :group="{ name:'formbuilder', pull:false, put:true }" :sort="true" ghost-class="sortable__ghost">
                     <!-- The form elements starts (on the right) -->
                     <!-- <div> -->
@@ -87,13 +88,16 @@ export default {
       forms: store._state.data.forms,
       activeField: store._state.data.activeField,
       activeTabForFields: store._state.data.activeTabForFields
+      
     }
   },
   mounted() {
-    // console.log(store._state.data.forms)
     console.log("form ->", this.forms)
     console.log("activeField ->", this.activeField)
+    console.log(FormBuilder)
   },
+  components: FormBuilder.components,
+  
   methods: {
     deleteElement(index, form) {
       FormBuilder.deleteElement(index, form)
@@ -106,7 +110,7 @@ export default {
       console.log("form ->", this.forms)
       console.log("activeField ->", this.activeField)
       
-      FormBuilder.editElementProperties(field)
+      // FormBuilder.editElementProperties(field)
     },
     addSection() {
       const formObj = {
@@ -118,14 +122,14 @@ export default {
       console.log("form ->", this.forms);
     },
     deleteSection(formIndex,formTitle ) {
-      console.log("form ->", this.forms);
-      console.log("formindex", formIndex);
+      // console.log("form ->", this.forms);
+      // console.log("formindex", formIndex);
       this.$confirm(`Are you sure to delete the section ${formTitle} ?`, 'Warning', {
           confirmButtonText: 'OK',
           cancelButtonText: 'Cancel',
           type: 'warning'
         }).then(() => {
-          console.log("formindex", formIndex);
+          // console.log("formindex", formIndex);
           this.forms.splice(formIndex, 1)
         });
       

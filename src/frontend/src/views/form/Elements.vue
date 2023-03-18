@@ -17,18 +17,22 @@
 
 <script>
 import { FormBuilder } from './formbuilder.js';
-import draggable from 'vuedraggable';
+// import draggable from 'vuedraggable';
+import { VueDraggableNext } from 'vue-draggable-next'
+import { store } from '../../store.js';
 
 export default {
   name: 'Elements',
-  store: ['forms'],
+  // store: ['forms'],
   components: {
-    draggable
+    // draggable
+    VueDraggableNext
   },
   data() {
     return {
-      fields: FormBuilder.$data.fields,
-      dropElementOptions: FormBuilder.$data.dropElementOptions
+      fields: FormBuilder.props.fields,
+      // dropElementOptions: FormBuilder.$data.dropElementOptions,
+      forms: store._state.data.forms,
     };
   },
   methods: {
@@ -39,13 +43,14 @@ export default {
       var form = this.forms,
         formArray = [];
 
-        console.log(form)
+        console.log(field)
       for (var key in form) {
+        console.log("key",key);
         formArray.push(form[key]['fieldType'])
       }
       // Check if the fieldname exist in formArray
       // And when the field.isUnique too
-      return _.includes(formArray, field.name) && field.isUnique;
+      // return _.includes(formArray, field.name) && field.isUnique;
     }
   }
 }
