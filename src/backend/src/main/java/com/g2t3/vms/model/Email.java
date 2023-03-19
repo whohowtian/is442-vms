@@ -1,8 +1,13 @@
 package com.g2t3.vms.model;
 
-public class Email {
-    private String toEmail;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
+public class Email {
+
+    private String toEmail;
     private String body;
     private String subject;
     private String attachment;
@@ -13,36 +18,4 @@ public class Email {
         this.subject = subject;
         this.attachment = attachment;
     }
-    public String getToEmail() {
-        return toEmail;
-    }
-
-    public void setToEmail(String toEmail) {
-        this.toEmail = toEmail;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public String getAttachment() {
-        return attachment;
-    }
-
-    public void setAttachment(String attachment) {
-        this.attachment = attachment;
-    }
-
 }

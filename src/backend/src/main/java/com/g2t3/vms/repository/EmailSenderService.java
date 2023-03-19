@@ -12,34 +12,38 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import com.g2t3.vms.model.Email;
+
 
 @Service
 public class EmailSenderService {
 
     @Autowired
     private JavaMailSender mailSender;
-    public void sendEmail(String toEmail, String body, String subject, String attachment) throws MailException, MessagingException {
-        if(attachment == ""){
+
+    // public void sendEmail(String toEmail, String body, String subject, String attachment) throws MailException, MessagingException {
+    public void sendEmail(Email email) throws MailException, MessagingException {
+        if (email.getAttachment() == "") {
             SimpleMailMessage message = new SimpleMailMessage();
 
             message.setFrom("is442g2t3@outlook.com");
-            message.setTo(toEmail);
-            message.setText(body);
-            message.setSubject(subject);
+            message.setTo(email.getToEmail());
+            message.setText(email.getBody());
+            message.setSubject(email.getSubject());
 
             mailSender.send(message);
             System.out.println("Email sent successfully");
-        }else{
+        } else {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper;
 
             mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
             mimeMessageHelper.setFrom("is442g2t3@outlook.com");
-            mimeMessageHelper.setTo(toEmail);
-            mimeMessageHelper.setText(body);
-            mimeMessageHelper.setSubject(subject);
+            mimeMessageHelper.setTo(email.getToEmail());
+            mimeMessageHelper.setText(email.getBody());
+            mimeMessageHelper.setSubject(email.getSubject());
 
-            FileSystemResource file = new FileSystemResource(new File(attachment));
+            FileSystemResource file = new FileSystemResource(new File(email.getAttachment()));
             mimeMessageHelper.addAttachment(file.getFilename(), file);
 
             mailSender.send(mimeMessage);
