@@ -9,7 +9,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, index) in data" :key="index">
+        <tr v-for="(item, index) in data" :key="index"  @click="toggleRowSelection(item)" :class="{ 'is-selected': isSelected(index) }"
+>
         <td  class="checkbox-col">
           <input type="checkbox" v-model="selectedRows" :value="item">
         </td>
@@ -77,7 +78,7 @@
     },
     data(){
       return{
-        selectedRows: [],
+        selectedRows: [], //tick checkbox
       };
     },
     computed: {
@@ -98,6 +99,17 @@
       selectAllRows() {
         this.allRowsSelected = !this.allRowsSelected;
       },
+    toggleRowSelection(item) {
+      const index = this.selectedRows.indexOf(item);
+      if (index > -1) {
+        this.selectedRows.splice(index, 1);
+      } else {
+        this.selectedRows.push(item);
+      }
+    },
+    isSelected(index) {
+      return this.selectedRows.includes(this.data[index]);
+    },
       handleActionClick(item) {
         this.$emit("action-click", item);
       },
@@ -139,5 +151,9 @@
   margin: 0;
   padding: 0;
   
+}
+
+.is-selected {
+  background-color: #cedfff;
 }
 </style>
