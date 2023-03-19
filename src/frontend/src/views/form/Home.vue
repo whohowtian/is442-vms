@@ -31,8 +31,10 @@
                     <!-- The form elements starts (on the right) -->
                     
                     <div v-for="(field, index) in eachFormObj.fields" :key="index">
+                      
                     <el-col  v-bind="field" :span="field.span" class="form__group" :class="{ 'is--active': field === activeField }">
-                      <span class="form__selectedlabel">{{ field.fieldType }}</span>
+                    
+                      <span class="form__selectedlabel">{{ field.fieldType }} </span>
 
                       <div>
                         <!-- <label class="form__label" v-model="form.label" v-show="form.hasOwnProperty('label')">{{ form.label }}</label> -->
@@ -89,17 +91,18 @@ export default {
     return{
       forms: store._state.data.forms,
       activeField: store._state.data.activeField,
-      activeTabForFields: store._state.data.activeTabForFields
+      activeTabForFields: store._state.data.activeTabForFields,
+      sortElementOptions:FormBuilder.props.sortElementOptions
       
     }
   },
   mounted() {
     console.log("form ->", this.forms)
     console.log("activeField ->", this.activeField)
-    console.log(FormBuilder.components)
+    console.log(FormBuilder.props)
   },
-  components: FormBuilder.components,
-  
+  components: FormBuilder.components
+  ,
   methods: {
     deleteElement(index, form) {
       FormBuilder.deleteElement(index, form)

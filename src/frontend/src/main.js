@@ -8,6 +8,7 @@ import vueformConfig from './../vueform.config'
 import './index.scss'
 import router from './router'
 import './assets/styles/main.css'
+import { VueDraggableNext } from 'vue-draggable-next'
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -24,8 +25,10 @@ library.add(far);
 const app = createApp(App)
 app.component('font-awesome-icon', FontAwesomeIcon);
 app.component('VueDatePicker', VueDatePicker);
+app.component('draggable',VueDraggableNext);
 app.use(Vueform, vueformConfig)
 app.use(VueLodash)
+
 
 app.use(store)
 

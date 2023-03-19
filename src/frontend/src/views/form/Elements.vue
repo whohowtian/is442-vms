@@ -51,7 +51,7 @@ export default {
   data() {
     return {
       fields: FormBuilder.props.fields,
-      // dropElementOptions: FormBuilder.$data.dropElementOptions,
+      dropElementOptions: FormBuilder.props.dropElementOptions,
       forms: store._state.data.forms,
       
     };
