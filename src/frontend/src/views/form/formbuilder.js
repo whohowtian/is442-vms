@@ -9,6 +9,10 @@ import TextInput from './FormElementTextInput.vue'
 import LongTextInput from './FormElementLongTextInput.vue'
 import NumberInput from './FormElementNumberInput.vue'
 import RadioButton from './FormElementRadioButton.vue'
+import SelectList from './FormElementSelectList.vue'
+import DatePicker from './FormElementDatePicker.vue'
+import Rating from './FormElementRating.vue'
+import Button from './FormElementButton.vue'
 
 import Elements from './Elements.vue'
 import { clone } from 'lodash';
@@ -23,7 +27,12 @@ export const FormBuilder ={
     TextInput,
     LongTextInput,
     NumberInput,
-    RadioButton
+    RadioButton,
+    SelectList,
+    DatePicker,
+    Rating,
+    Button
+
   },
   props:{
     fields: [
@@ -76,7 +85,7 @@ export const FormBuilder ={
       isHelpBlockVisible: false,
       isPlaceholderVisible: false,
       isUnique: false,
-      span: 8,
+      span: 20,
       labelWidth: 100,
       isFromUrl: false,
       options: [{
@@ -106,7 +115,83 @@ export const FormBuilder ={
       isHelpBlockVisible: false,
       isPlaceholderVisible: true,
       isUnique: false,
-      span: 24,
+      span: 50,
+      labelWidth: 100
+    },
+    {
+      fieldType: 'SelectList',
+      label: 'Select',
+      text: 'Select',
+      group: 'form',
+      isRequired: false,
+      isHelpBlockVisible: false,
+      isPlaceholderVisible: false,
+      isUnique: false,
+      span: 20,
+      labelWidth: 100,
+      isFromUrl: false,
+      dataUrl: '',
+      options: [{
+          optionLabel: "Option Label 1",
+          optionValue: "Option 1"
+        },
+        {
+          optionLabel: "Option Label 2",
+          optionValue: "Option 2"
+        }
+      ],
+      advancedOptions: true,
+      dataUrl: '',
+      labelField: 'label',
+      valueField: 'value',
+      disabled: false,
+      clearable: false,
+      multiple: false,
+      filterable: false,
+      remote: false
+    },
+    {
+      fieldType: 'DatePicker',
+      label: 'Date',
+      text: 'Date',
+      group: 'form',
+      isRequired: false,
+      isHelpBlockVisible: false,
+      isPlaceholderVisible: false,
+      isUnique: false,
+      span: 20,
+      labelWidth: 100
+    },
+    {
+      fieldType: 'Rating',
+      label: 'Rating',
+      text: 'Rating',
+      group: 'form',
+      isRequired: false,
+      isHelpBlockVisible: false,
+      isPlaceholderVisible: false,
+      isUnique: false,
+      span: 20,
+      labelWidth: 100,
+      advancedOptions: true,
+      rateValue: 0,
+      showText: true,
+      disabled: false,
+      showScore: false,
+      scoreUnit: 'points',
+      colors: ['#AAAAAA', '#F7BA2A', '#FF9900'],
+      texts: ['Poor', 'Below Average', 'Average', 'Above Average', 'Good']
+    },
+    {
+      fieldType: 'Button',
+      text: 'Submit Button',
+      group: 'button',
+      buttonText: 'Submit',
+      isRequired: false,
+      isHelpBlockVisible: false,
+      isPlaceholderVisible: false,
+      isUnique: true,
+      span: 20,
       labelWidth: 100
     },
   ],

@@ -9,7 +9,7 @@
 
 <script>
 // import fetchData from '@/api/fetch-data';
-import qs from 'qs';
+// import qs from 'qs';
 
 export default {
   name: 'SelectList',
