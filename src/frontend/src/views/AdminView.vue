@@ -34,7 +34,7 @@ import NavBar from '../components/Navbar.vue';
         <div class="col">
             <div class="card bg-light h-100">
                 <!-- change the link to the correct page -->
-                <a href="">
+                <a href="/AccountView">
                     <div class="card-body" >
                         
                         <img src="../assets/icons/adminEditAccount.png" class="mx-auto d-block img-fluid">
@@ -47,7 +47,7 @@ import NavBar from '../components/Navbar.vue';
         <div class="col">
             <div class="card bg-light h-100">
                 <!-- change the link to the correct page -->
-                <a href="">
+                <a href="/WorkflowView">
                     <div class="card-body">
                         <img src="../assets/icons/adminEditWorkflow.png" class="mx-auto d-block img-fluid">
                         <h4 class="card-title">Assign & Edit Workflow</h4>
