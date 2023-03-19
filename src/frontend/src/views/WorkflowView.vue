@@ -17,7 +17,6 @@ export default {
         },
     data() {
         return {
-        showDropdown: false,
         input1:"",
         menuItems: [ //for top nav bar
             { label: 'HOME', route: '/AdminView'  },
@@ -25,17 +24,22 @@ export default {
             { label: 'WORKFLOW', route: '/WorkflowView'  },
             { label: 'LOGOUT', route: '/'  }
         ],
+        dropdownOptions: [ //for actions dropdown options
+            { label: 'Edit', value: 'edit' },
+            { label: 'Delete', value: 'delete' },
+            { label: 'Email', value: 'email' },
+        ],
         firstNavOption:'workflowTable', //default table displaying
         secNavOption:'ActiveWorkFlow', //default table displaying
 
         //fake data -- in future change to api endpoint
         data1:fakeWorkflowData.active, 
         headers1:["Task","Company Name","Form No.","Stage","Status","Date Assigned","Actions"],
-        fields1:["task","company","formNo","stage","status","dateAssign","Actions"],
+        fields1:["task","company","formNo","stage","status","dateAssign","Actions-Toggle"],
 
         data2:fakeWorkflowData.inactive, 
         headers2:["Task","Company Name","Form No.","Stage","Status","Date Assigned","Actions"],
-        fields2:["task","company","formNo","stage","status","dateAssign","Actions"],
+        fields2:["task","company","formNo","stage","status","dateAssign","Actions-Toggle"],
 
         data3:fakeTaskData.todo, 
         headers3:["Task","Company Name","Form No.","Date Assigned","Actions"],
@@ -52,12 +56,6 @@ export default {
     },
     methods: {
         AddWorkflow() {alert('what is workflow');},
-        InactiveClick(item) {
-    //         item.showDropdown = !item.showDropdown;
-    // },
-            alert("clicked for inactive item", item);
-            console.log("clicked for inactive item", item);
-        },
         TaskToDoAction(){
             window.open('https://media.makeameme.org/created/i-pray-to-5bed2f.jpg', '_blank');
         },
@@ -91,6 +89,7 @@ export default {
                 <template #label>Inctive({{ data2.length }})</template>
             </el-tab-pane>
 
+        <!-- search bar and button (still unable to fit to inline) -->
         <div class="row">
             <div class="col-lg-2 col-sm-4  ">
                 <input type="text" placeholder="Search Company Name">
@@ -99,51 +98,15 @@ export default {
                 <Button @click="AddWorkflow">+ Add Workflow</Button>
             </div>
         </div>
+
         <!-- 1.1) Active Table content -->
-        <!-- previous way of hardcoding table, to be changed to table component -->
         <div v-if="firstNavOption === 'workflowTable' && secNavOption !== 'InActiveworkflowTable'">
-            <table class="my-table">
-            <thead>
-                <tr>
-                    <th>Task</th>
-                    <th>Company Name</th>
-                    <th>Form No.</th>
-                    <th>Stage</th>
-                    <th>Status</th>
-                    <th>Date Assigned</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="item in data1" :key="item.id">
-                <td>{{ item.task }}</td>
-                <td>{{ item.company }}</td>
-                <td>{{ item.formNo }}</td>
-                <td>{{ item.stage }}</td>
-                <td>{{ item.status }}</td>
-                <td>{{ item.dateAssign }}</td>
-                <td >
-                    <div  class="btn-group dropup">
-
-                        <Button buttonStyle="none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            ...
-                        </Button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Edit</a></li>
-                            <li><a class="dropdown-item" href="#">Delete</a></li>
-                            <li><a class="dropdown-item" href="#">Email</a></li>
-                        </ul>
-                    </div>
-
-                </td>
-                </tr>
-            </tbody>
-            </table>
+            <Table :data="data1" :headers="headers1" :fields="fields1" :options="dropdownOptions" />
         </div>
         
         <!-- 1.2) InActive Table content -->
         <div v-if="secNavOption === 'InActiveworkflowTable'">
-            <Table :data="data2" :headers="headers2" :fields="fields2" icon-class="ellipsis" @action-click="InactiveClick" />
+            <Table :data="data2" :headers="headers2" :fields="fields2" :options="dropdownOptions" />
         </div>
         </el-tabs>
     </div>
@@ -184,40 +147,4 @@ export default {
 </template>
 
 <style scoped>
-.my-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-  text-align: left;
-}
-
-.my-table th,
-.my-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-.my-table th {
-  background-color: #f2f2f2;
-  font-weight: bold;
-}
-
-.dropdown-menu {
-    min-width: 20px;
-    margin: 0;
-  padding: 0;
-}
-
-.dropdown-item {
-  white-space: nowrap; /* prevent text wrapping */
-  margin: 0;
-  padding: 0;
-  
-}
-
-.el-tabs__nav-scroll {
-  display: flex;
-  justify-content: space-between;
-}
-
 </style>
