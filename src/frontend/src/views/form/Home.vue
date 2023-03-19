@@ -30,15 +30,15 @@
                   <draggable :list="eachFormObj.fields" class="dragArea" :group="{ name:'formbuilder', pull:false, put:true }" :sort="true" ghost-class="sortable__ghost">
                     <!-- The form elements starts (on the right) -->
                     
-                    <div v-for="(field, index) in eachFormObj.fields" :key="index">
+
+                    <el-col v-for="(field, index) in eachFormObj.fields" :key="index" v-bind="field" class="form__group" :class="{ 'is--active': field === activeField }" :gutter="40">
                       
-                    <el-col  v-bind="field" :span="field.span" class="form__group" :class="{ 'is--active': field === activeField }">
-                    
+                     
                       <span class="form__selectedlabel">{{ field.fieldType }} </span>
 
-                      <div>
+                      <div :span ='6'>
                         <!-- <label class="form__label" v-model="form.label" v-show="form.hasOwnProperty('label')">{{ form.label }}</label> -->
-                        <component :is="field.fieldType" :currentField="field" class="form__field">
+                        <component :is="field.fieldType" :currentField="field" class="form__field" >
                         </component>
                       </div>
 
@@ -52,7 +52,7 @@
                         </el-button-group>
                       </div> -->
                     </el-col>
-                    </div>
+                    
                   </draggable>
                 </el-row>
               </div>
