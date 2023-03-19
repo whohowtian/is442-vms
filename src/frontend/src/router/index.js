@@ -52,6 +52,11 @@ const router = createRouter({
       path: '/EditableForm',
       name: 'EditableForm',
       component: () => import('../views/EditableForm.vue')
+    },
+    {
+      path: '/tryApi',
+      name: 'tryApi',
+      component: () => import('../tryApi.vue')
     }
   ]
 })
