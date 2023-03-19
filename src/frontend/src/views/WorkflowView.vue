@@ -6,6 +6,8 @@ import Table from "../components/Table.vue";
 import fakeWorkflowData from './fakeWorkflowData';
 import fakeTaskData from './fakeTaskData';
 import fakeEditFormData from './fakeEditFormData';
+import { Search } from '@element-plus/icons-vue'
+
 
 export default {
     name: "WorkflowView",
@@ -14,6 +16,7 @@ export default {
         Header,
         Button,
         Table,
+        Search
         },
     data() {
         return {
@@ -88,16 +91,19 @@ export default {
             <el-tab-pane label="Inactive" name="InActiveworkflowTable"  @tab-click="secNavOption = 'InActiveworkflowTable'">
                 <template #label>Inctive({{ data2.length }})</template>
             </el-tab-pane>
-            <el-input v-model="input1" placeholder="Search Company Name" width />
 
 
         <!-- search bar and button (still unable to fit to inline) -->
-        <div class="row">
-            <div class="col-lg-2 col-sm-4  ">
-                <input type="text" placeholder="Search Company Name">
+        <div class="row" >
+            <div class="col-sm-2">
+                <el-input v-model="input1" placeholder="Search Company Name" style="width:fit-content" size="large">
+                <template #suffix>
+                <el-icon class="el-input__icon"><Search /></el-icon>
+                </template>
+                </el-input>
             </div>
-            <div class="col-lg-2 col-sm-3">
-                <Button @click="AddWorkflow">+ Add Workflow</Button>
+            <div class="col-sm-2">
+                <Button @click="AddWorkflow">+ Add Account</Button>
             </div>
         </div>
 
@@ -124,9 +130,11 @@ export default {
             <el-tab-pane label="Completed" name="CompletedtaskTable"  @tab-click="secNavOption = 'CompletedtaskTable'">
                 <template #label>Completed({{ data4.length }})</template>
             </el-tab-pane>
-            <div class="col-lg-2 col-sm-4  ">
-                <input type="text" placeholder="Search Company Name">
-            </div>        
+            <el-input v-model="input1" placeholder="Search Company Name" style="width:fit-content" size="large">
+                <template #suffix>
+                <el-icon class="el-input__icon"><Search /></el-icon>
+                </template>
+            </el-input>      
         <!-- 2.1) To-do Table content -->
         <div v-if="firstNavOption === 'taskTable' && secNavOption !== 'CompletedtaskTable'">
             <Table :data="data3" :headers="headers3" :fields="fields3" icon-class="pen-square" @action-click="TaskToDoAction" />
