@@ -46,21 +46,17 @@
             <p style = "font-weight:600;">WELCOME, {{ userName.toUpperCase() }}</p>
         </div>
     </div>
-    <div v-if="activeOption === 'taskTable'|| activeOption === 'CompletedtaskTable'">
-        <h2>My Task</h2>
-        <p>Please review the checklist below to complete any assigned tasks.</p>
-        <!-- sub nav bar [ToDo / Completed] -->
-        <div class="row">
-            <div class="col-1" @click="activeOption = 'taskTable'">
-                <a href="#">To Do</a><span>({{ data1.length }})</span>
-            </div>
-            <div class="col-1" @click="activeOption = 'CompletedtaskTable'"> 
-                <a href="#" >Completed</a><span>({{ data2.length }})</span>
-            </div>
-            <div class="col-lg-2 col-sm-4">
-                <input type="text" placeholder="Search Company Name">
-            </div>
-        </div>
+    
+    <div>
+    <h2>My Task</h2>
+    <p>Please review the checklist below to complete any assigned tasks.</p>
+    <el-tabs v-model="activeOption"  type="border-card">
+        <el-tab-pane label="To Do" name="taskTable"  @tab-click="activeOption = 'taskTable'">
+            <template #label>To Do({{ data1.length }})</template>
+        </el-tab-pane>
+        <el-tab-pane label="Completed" name="CompletedtaskTable"  @tab-click="activeOption = 'CompletedtaskTable'">
+            <template #label>Completed({{ data2.length }})</template>
+        </el-tab-pane>
 
         <!-- 2.1) To-do Table content -->
         <div v-if="activeOption === 'taskTable'">
@@ -71,6 +67,7 @@
         <div v-if="activeOption === 'CompletedtaskTable'">
             <Table :data="data2" :headers="headers2" :fields="fields2" icon-class="eye" @action-click="TaskCompleted" />
         </div>
+    </el-tabs>
     </div>
 
 
