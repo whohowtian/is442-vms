@@ -88,6 +88,8 @@ export default {
             <el-tab-pane label="Inactive" name="InActiveworkflowTable"  @tab-click="secNavOption = 'InActiveworkflowTable'">
                 <template #label>Inctive({{ data2.length }})</template>
             </el-tab-pane>
+            <el-input v-model="input1" placeholder="Search Company Name" width />
+
 
         <!-- search bar and button (still unable to fit to inline) -->
         <div class="row">
