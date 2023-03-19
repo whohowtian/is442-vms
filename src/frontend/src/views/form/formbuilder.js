@@ -1,18 +1,22 @@
 import { useStore } from 'vuex'
 
-// import draggable from 'vuedraggable'
+import draggable from 'vuedraggable'
 import { VueDraggableNext } from 'vue-draggable-next'
+
 
 
 import TextInput from './FormElementTextInput.vue'
 import NumberInput from './FormElementNumberInput.vue'
 
 import Elements from './Elements.vue'
+import { clone } from 'lodash';
+import _ from 'lodash';
 
 
 export const FormBuilder ={
   components: {
     Elements,
+    // draggable,
     VueDraggableNext,
     TextInput,
     NumberInput
@@ -59,6 +63,23 @@ export const FormBuilder ={
       max: 10,
     },
   ],
+  sortElementOptions: {
+    group: {
+      name: 'formbuilder',
+      pull: false,
+      put: true
+    },
+    sort: true
+  },
+  dropElementOptions: {
+    group: {
+      name: 'formbuilder',
+      pull: 'clone',
+      put: false
+    },
+    sort: false,
+    filter: ".is-disabled"
+  }
   },
   data() {
     return {
@@ -130,6 +151,16 @@ export const FormBuilder ={
       store.state.activeField = []
       store.state.activeTabForFields = 'elements'
       form.splice(index, 1)
+    },
+    cloneElement(index, field, form) {
+      var cloned = _.cloneDeep(field) // clone deep lodash
+      form.splice(index, 0, cloned)
+    },
+    editElementProperties(field) {
+      const store = useStore()
+      store.state.activeField = field;
+      console.log(store.state.activeField);
+      // vm.$store.activeTabForFields = "properties";
     }
   }
 };

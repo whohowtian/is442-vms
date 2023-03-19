@@ -16,6 +16,7 @@ import '@fortawesome/fontawesome-free/css/all.css';
 import { far } from "@fortawesome/free-regular-svg-icons";
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
+import VueLodash from 'vue-lodash'
 
 library.add(faTrash, faEllipsis,faPenSquare,faEye)
 library.add(far);
@@ -24,6 +25,7 @@ const app = createApp(App)
 app.component('font-awesome-icon', FontAwesomeIcon);
 app.component('VueDatePicker', VueDatePicker);
 app.use(Vueform, vueformConfig)
+app.use(VueLodash)
 
 app.use(store)
 

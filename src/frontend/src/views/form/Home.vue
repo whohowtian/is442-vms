@@ -29,27 +29,28 @@
                   
                   <draggable :list="eachFormObj.fields" class="dragArea" :group="{ name:'formbuilder', pull:false, put:true }" :sort="true" ghost-class="sortable__ghost">
                     <!-- The form elements starts (on the right) -->
-                    <!-- <div> -->
-                    <el-col v-for="(field, index) in eachFormObj.fields" :key="index" v-bind="field" :span="field.span" class="form__group" :class="{ 'is--active': field === activeField }">
+                    
+                    <div v-for="(field, index) in eachFormObj.fields" :key="index">
+                    <el-col  v-bind="field" :span="field.span" class="form__group" :class="{ 'is--active': field === activeField }">
                       <span class="form__selectedlabel">{{ field.fieldType }}</span>
 
-                      <div @click="editElementProperties(field)">
+                      <div>
                         <!-- <label class="form__label" v-model="form.label" v-show="form.hasOwnProperty('label')">{{ form.label }}</label> -->
-                        <span :is="field.fieldType" :currentField="field" class="form__field">
-                        </span>
+                        <component :is="field.fieldType" :currentField="field" class="form__field">
+                        </component>
                       </div>
 
                       <!-- Actions list -->
-                      <div class="form__actiongroup">
+                      <!-- <div class="form__actiongroup">
                         <el-button circle size="mini" icon="el-icon-rank" class="form__actionitem--move"></el-button>
 
                         <el-button-group class="form__actionlist">
                           <el-button size="mini" icon="el-icon-plus" @click="cloneElement(index, field, eachFormObj.fields)" v-show="!field.isUnique"></el-button>
                           <el-button size="mini" icon="el-icon-delete" @click="deleteElement(index, eachFormObj.fields)"></el-button>
                         </el-button-group>
-                      </div>
+                      </div> -->
                     </el-col>
-                    <!-- </div> -->
+                    </div>
                   </draggable>
                 </el-row>
               </div>
@@ -62,6 +63,7 @@
 
     <el-aside class="wrapper--sidebar" width="30%">
       <el-tabs type="border-card" v-model="activeTabForFields">
+
         <el-tab-pane name="elements" label="Elements">
           <elements />
         </el-tab-pane>
@@ -94,7 +96,7 @@ export default {
   mounted() {
     console.log("form ->", this.forms)
     console.log("activeField ->", this.activeField)
-    console.log(FormBuilder)
+    console.log(FormBuilder.components)
   },
   components: FormBuilder.components,
   
@@ -110,7 +112,7 @@ export default {
       console.log("form ->", this.forms)
       console.log("activeField ->", this.activeField)
       
-      // FormBuilder.editElementProperties(field)
+      FormBuilder.editElementProperties(field)
     },
     addSection() {
       const formObj = {
