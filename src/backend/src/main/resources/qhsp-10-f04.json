@@ -1,0 +1,163 @@
+{
+    "formNo": "QHSP-10-F04",
+    "formName": "Subcontractors Safety - Health  Pre-Evaluation",
+    "formEffDate": "22.03.2023",
+    "formSections": [
+        {
+            "sectionName": "Evaluator Details",
+            "adminUseOnly": true,
+            "doScoreCalculation": false,
+            "questions": [
+                {
+                    "qnTitle": "Name of Sub-Contractor: ",
+                    "inputType": null
+                },
+                {
+                    "qnTitle": "Scope of Work: ",
+                    "inputType": "radio"
+                },
+                {
+                    "qnTitle": "Evaluated By: ",
+                    "inputType": "radio"
+                },
+                {
+                    "qnTitle": "Date: ",
+                    "inputType": "radio"
+                }
+            ]
+        },
+        {
+            "sectionName": "Safety & Health Policy and Organisation",
+            "adminUseOnly": true,
+            "doScoreCalculation": false,
+            "questions": [
+                {
+                    "qnTitle": "Is there a written Safety & Health Policy?",
+                    "inputType": "boolean"
+                },
+                {
+                    "qnTitle": "Is there a Safety Organisation with proper delegation of responsibility and accountability for safety and health?",
+                    "inputType": "boolean"
+                },
+                {
+                    "qnTitle": "Is there a written safety commitment and is it submitted?",
+                    "inputType": "boolean"
+                }
+            ]
+        },
+        {
+            "sectionName": "Tool Box Meeting",
+            "adminUseOnly": true,
+            "doScoreCalculation": false,
+            "questions": [
+                {
+                    "qnTitle": "Are regular tool-box meetings conducted and reports submitted",
+                    "inputType": "boolean"
+                }
+            ]
+        },
+        {
+            "sectionName": "Safety Training",
+            "adminUseOnly": true,
+            "doScoreCalculation": false,
+            "questions": [
+                {
+                    "qnTitle": "Are relevant safety training courses provided for management/supervisors?",
+                    "inputType": "boolean"
+                },
+                {
+                    "qnTitle": "Are relevant safety training courses provided for workers?",
+                    "inputType": "boolean"
+                },
+                {
+                    "qnTitle": "Are relevant safety training certifications submitted?",
+                    "inputType": "boolean"
+                }
+            ]
+        },
+        {
+            "sectionName": "Safety & Health Rules & Safe Work Procedures/Risk Assessment",
+            "adminUseOnly": true,
+            "doScoreCalculation": false,
+            "questions": [
+                {
+                    "qnTitle": "Are there written safety & health rules for the workers?",
+                    "inputType": "boolean"
+                },
+                {
+                    "qnTitle": "Are there written safe work procedures/risk assessment formulated and submitted?",
+                    "inputType": "boolean"
+                }
+            ]
+        },
+        {
+            "sectionName": "Safety & Health Inspection & Equipment",
+            "adminUseOnly": true,
+            "doScoreCalculation": false,
+            "questions": [
+                {
+                    "qnTitle": "Is there a written programme outlining inspection guidelines, frequency and follow-up corrective actions?",
+                    "inputType": "boolean"
+                },
+                {
+                    "qnTitle": "Is there available Personal Protective Equipment and of proper working condition and comply to safety requirements?",
+                    "inputType": "boolean"
+                }
+            ]
+        },
+        {
+            "sectionName": "Responsible Personnel",
+            "adminUseOnly": true,
+            "doScoreCalculation": false,
+            "questions": [
+                {
+                    "qnTitle": "Is there a Safety Supervisor working at least 5 hrs/week?",
+                    "inputType": "boolean"
+                },
+                {
+                    "qnTitle": "Is there a qualified First Aider?",
+                    "inputType": "boolean"
+                },
+                {
+                    "qnTitle": "Are there relevant Licensed Electrical WOrkers, qualified engineers, qualified supervisors, lifting supervisors, qualified JCN Tower/mobile/Crawler Crane operators?",
+                    "inputType": "boolean"
+                }
+            ]
+        },
+        {
+            "sectionName": "Accident Analysis for the past 3 years",
+            "adminUseOnly": true,
+            "doScoreCalculation": false,
+            "questions": [
+                {
+                    "qnTitle": "Number of Temporary Disability Cases",
+                    "inputType": "int"
+                },
+                {
+                    "qnTitle": "Number of Permanent Disability Cases",
+                    "inputType": "int"
+                },
+                {
+                    "qnTitle": "Number of Fatal Cases",
+                    "inputType": "int"
+                }
+            ]
+        },
+        {
+            "sectionName": "Acknowledgement",
+            "adminUseOnly": true,
+            "doScoreCalculation": false,
+            "questions": [
+                {
+                    "qnTitle": "I, representative of the above-named sub-contractor, have understand the various Safety Criteria listed above and hereby acknowledged that the information given above are valid and supporting items/documents are available upon request by the main contractor.",
+                    "inputType": "ApprovalBlock"
+                },
+                {
+                    "qnTitle": " ",
+                    "inputType": "boolean"
+                }
+            ]
+        }
+    ],
+    "archived": false
+}
