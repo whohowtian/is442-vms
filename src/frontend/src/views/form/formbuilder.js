@@ -6,7 +6,9 @@ import { VueDraggableNext } from 'vue-draggable-next'
 
 
 import TextInput from './FormElementTextInput.vue'
+import LongTextInput from './FormElementLongTextInput.vue'
 import NumberInput from './FormElementNumberInput.vue'
+import RadioButton from './FormElementRadioButton.vue'
 
 import Elements from './Elements.vue'
 import { clone } from 'lodash';
@@ -19,10 +21,13 @@ export const FormBuilder ={
     // draggable,
     VueDraggableNext,
     TextInput,
-    NumberInput
+    LongTextInput,
+    NumberInput,
+    RadioButton
   },
   props:{
-    fields: [{
+    fields: [
+      {
       fieldType: 'TextInput',
       label: 'Text',
       text: 'Text',
@@ -61,6 +66,48 @@ export const FormBuilder ={
       min: 1,
       hasMaxValue: false,
       max: 10,
+    },
+    {
+      fieldType: 'RadioButton',
+      label: 'Radio',
+      text: 'Radio',
+      group: 'form',
+      isRequired: false,
+      isHelpBlockVisible: false,
+      isPlaceholderVisible: false,
+      isUnique: false,
+      span: 8,
+      labelWidth: 100,
+      isFromUrl: false,
+      options: [{
+          optionLabel: "Yes",
+          optionValue: "Yes"
+        },
+        {
+          optionLabel: "No",
+          optionValue: "No"
+        },
+        {
+          optionLabel: "N.A.",
+          optionValue: "N.A."
+        }
+      ],
+      advancedOptions: true,
+      dataUrl: '',
+      labelField: 'label',
+      valueField: 'value'
+    },
+    {
+      fieldType: 'LongTextInput',
+      label: 'Long Text',
+      text: 'Long Text',
+      group: 'form',
+      isRequired: false,
+      isHelpBlockVisible: false,
+      isPlaceholderVisible: true,
+      isUnique: false,
+      span: 24,
+      labelWidth: 100
     },
   ],
   sortElementOptions: {
