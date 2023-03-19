@@ -9,31 +9,32 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, index) in data" :key="index">
+        <tr v-for="(item, index) in data" :key="index"  @click="toggleRowSelection(item)" :class="{ 'is-selected': isSelected(index) }"
+>
         <td  class="checkbox-col">
           <input type="checkbox" v-model="selectedRows" :value="item">
         </td>
         <td v-for="(field, index) in fields" :key="index">
+
           <!--1. dropdown option -->
           <template v-if="field === 'Actions-Toggle'">
-            <div class="dropdown" :class="{ 'is-active': item.showDropdown }">
-              <div class="dropdown-trigger">
-                <button data-bs-toggle="dropdown" aria-expanded="false"  @click="toggleDropdown(item)">
-                  <font-awesome-icon :icon="['fas', iconClass]" />
-                  </button>
-              </div>
-              <div class="dropdown-menu">
-                <div class="dropdown-content">
-                  <a href="#" class="dropdown-item">Edit</a>
-                  <a href="#" class="dropdown-item">Delete</a>
-                </div>
-              </div>
+            <div  class="btn-group dropup">
+              <Button buttonStyle="none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <font-awesome-icon :icon="['fas', iconClass]" />
+              </Button>
+              <ul class="dropdown-menu">
+                <li v-for="(option, index) in options" :key="index">
+                  <a href="#" class="dropdown-item">{{ option.label }}</a>
+                </li>
+              </ul>
             </div>
           </template>
+
           <!-- 2. simple action -->
           <template v-if="field === 'Actions'">
             <font-awesome-icon :icon="['fas', iconClass]"  @click="handleActionClick(item)"/>
           </template>
+          
           <!-- 3. basic displaying -->
           <template v-else>
             {{ item[field] }}
@@ -46,8 +47,11 @@
   
 <script>
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+  import Button from '../components/Button.vue';
+
   export default {
     components: {
+      Button,
       FontAwesomeIcon
     },
     props: {
@@ -67,10 +71,14 @@
         type: String,
         default: "ellipsis",
       },
+        options: { //dropdown options
+        type: Array,
+        default: () => []
+      }
     },
     data(){
       return{
-        selectedRows: [],
+        selectedRows: [], //tick checkbox
       };
     },
     computed: {
@@ -91,9 +99,17 @@
       selectAllRows() {
         this.allRowsSelected = !this.allRowsSelected;
       },
-      toggleDropdown(item) {
-        item.showDropdown = !item.showDropdown;
-      },
+    toggleRowSelection(item) {
+      const index = this.selectedRows.indexOf(item);
+      if (index > -1) {
+        this.selectedRows.splice(index, 1);
+      } else {
+        this.selectedRows.push(item);
+      }
+    },
+    isSelected(index) {
+      return this.selectedRows.includes(this.data[index]);
+    },
       handleActionClick(item) {
         this.$emit("action-click", item);
       },
@@ -135,5 +151,9 @@
   margin: 0;
   padding: 0;
   
+}
+
+.is-selected {
+  background-color: #cedfff;
 }
 </style>
