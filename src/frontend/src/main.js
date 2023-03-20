@@ -5,6 +5,7 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import Vueform from '@vueform/vueform/plugin'
 import vueformConfig from './../vueform.config'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import './index.scss'
 import router from './router'
 import './assets/styles/main.css'
@@ -28,6 +29,9 @@ app.component('VueDatePicker', VueDatePicker);
 app.component('draggable',VueDraggableNext);
 app.use(Vueform, vueformConfig)
 app.use(VueLodash)
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component)
+  }
 
 
 app.use(store)

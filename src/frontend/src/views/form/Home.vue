@@ -25,13 +25,12 @@
                 </el-row>
               </div>
               <div class="meta">
-                <el-row>
                   
                   <draggable :list="eachFormObj.fields" class="dragArea" :group="{ name:'formbuilder', pull:false, put:true }" :sort="true" ghost-class="sortable__ghost">
                     <!-- The form elements starts (on the right) -->
                     
 
-                    <el-col v-for="(field, index) in eachFormObj.fields" :key="index" v-bind="field" class="form__group" :class="{ 'is--active': field === activeField }" :gutter="40">
+                    <el-col v-for="(field, index) in eachFormObj.fields" :key="index" v-bind="field" class="form__group" :class="{ 'is--active': field === activeField }" >
                       
                      
                       <span class="form__selectedlabel">{{ field.fieldType }} </span>
@@ -43,16 +42,13 @@
                       </div>
 
                       <!-- Actions list -->
-                      <div class="form__actiongroup">
-                        <!-- <el-button circle size="mini" icon="el-icon-rank" class="form__actionitem--move"></el-button> -->
-                        <el-button size="mini"  :icon="Delete" @click="deleteElement(index, eachFormObj.fields)">Delete</el-button>
-
-                        
+                      <div class="form__actiongroup" style="display: flex; justify-content: flex-end; align-items: center;">
+                        <el-icon class="el-input__icon" @click="deleteElement(index, eachFormObj.fields)"><Delete /></el-icon>
                       </div>
+                        <!-- <el-button circle size="mini" icon="el-icon-rank" class="form__actionitem--move"></el-button> -->
                     </el-col>
                     
                   </draggable>
-                </el-row>
               </div>
             </div>
           </template>
@@ -79,7 +75,7 @@
 <script>
 import { FormBuilder } from './formbuilder';
 import { store } from '../../store.js';
-
+import { Delete } from '@element-plus/icons-vue'
 
 export default {
   name: 'Home',
@@ -156,9 +152,8 @@ export default {
     margin-left: auto;
     margin-right: auto;
     position: relative;
-    min-height: 10px;
-    height: calc(30vh);
-    z-index: 2;
+    min-height: 30vh;
+    height:fit-content;
 }
 
 .el-main-left {
