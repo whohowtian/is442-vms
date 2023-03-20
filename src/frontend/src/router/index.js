@@ -57,6 +57,11 @@ const router = createRouter({
       path: '/tryApi',
       name: 'tryApi',
       component: () => import('../tryApi.vue')
+    },
+    {
+      path: '/CreateAccount',
+      name: 'CreateAccount',
+      component: () => import('../views/CreateAccount.vue')
     }
   ]
 })

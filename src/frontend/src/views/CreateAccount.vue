@@ -16,8 +16,10 @@ export default {
             }
         },
         methods: {
-        createAcc() {alert('Created!')}
+        createAcc() {alert('Created!');
+            window.location.href = '/AccountView';
         }
+    }
     }
 </script>
 <template >
