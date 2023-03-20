@@ -1,4 +1,4 @@
-package com.g2t3.vms.repository;
+package com.g2t3.vms.service;
 
 import java.io.File;
 import jakarta.mail.MessagingException;

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.g2t3.vms.model.Email;
-import com.g2t3.vms.repository.EmailSenderService;
 import com.g2t3.vms.response.ResponseHandler;
+import com.g2t3.vms.service.EmailSenderService;
 
 import jakarta.mail.MessagingException;
 

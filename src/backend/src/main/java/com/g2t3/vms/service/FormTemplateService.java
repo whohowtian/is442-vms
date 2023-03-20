@@ -39,7 +39,7 @@ public class FormTemplateService {
         return getForm;
     }
 
-    public void editFormTemplate(FormTemplate formTemplate) throws FormNotFoundException, DataIntegrityViolationException, Exception {
+    public void updateFormTemplate(FormTemplate formTemplate) throws FormNotFoundException, DataIntegrityViolationException, Exception {
 
             String formNo = formTemplate.getFormNo();
             FormTemplate prevFT = getFormTemplateByFTID(formNo); 
@@ -66,7 +66,7 @@ public class FormTemplateService {
         }
     }
 
-    public void deleteFormTemplate(String FTID) throws NullPointerException, DataIntegrityViolationException, Exception {
+    public void deleteFormTemplate(String FTID) throws FormNotFoundException, DataIntegrityViolationException, Exception {
 
         FormTemplate formTemplate = getFormTemplateByFTID(FTID);
 

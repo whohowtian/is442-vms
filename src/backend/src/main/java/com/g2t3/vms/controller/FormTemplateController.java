@@ -41,7 +41,7 @@ public class FormTemplateController {
         try {
             formTemplates = service.getAllFormTemplates();
         } catch (FormNotFoundException e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NO_CONTENT, null);
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         } catch (Exception e) {
             return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
         }
@@ -69,10 +69,10 @@ public class FormTemplateController {
     // Edit existing form by FormNo
     // Returns form json obj if success, otherwise 400 or 500
     @PostMapping("/edit")
-    public ResponseEntity<?> editFormTemplate(@RequestBody FormTemplate formTemplate) {
+    public ResponseEntity<?> updateFormTemplate(@RequestBody FormTemplate formTemplate) {
         String formNo = formTemplate.getFormNo();
         try {
-            service.editFormTemplate(formTemplate); 
+            service.updateFormTemplate(formTemplate); 
             return ResponseHandler.generateResponse("Updated " + formNo + " successfully.", HttpStatus.OK, null);
         } catch (FormNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
@@ -106,8 +106,8 @@ public class FormTemplateController {
         try {
             service.deleteFormTemplate(FTID); 
             return ResponseHandler.generateResponse("Deleted " + FTID + " successfully.", HttpStatus.OK, null);
-        } catch (NullPointerException e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
+        } catch (FormNotFoundException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         } catch (DataIntegrityViolationException e){
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
         } catch (Exception e) {
