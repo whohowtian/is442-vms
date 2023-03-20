@@ -159,7 +159,7 @@ export const FormBuilder ={
       isHelpBlockVisible: false,
       isPlaceholderVisible: false,
       isUnique: false,
-      span: 20,
+      span: 30,
       labelWidth: 100
     },
     {
@@ -278,12 +278,7 @@ export const FormBuilder ={
     }
   },
   methods: {
-    deleteElement(index, form) {
-      const store = useStore()
-      store.state.activeField = []
-      store.state.activeTabForFields = 'elements'
-      form.splice(index, 1)
-    },
+    
     cloneElement(index, field, form) {
       var cloned = _.cloneDeep(field) // clone deep lodash
       form.splice(index, 0, cloned)

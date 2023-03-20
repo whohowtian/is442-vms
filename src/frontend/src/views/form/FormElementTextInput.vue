@@ -40,7 +40,6 @@ export default {
       if (this.currentField.isPlaceholderVisible) {
         attr.placeholder = this.currentField.placeholder;
       }
-      console.log(this.currentField.clearable);
       return attr;
     }
   }

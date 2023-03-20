@@ -43,14 +43,12 @@
                       </div>
 
                       <!-- Actions list -->
-                      <!-- <div class="form__actiongroup">
-                        <el-button circle size="mini" icon="el-icon-rank" class="form__actionitem--move"></el-button>
+                      <div class="form__actiongroup">
+                        <!-- <el-button circle size="mini" icon="el-icon-rank" class="form__actionitem--move"></el-button> -->
+                        <el-button size="mini"  :icon="Delete" @click="deleteElement(index, eachFormObj.fields)">Delete</el-button>
 
-                        <el-button-group class="form__actionlist">
-                          <el-button size="mini" icon="el-icon-plus" @click="cloneElement(index, field, eachFormObj.fields)" v-show="!field.isUnique"></el-button>
-                          <el-button size="mini" icon="el-icon-delete" @click="deleteElement(index, eachFormObj.fields)"></el-button>
-                        </el-button-group>
-                      </div> -->
+                        
+                      </div>
                     </el-col>
                     
                   </draggable>
@@ -105,7 +103,8 @@ export default {
   ,
   methods: {
     deleteElement(index, form) {
-      FormBuilder.deleteElement(index, form)
+      form.splice(index, 1)
+      // FormBuilder.deleteElement(index, form)
     },
     cloneElement(index, field, form) {
       FormBuilder.cloneElement(index, field, form)
