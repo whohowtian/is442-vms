@@ -95,7 +95,9 @@
                   </el-form-item>
                 </el-col>
               </el-row>
-              <el-row>
+
+              <!-- for rating-->
+              <el-row v-if ="activeField.fieldType =='Rating'">
                 <el-col :span="12">
                   <el-form-item label="Show Text">
                     <el-switch @change="showTextChange" v-model="activeField.showText"></el-switch>
@@ -103,7 +105,7 @@
                 </el-col>
               </el-row>
 
-              <el-row>
+              <el-row v-if ="activeField.fieldType =='Rating'">
                 <el-col :span="24">
                   <el-form-item label="Texts" v-show="activeField.showText">
                     <el-row :gutter="3">
@@ -114,7 +116,7 @@
                   </el-form-item>
                 </el-col>
               </el-row>
-              <el-row>
+              <el-row v-if ="activeField.fieldType=='Rating'">
                 <el-col :span="12">
                   <el-form-item label="Show Score">
                     <el-switch @change="showScoreChange" v-model="activeField.showScore"></el-switch>
