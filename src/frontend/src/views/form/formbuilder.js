@@ -186,9 +186,9 @@ export const FormBuilder ={
     },
     {
       fieldType: 'Button',
-      text: 'Submit Button',
+      text: 'Button',
       group: 'button',
-      buttonText: 'Submit',
+      buttonText: 'Button',
       isRequired: false,
       isHelpBlockVisible: false,
       isPlaceholderVisible: false,
@@ -289,13 +289,6 @@ export const FormBuilder ={
       
       store.state.activeField= field;
       store.state.activeTabForFields="properties";
-      // const properties = './properties/Properties'
-      // fetch('./properties/Properties').then(idk => {
-      //   store.state.activeField= field;
-      //   store.state.activeTabForFields="properties";
-      //   console.log("hi");
-      // });
-      
       console.log(store.state.activeField);
    
 

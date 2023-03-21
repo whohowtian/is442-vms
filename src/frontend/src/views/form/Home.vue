@@ -63,7 +63,48 @@
           <elements />
         </el-tab-pane>
         <el-tab-pane name="properties" label="Properties">
-          <properties v-show="Object.keys(activeField).length > 0"></properties>
+          <!-- <properties v-show="Object.keys(activeField).length > 0"></properties> -->
+          <div class="el-tabs__inner">
+            <el-form  label-position="top" >
+              
+              <!-- label name -->
+              <el-row>
+                <el-col :span="12">
+                  <el-form-item label="Label Name" v-show="activeField.hasOwnProperty('label')">
+                    <el-input v-model="activeField.label">{{activeField.label}}</el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+
+              <!-- placeholder -->
+              <el-form-item label="Placeholder" v-show="activeField.hasOwnProperty('isPlaceholderVisible') && activeField['isPlaceholderVisible'] == true">
+                <el-row>
+                  <el-col :span="19 ">
+                    <el-input v-show="activeField.isPlaceholderVisible" v-model="activeField.placeholder">
+                      {{activeField.placeholder}}
+                    </el-input>
+                  </el-col>
+                </el-row>
+              </el-form-item>
+
+              <!-- required field -->
+              <el-row>
+                <el-col :span="12">
+                  <el-form-item label="Required field?" v-show="activeField.hasOwnProperty('isRequired')">
+                    <el-switch v-model="activeField.isRequired"></el-switch>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+
+              <!-- edit button text -->
+              <el-form-item label="Button text" v-show="activeField.hasOwnProperty('buttonText')">
+                <el-input v-model="activeField.buttonText">
+                  {{activeField.buttonText}}
+                </el-input>
+              </el-form-item>
+
+            </el-form>
+          </div>
         </el-tab-pane>
 
       </el-tabs>
@@ -124,7 +165,7 @@ export default {
       // store._state.data.activeTabForFields="properties";
       
       FormBuilder.methods.editElementProperties(field);
-      console.log(store._state.data.activeField);
+      // console.log(store._state.data.activeField);
       
 
       

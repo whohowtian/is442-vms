@@ -1,6 +1,7 @@
 <template>
   <div class="el-tabs__inner">
     <el-form :model="fieldProperties" :rules="rules" :label-position="labelPosition" ref="fieldProperties">
+      <!-- label name and label width -->
       <el-row>
         <el-col :span="12">
           <el-form-item label="Label Name" v-show="activeField.hasOwnProperty('label')">
@@ -14,11 +15,7 @@
         </el-col>
       </el-row>
   
-      <el-form-item label="Height - px" v-show="activeField.hasOwnProperty('fieldType') && activeField['fieldType'] == 'Carousel'">
-        <el-input-number v-model="activeField.controlHeight" controls-position="right"></el-input-number>
-      </el-form-item>
-  
-      <!-- Show only when 'isPlacehodlerVisible' key exist -->
+      <!-- Placeholder,Show only when 'isPlacehodlerVisible' key exist -->
       <el-form-item label="Placeholder" v-show="activeField.hasOwnProperty('isPlaceholderVisible') && activeField['isPlaceholderVisible'] == true">
         <el-row>
           <el-col :span="5">
