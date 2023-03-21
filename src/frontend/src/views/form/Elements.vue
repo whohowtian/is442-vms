@@ -52,7 +52,7 @@ export default {
   },
   methods: {
     clone(field) {
-      console.log(field.text);
+      // console.log(field.text);
       return _.cloneDeep(field);
 
 
@@ -62,9 +62,9 @@ export default {
       var form = this.forms,
         formArray = [];
 
-        console.log(field)
+        // console.log(field)
       for (var key in form) {
-        console.log("key",key);
+        // console.log("key",key);
         
         formArray.push(form[key]['fieldType'])
       }

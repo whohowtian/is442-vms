@@ -3,8 +3,7 @@ import { useStore } from 'vuex'
 import draggable from 'vuedraggable'
 import { VueDraggableNext } from 'vue-draggable-next'
 
-
-
+import { store } from '../../store.js';
 import TextInput from './FormElementTextInput.vue'
 import LongTextInput from './FormElementLongTextInput.vue'
 import NumberInput from './FormElementNumberInput.vue'
@@ -17,6 +16,9 @@ import Button from './FormElementButton.vue'
 import Elements from './Elements.vue'
 import { clone } from 'lodash';
 import _ from 'lodash';
+
+import Properties from './properties/Properties.vue'
+
 
 
 export const FormBuilder ={
@@ -31,8 +33,8 @@ export const FormBuilder ={
     SelectList,
     DatePicker,
     Rating,
-    Button
-
+    Button,
+    Properties
   },
   props:{
     fields: [
@@ -283,11 +285,20 @@ export const FormBuilder ={
       var cloned = _.cloneDeep(field) // clone deep lodash
       form.splice(index, 0, cloned)
     },
-    editElementProperties(field) {
-      const store = useStore()
-      store.state.activeField = field;
+    async editElementProperties(field) {
+      
+      store.state.activeField= field;
+      store.state.activeTabForFields="properties";
+      // const properties = './properties/Properties'
+      // fetch('./properties/Properties').then(idk => {
+      //   store.state.activeField= field;
+      //   store.state.activeTabForFields="properties";
+      //   console.log("hi");
+      // });
+      
       console.log(store.state.activeField);
-      // vm.$store.activeTabForFields = "properties";
+   
+
     }
   }
 };

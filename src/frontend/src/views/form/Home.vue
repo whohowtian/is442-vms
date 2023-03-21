@@ -34,8 +34,7 @@
                       
                      
                       <span class="form__selectedlabel">{{ field.fieldType }} </span>
-
-                      <div :span ='6'>
+                      <div @click="editElementProperties(field)">
                         <!-- <label class="form__label" v-model="form.label" v-show="form.hasOwnProperty('label')">{{ form.label }}</label> -->
                         <component :is="field.fieldType" :currentField="field" class="form__field" >
                         </component>
@@ -63,10 +62,13 @@
         <el-tab-pane name="elements" label="Elements">
           <elements />
         </el-tab-pane>
+        <el-tab-pane name="properties" label="Properties">
+          <properties v-show="Object.keys(activeField).length > 0"></properties>
+        </el-tab-pane>
 
       </el-tabs>
 
-      <!--{{ $store.activeField }}-->
+      <!-- {{ $store.activeField }} -->
     </el-aside>
   </el-container>
 </div>
@@ -76,11 +78,15 @@
 import { FormBuilder } from './formbuilder';
 import { store } from '../../store.js';
 import { Delete } from '@element-plus/icons-vue'
+import { useStore } from 'vuex'
+import Properties from './properties/Properties.vue'
 
 export default {
   name: 'Home',
   // store: ['forms', 'activeField', 'activeTabForFields'],
   // store:[store._state.data.forms,store._state.data.activeField ],
+ 
+  
   data(){
     return{
       forms: store._state.data.forms,
@@ -91,9 +97,10 @@ export default {
     }
   },
   mounted() {
-    console.log("form ->", this.forms)
-    console.log("activeField ->", this.activeField)
-    console.log(FormBuilder.props)
+    // console.log("form ->", this.forms)
+    // console.log("activeField ->", this.activeField)
+    // console.log(this.$store)
+    console.log(FormBuilder.components.Properties)
   },
   components: FormBuilder.components
   ,
@@ -105,12 +112,23 @@ export default {
     cloneElement(index, field, form) {
       FormBuilder.cloneElement(index, field, form)
     },
-    editElementProperties(field) {
+    async editElementProperties(field) {
       
-      console.log("form ->", this.forms)
-      console.log("activeField ->", this.activeField)
+      // console.log("form ->", this.forms)
+      // console.log("activeField ->", this.activeField)
       
-      FormBuilder.editElementProperties(field)
+      this.activeField = field;
+      // this.activeTabForFields = "properties";
+      
+      // store._state.data.activeField= field;
+      // store._state.data.activeTabForFields="properties";
+      
+      FormBuilder.methods.editElementProperties(field);
+      console.log(store._state.data.activeField);
+      
+
+      
+      
     },
     addSection() {
       const formObj = {
@@ -119,7 +137,7 @@ export default {
       };
       
       this.forms.push(formObj);
-      console.log("form ->", this.forms);
+      // console.log("form ->", this.forms);
     },
     deleteSection(formIndex,formTitle ) {
       // console.log("form ->", this.forms);
