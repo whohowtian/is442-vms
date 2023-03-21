@@ -180,7 +180,7 @@ export const FormBuilder ={
       showText: true,
       disabled: false,
       showScore: false,
-      scoreUnit: 'points',
+      scoreUnit: 'Points',
       colors: ['#AAAAAA', '#F7BA2A', '#FF9900'],
       texts: ['Poor', 'Below Average', 'Average', 'Above Average', 'Good']
     },

@@ -5,7 +5,7 @@
   :disabled="currentField.disabled"
   :show-score="currentField.showScore"
   :score-template="'{value} ' + currentField.scoreUnit"
-  allow-half>
+  >
   </el-rate>
 </el-form-item>
 </template>
