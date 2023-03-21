@@ -142,10 +142,15 @@ export default {
     // console.log("activeField ->", this.activeField)
     // console.log(this.$store)
     console.log(FormBuilder.components.Properties)
+    store._state.data.forms = this.forms
+    console.log(store._state.data.forms)
   },
   components: FormBuilder.components
   ,
   methods: {
+    latestfield(){
+      store._state.data.forms = this.forms
+    },
     deleteElement(index, form) {
       form.splice(index, 1)
       // FormBuilder.deleteElement(index, form)
