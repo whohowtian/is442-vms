@@ -80,7 +80,7 @@
               <el-form-item label="Placeholder" v-show="activeField.hasOwnProperty('isPlaceholderVisible') && activeField['isPlaceholderVisible'] == true">
                 <el-row>
                   <el-col :span="19 ">
-                    <el-input v-show="activeField.isPlaceholderVisible" v-model="activeField.placeholder">
+                    <el-input v-show="activeField.isPlaceholderVisible" v-model="activeField.placeholder" >
                       {{activeField.placeholder}}
                     </el-input>
                   </el-col>
