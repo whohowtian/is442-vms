@@ -32,4 +32,8 @@ public class FormSection {
         return String.format("{ \"sectionName\": '%s', \"questions\": %s", sectionName, questions + "}");
     }
 
+    public boolean getAdminUseOnly() {
+        return adminUseOnly;
+    }
+
 }

@@ -2,6 +2,7 @@ package com.g2t3.vms.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +11,11 @@ import org.springframework.stereotype.Service;
 
 import com.g2t3.vms.exception.FormNotFoundException;
 import com.g2t3.vms.model.FormTemplate;
+import com.g2t3.vms.model.FormSection;
 import com.g2t3.vms.model.Form;
 import com.g2t3.vms.repository.FormTemplateRepo;
 import com.g2t3.vms.repository.FormRepo;
+import com.g2t3.vms.service.FormTemplateService;
 
 @Service
 public class FormService {
@@ -58,5 +61,30 @@ public class FormService {
         // TODO: Check vendor UID exists?
 
         formRepo.save(newForm); 
+    }
+
+    public void editForm(Form form) throws NullPointerException, DataIntegrityViolationException, Exception {
+        // TODO: fix formid generation
+        String formID = form.getID();
+        System.out.println(formID);
+        FormTemplate prevFT = formRepo.getFormByID(formID);
+        System.out.println(prevFT);
+
+
+        ArrayList<FormSection> newInput = form.getFormContent().getFormSections();
+
+        // TODO: no admin check - assume vendor only for now
+        Iterator<FormSection> iter = newInput.iterator();
+        if (iter.hasNext()) {
+            FormSection currSection = iter.next();
+
+            if (currSection.getAdminUseOnly()) {
+                iter.remove();
+            }
+
+        }
+        prevFT.setFormSections(newInput);
+
+        formTemplateRepo.save(prevFT); 
     }
 }

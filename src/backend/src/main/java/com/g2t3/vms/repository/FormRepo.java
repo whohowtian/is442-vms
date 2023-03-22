@@ -9,4 +9,7 @@ public interface FormRepo extends MongoRepository<Form, String> {
     
     @Query("{}")
     ArrayList<Form> findAll();
+
+    @Query("{'_id': ?0}")
+    FormTemplate getFormByID(String id);
 }
