@@ -24,8 +24,14 @@
     "primeicons": "^6.0.1",
     "primevue": "^3.23.0",
     "vue": "^3.2.47",
+    "vue-draggable-next": "^2.1.1",
+    "vue-lodash": "^2.1.2",
     "vue-router": "^4.1.6",
-    "vue3-datepicker": "^0.3.4"
+    "vue-stash": "^2.0.1-beta",
+    "vue3-datepicker": "^0.3.4",
+    "vue3-draggable": "^2.0.9",
+    "vuedraggable": "^4.1.0",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",

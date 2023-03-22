@@ -1,6 +1,8 @@
 @import './base.css';
 @import '../../../node_modules/@vueform/vueform/themes/vueform/css/index.min.css';
 
+/* // Form Styles */
+@import './_styles.scss';
 
 #app {
   margin: 0 auto;
