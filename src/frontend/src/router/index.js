@@ -62,6 +62,8 @@ const router = createRouter({
       path: '/CreateAccount',
       name: 'CreateAccount',
       component: () => import('../views/CreateAccount.vue')
+    },
+    {
       path: '/FormBuilder',
       name: 'FormBuilder',
       component: () => import('../views/form/index.vue')
