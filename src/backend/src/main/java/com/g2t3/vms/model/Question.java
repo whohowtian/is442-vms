@@ -18,6 +18,8 @@ public class Question {
     // possbily need QuestionController?
     private String value;
 
+    private String answer;
+
     public Question(String qnTitle, String inputType) {
         this.qnTitle = qnTitle;
         this.inputType = inputType;

@@ -59,11 +59,14 @@ public class FormTemplateService {
 
         String formNo = formTemplate.getFormNo();
         FormTemplate getForm = formTemplateRepo.getFormTemplateByNo(formNo);
-        formTemplateRepo.save(formTemplate); 
 
         if (getForm != null) {
             throw new NullPointerException("Form Template " + formNo + "already exist.");
         }
+        
+        formTemplateRepo.save(formTemplate); 
+
+
     }
 
     public void deleteFormTemplate(String FTID) throws FormNotFoundException, DataIntegrityViolationException, Exception {

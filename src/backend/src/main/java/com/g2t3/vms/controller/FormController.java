@@ -1,0 +1,75 @@
+package com.g2t3.vms.controller;
+
+import java.util.ArrayList;
+import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.g2t3.vms.exception.FormNotFoundException;
+
+import com.g2t3.vms.response.ResponseHandler;
+
+import com.g2t3.vms.model.Form;
+import com.g2t3.vms.repository.FormRepo;
+import com.g2t3.vms.model.FormTemplate;
+import com.g2t3.vms.repository.FormTemplateRepo;
+import com.g2t3.vms.response.ResponseHandler;
+import com.g2t3.vms.service.FormService;
+
+
+
+
+@CrossOrigin(origins= {"*"}, maxAge = 4800, allowCredentials = "false" )
+@RestController
+@RequestMapping(path="/api/form", produces="application/json")
+public class FormController {
+    @Autowired
+    private FormService service;
+
+    // Returns all Forms
+    Logger logger = LogManager.getLogger(FormTemplateController.class);
+
+    // Returns all Forms
+    @GetMapping("")
+    @ResponseBody
+    public ResponseEntity<?> getAllForm() {
+        ArrayList <Form> forms = new ArrayList<>();
+        try {
+            forms = service.getAllForms();
+        } catch (FormNotFoundException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
+        }
+        return ResponseHandler.generateResponse("Successful", HttpStatus.OK, forms);
+    } 
+
+
+    @PostMapping("/create")
+    public ResponseEntity<?> createFormTemplate(@RequestBody Map<String, String> newFormInfo) {
+        try {
+            service.createForm(newFormInfo); 
+            return ResponseHandler.generateResponse("Created form for " + newFormInfo.get("assigned_vendor_uid") + " successfully.", HttpStatus.OK, null);
+        } catch (NullPointerException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
+        } catch (DataIntegrityViolationException e){
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("Internal Server Error: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
+        } 
+    }
+}
