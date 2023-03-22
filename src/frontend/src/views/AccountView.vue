@@ -3,8 +3,8 @@
     import Header from '../components/Header.vue';
     import Button from '../components/Button.vue';
     import Table from "../components/Table.vue";
-    import fakeAccountDate from './fakeAccountDate';
-    import { Search } from '@element-plus/icons-vue'
+    import { Search, More} from '@element-plus/icons-vue'
+    import axios from 'axios';
 
     export default {
         name: "AccountView",
@@ -17,6 +17,9 @@
          },
         data() {
             return {
+            selectedRows: [], //tick checkbox
+            selectAll: false,
+            allAccount:[],
             menuItems: [
                 { label: 'HOME', route: '/AdminView'  },
                 { label: 'ACCOUNT', route: '/AccountView'  },
@@ -28,12 +31,66 @@
             { label: 'Edit', value: 'edit' },
             { label: 'Delete', value: 'delete' }
             ],
-            //fake data -- in future change to api endpoint
-            data:fakeAccountDate, 
-            headers:["Name","Email","Company Name","User Role","Actions"],
-            fields:["name","email","company","userRole","Actions-Toggle"],
             }
+        },
+        created() {
+            this.getAllAccount() //trigger Account API
+        },
+        methods: {
+            async getAllAccount(){
+            axios.get('http://localhost:8080/api/user')
+                .then(response => {
+                this.allAccount = response.data.data;
+                console.log(this.allAccount)
+                })
+                .catch(error => {
+                console.log(error);
+                });
+            },
+            async DeleteAccount(userId){
+                axios.delete('http://localhost:8080/api/user/'+ userId)
+                .then(response => {
+                    console.log(response.data);
+                    alert('Deleted!'); // do verification --> sweet alert
+                    location.reload();
+
+                    })
+                    .catch(error => {
+                    console.log(error);
+                    });
+            },
+        //table styling  function
+        selectAllRows() {
+            this.selectedRows = this.selectAll ? [...this.allAccount] : [];
+        },
+        toggleRowSelection(item, event) {
+            if (event.target.tagName === 'TD') {
+                const index = this.selectedRows.findIndex(selectedRow => selectedRow.userId === item.userId);
+                if (index === -1) {
+                this.selectedRows.push(item);
+                } else {
+                this.selectedRows.splice(index, 1);
+                }
+            }
+        },
+        isSelected(item) {
+            return this.selectedRows.findIndex(selectedRow => selectedRow.userId === item.userId) !== -1;
+        },
+    },
+    computed: {
+        allRowsSelected() { //table styling function
+            return this.selectedRows.length === this.allAccount.length;
         }
+    },
+    watch: { //table styling function
+        selectAll(val) {
+        this.selectedRows = val ? [...this.allAccount] : [];
+        },
+        selectedRows(val) {
+        this.selectAll = val.length === this.allAccount.length;
+        }
+    },
+
 };
 </script>
 
@@ -54,7 +111,39 @@
             </div>
         </div>
 
-        <Table :data="data" :headers="headers" :fields="fields" :options="dropdownOptions" />
+        <table class="my-table">
+            <thead>
+            <tr>
+                <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Company Name</th>
+                <th>User Role</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in allAccount" :key="item.userId" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
+                    <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.email }}</td>
+                    <td>{{ item.vendorName }}</td>
+                    <td>{{ item.userType }}</td>
+                    <td >
+                        <div  class="btn-group dropup">
+                        <Button buttonStyle="none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <el-icon><More /></el-icon>
+                        </Button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/EditAccount">Edit</a></li>
+                            <li><a class="dropdown-item" @click="DeleteAccount(item.userId)">Delete</a></li>
+                        </ul>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
 
 
     </div>

@@ -1,7 +1,7 @@
 <script>
 import NavBar from '../components/Navbar.vue';
 export default {
-        name: "AccountView",
+        name: "ACCOUNT",
         components: {
             NavBar,
          },
@@ -18,6 +18,16 @@ export default {
         methods: {
         createAcc() {alert('Created!');
             window.location.href = '/AccountView';
+        },
+        async EditAccount(userId){
+            axios.put('http://localhost:8080/api/user/'+ userId)
+            .then(response => {
+                this.allAccount = response.data.data;
+                console.log(this.allAccount)
+                })
+                .catch(error => {
+                console.log(error);
+                });
         }
     }
     }
@@ -34,7 +44,7 @@ export default {
             </div>
         </div>
         <form class="row g-3 p-2">
-            <div><h1>CREATE USER ACCOUNT</h1></div>
+            <div><h1>EDIT USER ACCOUNT</h1></div>
             <div><span style="color:red">* Required</span></div>
             <div class="col-lg-6 col-md-6">
                 <h4><label for="inputName" class="form-label">Full Name <span style="color:red">*</span></label></h4>
