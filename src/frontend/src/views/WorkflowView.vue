@@ -5,8 +5,9 @@ import Button from '../components/Button.vue';
 import Table from "../components/Table.vue";
 import fakeWorkflowData from './fakeWorkflowData';
 import fakeTaskData from './fakeTaskData';
-import fakeEditFormData from './fakeEditFormData';
-import { Search } from '@element-plus/icons-vue'
+import { Search, Edit } from '@element-plus/icons-vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import axios from 'axios';
 
 
 export default {
@@ -20,7 +21,9 @@ export default {
         },
     data() {
         return {
-        input1:"",
+        selectedRows: [], //tick checkbox
+        selectAll: false,
+        allFormData:[],
         menuItems: [ //for top nav bar
             { label: 'HOME', route: '/AdminView'  },
             { label: 'ACCOUNT', route: '/AccountView'  },
@@ -51,20 +54,73 @@ export default {
         data4:fakeTaskData.completed, 
         headers4:["Task","Company Name","Form No.","Date Assigned","Actions"],
         fields4:["task","company","formNo","dateAssign","Actions"],
-
-        data5:fakeEditFormData, 
-        headers5:["Form","Edited By","Last Edited","Actions"],
-        fields5:["form","editedby","lastEdited","Actions"],
     }
     },
+    created() {
+        this.getAllFormAvail() //trigger FormTemplate API
+      },
     methods: {
-        AddWorkflow() {alert('what is workflow');},
-        TaskToDoAction(){
-            window.open('https://media.makeameme.org/created/i-pray-to-5bed2f.jpg', '_blank');
+        async getAllFormAvail(){
+          axios.get('http://localhost:8080/api/formtemplate')
+            .then(response => {
+              var allForm = response.data.data;
+              //data cleaning
+              for (const form of allForm){
+                var id = form.id
+                var formName = form.formName
+                var formNo = form.formNo
+                var lastEdited=form.formEffDate
+                this.allFormData.push({ id: id, formName: formName, formNo: formNo, editedby:"", lastEdited: lastEdited})
+              }
+              console.log(this.allFormData)
+
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        },
+        EditEachForm(formNo){ //GET FormTemplate API
+            const allData = 'http://localhost:8080/api/formtemplate/'+ formNo
+            axios.get(allData).then(response=>{
+            var seeAllData = response.data.data
+            console.log(seeAllData)  //oh fk is another interface
+            })
         },
         TaskCompleted(){
             window.open('http://i.imgflip.com/31fael.jpg', '_blank');
-        } 
+        },
+        AddWorkflow() {alert('what is workflow');}, //dummy button function
+
+        //table styling  function
+        selectAllRows() {
+            this.selectedRows = this.selectAll ? [...this.allFormData] : [];
+        },
+        toggleRowSelection(item, event) {
+            if (event.target.tagName === 'TD') {
+                const index = this.selectedRows.findIndex(selectedRow => selectedRow.id === item.id);
+                if (index === -1) {
+                this.selectedRows.push(item);
+                } else {
+                this.selectedRows.splice(index, 1);
+                }
+            }
+        },
+        isSelected(item) {
+            return this.selectedRows.findIndex(selectedRow => selectedRow.id === item.id) !== -1;
+        },
+    },
+    computed: {
+        allRowsSelected() { //table styling function
+            return this.selectedRows.length === this.allFormData.length;
+        }
+    },
+    watch: { //table styling function
+        selectAll(val) {
+        this.selectedRows = val ? [...this.allFormData] : [];
+        },
+        selectedRows(val) {
+        this.selectAll = val.length === this.allFormData.length;
+        }
     },
 
 };
@@ -75,7 +131,7 @@ export default {
     <Header dept= "WORKFLOW MANAGEMENT" msg= "Create new or edit existing account within your business along with assigning each a specific role "/>
 
     <!-- sub nav bar [WORKFLOW / TASK/ EDIT FORM] -->
-    <el-tabs v-model="firstNavOption" @tab-click="firstNavOption">
+    <el-tabs v-model="firstNavOption" >
         <el-tab-pane label="WORKFLOW" name="workflowTable"></el-tab-pane>
         <el-tab-pane label="MY TASK" name="taskTable"></el-tab-pane>
         <el-tab-pane label="EDIT FORM" name="formTable"></el-tab-pane>
@@ -84,20 +140,18 @@ export default {
     <!-- 1) workflowTable -->
     <div v-if="firstNavOption === 'workflowTable'" >
         <!-- sub nav bar [Active / Inactive] -->
-        <el-tabs v-model="secNavOption"  type="border-card" @tab-click="secNavOption"  ref="tabs" >
+        <el-tabs v-model="secNavOption"  type="border-card" >
             <el-tab-pane label="Active" name="ActiveWorkFlow"   @tab-click="secNavOption = 'ActiveWorkFlow'">
                 <template #label>Active({{ data1.length }})</template>
             </el-tab-pane>
             <el-tab-pane label="Inactive" name="InActiveworkflowTable"  @tab-click="secNavOption = 'InActiveworkflowTable'">
                 <template #label>Inctive({{ data2.length }})</template>
             </el-tab-pane>
-            <el-input v-model="input1" placeholder="Search Company Name" />
-
 
         <!-- search bar and button (still unable to fit to inline) -->
         <div class="row" >
             <div class="col-sm-2">
-                <el-input v-model="input1" placeholder="Search Company Name" style="width:fit-content" size="large">
+                <el-input placeholder="Search Company Name" style="width:fit-content" size="large">
                 <template #suffix>
                 <el-icon class="el-input__icon"><Search /></el-icon>
                 </template>
@@ -124,14 +178,14 @@ export default {
     <div v-if="firstNavOption === 'taskTable'">
         <p>Please review the checklist below to complete any assigned tasks.</p>
         <!-- sub nav bar [ToDo / Completed] -->
-        <el-tabs v-model="secNavOption"  type="border-card" @tab-click="ToDoTable"  ref="tabs" >
-            <el-tab-pane label="To Do" name="ToDoTable"   @tab-click="secNavOption = 'ToDoTable'">
+        <el-tabs v-model="secNavOption"  type="border-card" >
+            <el-tab-pane label="To Do" name="ToDoTable" >
                 <template #label>To Do({{ data3.length }})</template>
             </el-tab-pane>
             <el-tab-pane label="Completed" name="CompletedtaskTable"  @tab-click="secNavOption = 'CompletedtaskTable'">
                 <template #label>Completed({{ data4.length }})</template>
             </el-tab-pane>
-            <el-input v-model="input1" placeholder="Search Company Name" style="width:fit-content" size="large">
+            <el-input placeholder="Search Company Name" style="width:fit-content" size="large">
                 <template #suffix>
                 <el-icon class="el-input__icon"><Search /></el-icon>
                 </template>
@@ -148,14 +202,72 @@ export default {
     </el-tabs >
     </div>
 
-    <!-- 3) formTable -->
+    <!-- 3) formTable with API calling DONE -->
     <div v-if="firstNavOption === 'formTable'">
-        <div>
-            <Button @click="handleButton">+ Add Form</Button>
-        </div>
-        <Table :data="data5" :headers="headers5" :fields="fields5" icon-class="pen-square" @action-click="TaskToDoAction" />
+        <div><a href="/FormBuilder"><Button>+ Add Form</Button></a></div>
+        <table class="my-table">
+            <thead>
+            <tr>
+                <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
+                <th>Form</th>
+                <th>Edited By</th>
+                <th>Last Edited</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in allFormData" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
+                    <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
+                    <td>{{ item.formName }}</td>
+                    <td>{{ item.editedby }}</td>
+                    <td>{{ item.lastEdited }}</td>
+                    <td >
+                        <el-icon class="el-input__icon" @click="EditEachForm(item.formNo)">
+                            <Edit />
+                        </el-icon>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </template>
 
 <style scoped>
+.my-table {
+  margin-top: 15px;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  text-align: left;
+}
+
+.my-table th,
+.my-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.my-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+.checkbox-col {
+  width: 1%;
+  white-space: nowrap;
+}
+.dropdown-menu {
+    min-width: 20px;
+    margin: 0;
+  padding: 0;
+}
+
+.dropdown-item {
+  white-space: nowrap; /* prevent text wrapping */
+  margin: 0;
+  padding: 0;
+}
+
+.selected {
+  background-color: #cedfff;
+}
 </style>
