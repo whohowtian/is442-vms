@@ -209,7 +209,7 @@ export default {
       // store._state.data.activeField= field;
       // store._state.data.activeTabForFields="properties";
       
-      FormBuilder.methods.editElementProperties(field);
+      // FormBuilder.methods.editElementProperties(field);
       // console.log(store._state.data.activeField);
       
 
