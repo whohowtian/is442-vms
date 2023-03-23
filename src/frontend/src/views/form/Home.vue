@@ -7,7 +7,7 @@
         <el-form>
           <!-- header -->
           <el-row>
-            <el-button style="margin-bottom: 10px;" type="primary" @click="addSection">Add Section</el-button>
+            <el-input placeholder="Form Title" style="width: 100%;"></el-input>
           </el-row>
           <el-row>
             <el-button style="margin-bottom: 10px;" type="primary" @click="addSection">Add Section</el-button>
@@ -18,14 +18,15 @@
           </el-row>
 
           <template v-for="(eachFormObj, eachFormIndex) in forms" :key="`div-${eachFormIndex}`">
+            {{eachFormObj  }}
             <div  class="section-block">
               <div class="source">
                 <el-row>
                   <el-col :span="18">
-                    <el-input placeholder="Please input section title" v-model="eachFormObj.title" style="width: 100%;"></el-input>
+                    <el-input placeholder="Please input section title" v-model="eachFormObj.sectionTitle" style="width: 100%;"></el-input>
                   </el-col>
                   <el-col :span="6">
-                    <el-button type="danger" round style="float: right" @click="deleteSection(eachFormIndex,eachFormObj.title)">Delete Section</el-button>
+                    <el-button type="danger" round style="float: right" @click="deleteSection(eachFormIndex,eachFormObj.sectionTitle)">Delete Section</el-button>
                   </el-col>
                 </el-row>
               </div>
@@ -275,7 +276,7 @@ export default {
     },
     addSection() {
       const formObj = {
-        title: "",
+        sectionTitle: "",
         fields: []
       };
       

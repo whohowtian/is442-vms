@@ -94,16 +94,12 @@ export const FormBuilder ={
       labelWidth: 100,
       isFromUrl: false,
       options: [{
-          optionLabel: "Yes",
-          optionValue: "Yes"
+          optionLabel: "Option Label 1",
+          optionValue: "Option 1"
         },
         {
-          optionLabel: "No",
-          optionValue: "No"
-        },
-        {
-          optionLabel: "N.A.",
-          optionValue: "N.A."
+          optionLabel: "Option Label 2",
+          optionValue: "Option 2"
         }
       ],
       advancedOptions: true,
