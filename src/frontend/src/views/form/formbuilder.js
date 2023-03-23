@@ -54,7 +54,7 @@ export const FormBuilder ={
       showPassword: false,
       disabled: false,
       clearable: false,
-      prepend: 'dd',
+      prepend: '',
       append: '',
       maxlength: 10,
       showWordLimit: false

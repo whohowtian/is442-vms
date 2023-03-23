@@ -1,9 +1,14 @@
 <template>
 <div>
   <el-container>
+    
     <el-main class="el-main-left">
       <div class="wrapper--forms">
         <el-form>
+          <!-- header -->
+          <el-row>
+            <el-button style="margin-bottom: 10px;" type="primary" @click="addSection">Add Section</el-button>
+          </el-row>
           <el-row>
             <el-button style="margin-bottom: 10px;" type="primary" @click="addSection">Add Section</el-button>
           </el-row>
@@ -34,8 +39,7 @@
                       
                      
                       <span class="form__selectedlabel">{{ field.fieldType }} </span>
-                      <div @click="editElementProperties(field)">
-                        <!-- <label class="form__label" v-model="form.label" v-show="form.hasOwnProperty('label')">{{ form.label }}</label> -->
+                      <div @click="editElementProperties(field)" >
                         <component :is="field.fieldType" :currentField="field" class="form__field" >
                         </component>
                       </div>
@@ -58,7 +62,6 @@
 
     <el-aside class="wrapper--sidebar" width="30%">
       <el-tabs type="border-card" v-model="activeTabForFields">
-
         <el-tab-pane name="elements" label="Elements">
           <elements />
         </el-tab-pane>
@@ -95,6 +98,61 @@
                   </el-form-item>
                 </el-col>
               </el-row>
+
+              <!-- select & radio  -->
+              <el-form-item label="Items" v-show="activeField.hasOwnProperty('items')">
+                <li v-for="(item, index) in activeField.items" :key="index" class="properties__optionslist">
+                  <el-row :gutter="5">
+                    <el-col :span="20">
+                      <el-input v-model="item.url">{{item.url}}</el-input>
+                    </el-col>
+                    <el-col :span="4">
+                      <el-button @click="deleteOption(activeField.items, index)" v-show="activeField.items.length > 1">
+                        <i class="el-icon-error"></i>
+                      </el-button>
+                    </el-col>
+                  </el-row>
+                </li>
+                <el-button type="text" @click="addItem(activeField.items)">
+                  <i class="el-icon-plus"></i>
+                  Add more
+                </el-button>
+              </el-form-item>
+
+              <el-form-item label="Options" v-if="!activeField.isFromUrl && activeField.options">
+                <ul class="properties__optionsul">
+                  <li class="properties__optionslist">
+                    <el-row :gutter="5">
+                      <el-col :span="10">
+                        Label
+                      </el-col>
+                      <el-col :span="10">
+                        Value
+                      </el-col>
+                      <el-col :span="4">
+                      </el-col>
+                    </el-row>
+                  </li>
+                  <li v-for="(item, index) in activeField.options" :key="index" class="properties__optionslist">
+                    <el-row :gutter="5">
+                      <el-col :span="10">
+                        <el-input v-model="item.optionLabel">{{item.optionLabel}}</el-input>
+                      </el-col>
+                      <el-col :span="10">
+                        <el-input v-model="item.optionValue">{{item.optionValue}}</el-input>
+                      </el-col>
+                      <el-col :span="4">
+                          <el-icon  @click="deleteOption(activeField.options, index)" v-show="activeField.options.length > 1"><Delete /></el-icon>
+
+                      </el-col>
+                    </el-row>
+                  </li>
+                </ul>
+                <el-button type="text" @click="addOption(activeField.options)">
+                  <i class="el-icon-plus"></i>
+                  Add more
+                </el-button>
+              </el-form-item>
 
               <!-- for rating-->
               <el-row v-if ="activeField.fieldType =='Rating'">
@@ -156,10 +214,7 @@ import { useStore } from 'vuex'
 import Properties from './properties/Properties.vue'
 
 export default {
-  name: 'Home',
-  // store: ['forms', 'activeField', 'activeTabForFields'],
-  // store:[store._state.data.forms,store._state.data.activeField ],
- 
+  name: 'Home', 
   
   data(){
     return{
@@ -173,14 +228,23 @@ export default {
   mounted() {
     // console.log("form ->", this.forms)
     // console.log("activeField ->", this.activeField)
-    // console.log(this.$store)
-    console.log(FormBuilder.components.Properties)
+    // console.log(FormBuilder.components.Properties)
     store._state.data.forms = this.forms
-    console.log(store._state.data.forms)
+    // console.log(store._state.data.forms)
   },
   components: FormBuilder.components
   ,
   methods: {
+    deleteOption(option, index) {
+      option.splice(index, 1)
+    },
+    addOption(option) {
+      let count = option.length + 1;
+      option.push({
+        optionLabel: "Option Label " + count,
+        optionValue: "Option " + count
+      })
+    },
     showTextChange(value) {
       if (value && this.activeField.showScore) {
         this.activeField.showScore = false;
@@ -193,6 +257,7 @@ export default {
     },
     deleteElement(index, form) {
       form.splice(index, 1)
+      this.activeField=[]
       // FormBuilder.deleteElement(index, form)
     },
     cloneElement(index, field, form) {
@@ -203,17 +268,9 @@ export default {
       // console.log("form ->", this.forms)
       // console.log("activeField ->", this.activeField)
       
-      this.activeField = field;
-      // this.activeTabForFields = "properties";
-      
-      // store._state.data.activeField= field;
-      // store._state.data.activeTabForFields="properties";
-      
+      this.activeField = field;      
       // FormBuilder.methods.editElementProperties(field);
-      // console.log(store._state.data.activeField);
-      
 
-      
       
     },
     addSection() {
