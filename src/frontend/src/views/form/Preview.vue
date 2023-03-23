@@ -7,7 +7,7 @@
         <template v-for="(eachFormObj, eachFormIndex) in forms" :key="`divider-${eachFormIndex}`">
           <!-- {{ eachFormObj }} -->
           <el-divider >{{ eachFormObj.title }}</el-divider>
-          
+          {{eachFormObj  }}
             <div class="wrapper--forms">
               <el-col v-for="(field, index) in eachFormObj.fields" :key="index" :span="field.span" v-bind="field" class="form__group">
                 <component :is="field.fieldType" :currentField="field" class="form__field">

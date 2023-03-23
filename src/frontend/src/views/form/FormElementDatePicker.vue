@@ -1,7 +1,7 @@
 <template>
   <el-form-item :label="currentField.label" :label-width="currentField.labelWidth + 'px'">
     <el-date-picker
-      v-model="date"
+      v-model="currentField.input"
       type="date"
       placeholder="Pick a day">
     </el-date-picker>

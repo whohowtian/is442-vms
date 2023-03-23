@@ -1,6 +1,6 @@
 <template>
 <el-form-item :label="currentField.label" :label-width="currentField.labelWidth + 'px'">
-  <el-radio v-model="radio" v-for="item in currentField.options" :key="item.optionValue" :label="item.optionValue" :disabled="item.disabled">
+  <el-radio v-model="currentField.input" v-for="item in currentField.options" :key="item.optionValue" :label="item.optionValue" :disabled="item.disabled">
   </el-radio>
 </el-form-item>
 </template>
