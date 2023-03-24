@@ -1,6 +1,7 @@
 package com.g2t3.vms.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Getter;
@@ -16,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 public class FormTemplate {
     @Id
     private String id;
+    @Indexed(unique = true, background = true)
     private String formNo;
     private String formName;
     private String formEffDate;
@@ -32,14 +34,6 @@ public class FormTemplate {
         LocalDate date = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         formEffDate = date.format(formatter);
-
-    }
-
-    @Override
-    public String toString() {
-        return String.format("{ \"formNo\": '%s', \"formName\": '%s', \"revNo\": '%s', \"formEffDate\": '%s', \"isArchived\": %s, \"formSections\": %s}", formNo, formName, revNo, formEffDate, isArchived, formSections.toString());
-
-        // return String.format("{ id: '%s' formNo: '%s', formName: '%s', revNo: '%s', formEffDate: '%s', isArchived: %s, formSections: %s}", id, formNo, formName, revNo, formEffDate, isArchived, formSections.toString());
     }
 
 }
