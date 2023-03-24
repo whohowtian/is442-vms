@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.bson.types.ObjectId;
+
 
 import com.g2t3.vms.exception.FormNotFoundException;
 
@@ -56,11 +58,27 @@ public class FormController {
             return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
         }
         return ResponseHandler.generateResponse("Successful", HttpStatus.OK, forms);
-    } 
+    }
+
+    @GetMapping("/{FID}")
+    @ResponseBody
+    public ResponseEntity<?> getFormById(@PathVariable ObjectId FID) {
+        Form getForm;
+        try {
+            getForm = service.getFormByFID(FID);
+        } catch (FormNotFoundException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
+        }
+        return ResponseHandler.generateResponse("Successful", HttpStatus.OK, getForm);
+        
+    }
 
 
     @PostMapping("/create")
-    public ResponseEntity<?> createFormTemplate(@RequestBody Map<String, String> newFormInfo) {
+    public ResponseEntity<?> createForm(@RequestBody Map<String, String> newFormInfo) {
         try {
             service.createForm(newFormInfo); 
             return ResponseHandler.generateResponse("Created form for " + newFormInfo.get("assigned_vendor_uid") + " successfully.", HttpStatus.OK, null);
@@ -73,17 +91,17 @@ public class FormController {
         } 
     }
 
-    @PostMapping("/edit")
-    public ResponseEntity<?> createFormTemplate(@RequestBody Form editedForm) {
-        try {
-            service.editForm(editedForm); 
-            return ResponseHandler.generateResponse("Form edited successfully.", HttpStatus.OK, null);
-        } catch (NullPointerException e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
-        } catch (DataIntegrityViolationException e){
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
-        } catch (Exception e) {
-            return ResponseHandler.generateResponse("Internal Server Error: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
-        } 
-    }
+    // @PostMapping("/edit")
+    // public ResponseEntity<?> editForm(@RequestBody Form editedForm) {
+    //     try {
+    //         service.editForm(editedForm); 
+    //         return ResponseHandler.generateResponse("Form edited successfully.", HttpStatus.OK, null);
+    //     } catch (NullPointerException e) {
+    //         return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
+    //     } catch (DataIntegrityViolationException e){
+    //         return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
+    //     } catch (Exception e) {
+    //         return ResponseHandler.generateResponse("Internal Server Error: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
+    //     } 
+    // }
 }

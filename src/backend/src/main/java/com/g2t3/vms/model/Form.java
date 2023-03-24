@@ -32,10 +32,10 @@ public class Form {
 
     }
 
-    @Override
-    public String toString() {
-        return String.format("{ \"assigned_vendor_uid\": '%s', \"status\": '%s', \"approver\": '%s', \"approvalDateTime\": '%s', \"formContent\": %s }", assigned_vendor_uid, status, approver, approvalDateTime, formContent.toString());
-    }
+    // @Override
+    // public String toString() {
+    //     return String.format("{ \"assigned_vendor_uid\": '%s', \"status\": '%s', \"approver\": '%s', \"approvalDateTime\": '%s', \"formContent\": %s }", assigned_vendor_uid, status, approver, approvalDateTime, formContent.toString());
+    // }
 
     public String getID() {
         return id;

@@ -8,6 +8,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.bson.types.ObjectId;
+
 
 import com.g2t3.vms.exception.FormNotFoundException;
 import com.g2t3.vms.model.FormTemplate;
@@ -42,6 +44,15 @@ public class FormService {
         return forms;
     }
 
+    public Form getFormByFID(ObjectId formID) throws FormNotFoundException, Exception {
+        
+        Form getForm = formRepo.getFormByID(formID);
+        if (getForm == null) {
+            throw new FormNotFoundException("Form " + formID +  " does not exist.");
+        }
+        return getForm;
+    }
+
     // create new form/workflow
     public void createForm(Map<String, String> newFormInfo) throws NullPointerException, DataIntegrityViolationException, Exception {
 
@@ -65,28 +76,28 @@ public class FormService {
         formRepo.save(newForm); 
     }
 
-    public void editForm(Form form) throws NullPointerException, DataIntegrityViolationException, Exception {
-        // TODO: fix formid generation
-        String formID = form.getID();
-        System.out.println(formID);
-        FormTemplate prevFT = formRepo.getFormByID(formID);
-        System.out.println(prevFT);
+    // public void editForm(Form form) throws NullPointerException, DataIntegrityViolationException, Exception {
+    //     // TODO: fix formid generation
+    //     String formID = form.getID();
+    //     System.out.println(formID);
+    //     Form prevFT = formRepo.getFormByID(formID);
+    //     System.out.println(prevFT);
 
 
-        ArrayList<FormSection> newInput = form.getFormContent().getFormSections();
+    //     ArrayList<FormSection> newInput = form.getFormContent().getFormSections();
 
-        // TODO: no admin check - assume vendor only for now
-        Iterator<FormSection> iter = newInput.iterator();
-        if (iter.hasNext()) {
-            FormSection currSection = iter.next();
+    //     // TODO: no admin check - assume vendor only for now
+    //     Iterator<FormSection> iter = newInput.iterator();
+    //     if (iter.hasNext()) {
+    //         FormSection currSection = iter.next();
 
-            if (currSection.getAdminUseOnly()) {
-                iter.remove();
-            }
+    //         if (currSection.getAdminUseOnly()) {
+    //             iter.remove();
+    //         }
 
-        }
-        prevFT.setFormSections(newInput);
+    //     }
+    //     prevFT.setFormSections(newInput);
 
-        formTemplateRepo.save(prevFT); 
-    }
+    //     formRepo.save(prevFT); 
+    // }
 }
