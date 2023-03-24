@@ -14,6 +14,7 @@ import org.bson.types.ObjectId;
 import com.g2t3.vms.exception.FormNotFoundException;
 import com.g2t3.vms.model.FormTemplate;
 import com.g2t3.vms.model.FormSection;
+import com.g2t3.vms.model.Question;
 import com.g2t3.vms.model.Form;
 import com.g2t3.vms.repository.FormTemplateRepo;
 import com.g2t3.vms.repository.FormRepo;
@@ -76,28 +77,33 @@ public class FormService {
         formRepo.save(newForm); 
     }
 
-    // public void editForm(Form form) throws NullPointerException, DataIntegrityViolationException, Exception {
-    //     // TODO: fix formid generation
-    //     String formID = form.getID();
-    //     System.out.println(formID);
-    //     Form prevFT = formRepo.getFormByID(formID);
-    //     System.out.println(prevFT);
+    public void editForm(Form form) throws NullPointerException, DataIntegrityViolationException, Exception {
+        // ObjectId formID = form.getId();
+        // Form currFormObjDB = formRepo.getFormByID(formID);
 
+        // ArrayList<FormSection> newInput = form.getFormContent().getFormSections();
 
-    //     ArrayList<FormSection> newInput = form.getFormContent().getFormSections();
+        // Iterator<FormSection> formSectIter = newInput.iterator();
+        // while (formSectIter.hasNext()) {
+        //     FormSection currSection = formSectIter.next();
+        //     if (currSection.getAdminUseOnly() == false) {
+        //         ObjectId sectID = currSection.getid();
+        //         ArrayList<Question> questions = currSection.getQuestions();
+        //         Iterator<Question> qnIter = questions.iterator();
 
-    //     // TODO: no admin check - assume vendor only for now
-    //     Iterator<FormSection> iter = newInput.iterator();
-    //     if (iter.hasNext()) {
-    //         FormSection currSection = iter.next();
+        //         while (qnIter.hasNext()) {
+        //             Question currQn = qnIter.next();
+        //             ObjectId qnID = currQn.getid();
 
-    //         if (currSection.getAdminUseOnly()) {
-    //             iter.remove();
-    //         }
+        //             FormSection currSectDB = currFormObjDB.getFormSections();
 
-    //     }
-    //     prevFT.setFormSections(newInput);
+        //             currQnDB.setAnswer(currQn.getAnswer());
 
-    //     formRepo.save(prevFT); 
-    // }
+        //             Question updatedQnObj = formRepo.save(currQnDB);
+                    
+        //             System.out.println(updatedQnObj);
+        //         }
+        //     } 
+        // }
+    }
 }

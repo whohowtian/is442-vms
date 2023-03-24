@@ -91,17 +91,17 @@ public class FormController {
         } 
     }
 
-    // @PostMapping("/edit")
-    // public ResponseEntity<?> editForm(@RequestBody Form editedForm) {
-    //     try {
-    //         service.editForm(editedForm); 
-    //         return ResponseHandler.generateResponse("Form edited successfully.", HttpStatus.OK, null);
-    //     } catch (NullPointerException e) {
-    //         return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
-    //     } catch (DataIntegrityViolationException e){
-    //         return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
-    //     } catch (Exception e) {
-    //         return ResponseHandler.generateResponse("Internal Server Error: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
-    //     } 
-    // }
+    @PostMapping("/edit")
+    public ResponseEntity<?> editForm(@RequestBody Form editedForm) {
+        try {
+            service.editForm(editedForm); 
+            return ResponseHandler.generateResponse("Form edited successfully.", HttpStatus.OK, null);
+        } catch (NullPointerException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
+        } catch (DataIntegrityViolationException e){
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("Internal Server Error: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
+        } 
+    }
 }
