@@ -6,19 +6,41 @@
       <div class="wrapper--forms">
         <el-form>
           <!-- header -->
-          <el-row>
-            <el-input placeholder="Form Title" style="width: 100%;"></el-input>
-          </el-row>
+          <template v-for="element in formInfo">
+            <div  style="border: solid 1px gray; margin: 0.5em">
+            <el-row>
+              <el-form-item label="Form Title">
+                <el-input v-model="element.formName" placeholder="Form Title"  style="width: 100%;"></el-input>
+              </el-form-item>
+              
+            </el-row>
+            <el-row>
+              <el-form-item label="Form No">
+                <el-input v-model="element.formNo" placeholder="Form No" style="width: 100%;"></el-input>
+              </el-form-item>
+            </el-row>
+            <el-row>
+              <el-form-item label="Revision No">
+                <el-input v-model="element.revNo" placeholder="Revision" style="width: 100%;"></el-input>
+              </el-form-item>
+            </el-row>
+            <el-row>
+              <el-form-item label="Date">
+                <el-input v-model="element.formEffDate" disabled  style="width: 100%;"></el-input>
+              </el-form-item>
+              
+            </el-row>
+            
+          </div>
+
+          </template>
+          
           <el-row>
             <el-button style="margin-bottom: 10px;" type="primary" @click="addSection">Add Section</el-button>
           </el-row>
 
-          <el-row>
-            <div class="empty-section">Please add Sections</div>
-          </el-row>
-
+          <!-- section -->
           <template v-for="(eachFormObj, eachFormIndex) in forms" :key="`div-${eachFormIndex}`">
-            {{eachFormObj  }}
             <div  class="section-block">
               <div class="source">
                 <el-row>
@@ -41,7 +63,7 @@
                      
                       <span class="form__selectedlabel">{{ field.fieldType }} </span>
                       <div @click="editElementProperties(field)" >
-                        <component :is="field.fieldType" :currentField="field" class="form__field" >
+                        <component :is="field.fieldType" :currentField="field"  class="form__field" >
                         </component>
                       </div>
 
@@ -49,7 +71,6 @@
                       <div class="form__actiongroup" style="display: flex; justify-content: flex-end; align-items: center;">
                         <el-icon class="el-input__icon" @click="deleteElement(index, eachFormObj.fields)"><Delete /></el-icon>
                       </div>
-                        <!-- <el-button circle size="mini" icon="el-icon-rank" class="form__actionitem--move"></el-button> -->
                     </el-col>
                     
                   </draggable>
@@ -61,6 +82,7 @@
 
     </el-main>
 
+    <!-- element & properties -->
     <el-aside class="wrapper--sidebar" width="30%">
       <el-tabs type="border-card" v-model="activeTabForFields">
         <el-tab-pane name="elements" label="Elements">
@@ -216,9 +238,15 @@ import Properties from './properties/Properties.vue'
 
 export default {
   name: 'Home', 
-  
+  // mounted() {
+  //   console.log(this.formInfo)
+  //   console.log(store._state.data.formInfo)
+  //   console.log(store._state.data.forms)
+
+  // },
   data(){
     return{
+      formInfo: store._state.data.formInfo,
       forms: store._state.data.forms,
       activeField: store._state.data.activeField,
       activeTabForFields: store._state.data.activeTabForFields,
@@ -226,16 +254,11 @@ export default {
       
     }
   },
-  mounted() {
-    // console.log("form ->", this.forms)
-    // console.log("activeField ->", this.activeField)
-    // console.log(FormBuilder.components.Properties)
-    store._state.data.forms = this.forms
-    // console.log(store._state.data.forms)
-  },
+  
   components: FormBuilder.components
   ,
   methods: {
+
     deleteOption(option, index) {
       option.splice(index, 1)
     },
@@ -265,10 +288,6 @@ export default {
       FormBuilder.cloneElement(index, field, form)
     },
     async editElementProperties(field) {
-      
-      // console.log("form ->", this.forms)
-      // console.log("activeField ->", this.activeField)
-      
       this.activeField = field;      
       // FormBuilder.methods.editElementProperties(field);
 
@@ -279,9 +298,7 @@ export default {
         sectionTitle: "",
         fields: []
       };
-      
       this.forms.push(formObj);
-      // console.log("form ->", this.forms);
     },
     deleteSection(formIndex,formTitle ) {
       // console.log("form ->", this.forms);

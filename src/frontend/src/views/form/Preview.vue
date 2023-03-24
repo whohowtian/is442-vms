@@ -1,20 +1,37 @@
 <template>
 <div class="main__wrapper">
- 
   <el-container>
     <el-main>
       <el-form>
-        <template v-for="(eachFormObj, eachFormIndex) in forms" :key="`divider-${eachFormIndex}`">
-          <!-- {{ eachFormObj }} -->
-          <el-divider >{{ eachFormObj.title }}</el-divider>
+        <!-- header -->
+        <template v-for="element in formInfo">
+            <div class="wrapper--forms ">
+            <el-row >
+                <h3>{{ element.formName }}</h3>
+            </el-row>
+            <el-row>
+              <h6>{{ element.formNo }}</h6>
+            </el-row>
+            <el-row>
+              <h6>{{ element.revNo }}</h6>
+            </el-row>
+            <el-row v-if="element.formName !=''">
+              <i>{{element.formEffDate}}</i>
+            </el-row>           
+          </div>
+          </template>
+        
+        <!-- form -->
+        <template v-for="eachFormObj in forms">
+          <el-divider content-position="left" >{{ eachFormObj.sectionTitle }}</el-divider>
             <div class="wrapper--forms">
-              <el-col v-for="(field, index) in eachFormObj.fields" :key="index" :span="field.span" v-bind="field" class="form__group">
-                <component :is="field.fieldType" :currentField="field" class="form__field">
+              <el-col v-for="field in eachFormObj.fields"  v-bind="field" class="form__group">
+                <component :is="field.fieldType" :currentField="field"  class="form__field">
                 </component>
               </el-col>
-            </div>
-          
+            </div>          
         </template>
+
         <!-- change to submitForm() to post API , put a unique formNo:"XXX" in "data"
  -->
         <button type="button" class="btn btn-primary" @click=getData()>Save</button>
@@ -33,16 +50,14 @@ export default {
   components: FormBuilder.components,
   data(){
     return {
+      formInfo: store._state.data.formInfo,
       forms: store._state.data.forms,
-      formNo:"TESTING2",
-      formName:"TESTING",
-      formEffDate:"",
       AllSections:[], //sectionName , adminUseOnly(default False), doScoreCalculation(default False), 
       AllQuestion:[]
     }
-  },
-  mounted() {
-    this.formEffDate = this.getToday();
+  },mounted(){
+    console.log(store._state.data.forms)
+    console.log(store._state.data.formInfo)
   },
   methods: {
     // calculate today date
