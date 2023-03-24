@@ -2,6 +2,7 @@ package com.g2t3.vms.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.bson.types.ObjectId;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +26,7 @@ public class FormSection {
         this.sectionName = sectionName;
         this.questions = questions;
         this.doScoreCalculation = doScoreCalculation;
+        this.id = new ObjectId().toString();
     }
 
     @Override
