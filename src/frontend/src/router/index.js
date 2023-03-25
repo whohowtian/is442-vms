@@ -34,30 +34,35 @@ const router = createRouter({
       component: () => import('../views/ApprovalView.vue')
     },
     {
-      path: '/VendorAssessmentForm',
-      name: 'VendorAssessmentForm',
-      component: () => import('../views/VendorAssessmentForm.vue')
+      path: '/CreateAccount',
+      name: 'CreateAccount',
+      component: () => import('../views/CreateAccount.vue')
     },
     {
-      path: '/PerformanceEvaluationForm',
-      name: 'PerformanceEvaluationForm',
-      component: () => import('../views/PerformanceEvaluationForm.vue')
+      path: '/FormBuilder',
+      name: 'FormBuilder',
+      component: () => import('../views/form/index.vue')
     },
     {
-      path: '/PreEvaluationForm',
-      name: 'PreEvaluationForm',
-      component: () => import('../views/PreEvaluationForm.vue')
+      path: '/VendorForm',
+      name: 'VendorForm',
+      component: () => import('../views/form/VendorForm.vue')
     },
     {
-      path: '/EditableForm',
-      name: 'EditableForm',
-      component: () => import('../views/EditableForm.vue')
+      path: '/EditAccount',
+      name: 'EditAccount',
+      component: () => import('../views/EditAccount.vue')
+    },
+    {
+      path: '/UpdateFormBuilder',
+      name: 'UpdateFormBuilder',
+      component: () => import('../views/form/AdminUpdate/index.vue')
     },
     {
       path: '/tryApi',
       name: 'tryApi',
       component: () => import('../tryApi.vue')
-    }
+    },
   ]
 })
 
