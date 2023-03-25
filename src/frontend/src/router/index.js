@@ -77,6 +77,11 @@ const router = createRouter({
       path: '/EditAccount',
       name: 'EditAccount',
       component: () => import('../views/EditAccount.vue')
+    },
+    {
+      path: '/UpdateFormBuilder',
+      name: 'UpdateFormBuilder',
+      component: () => import('../views/form/AdminUpdate/index.vue')
     }
   ]
 })

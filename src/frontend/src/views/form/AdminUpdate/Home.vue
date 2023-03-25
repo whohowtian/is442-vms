@@ -19,11 +19,11 @@
                 <el-input v-model="element.formNo" placeholder="Form No" style="width: 100%;"></el-input>
               </el-form-item>
             </el-row>
-            <!-- <el-row>
+            <el-row>
               <el-form-item label="Revision No">
                 <el-input v-model="element.revNo" placeholder="Revision" style="width: 100%;"></el-input>
               </el-form-item>
-            </el-row> -->
+            </el-row>
             <el-row>
               <el-form-item label="Date">
                 <el-input v-model="element.formEffDate" disabled  style="width: 100%;"></el-input>
@@ -40,20 +40,15 @@
           </el-row>
 
           <!-- section -->
-          <template v-for="(eachFormObj, eachFormIndex) in forms" :key="`div-${eachFormIndex}`">
-            <!-- {{ eachFormObj }} -->
+          <template v-for="(eachFormObj, eachFormIndex) in editableForms" :key="`div-${eachFormIndex}`">
             <div  class="section-block">
               <div class="source">
                 <el-row>
-                  <el-col >
-                    <el-input placeholder="Please input section title" v-model="eachFormObj.sectionTitle" ></el-input>
+                  <el-col :span="18">
+                    <el-input placeholder="Please input section title" v-model="eachFormObj.sectionTitle" style="width: 100%;"></el-input>
                   </el-col>
-                  <el-col >
-                    <div >
-                      <el-checkbox v-model="eachFormObj.AdminUseOnly" label="AdminUseOnly"  size="small" />
-                      <!-- <el-checkbox v-model="eachFormObj.ApproverUseOnly"  label="ApproverUseOnly" size="small" /> -->
-                      <el-button type="danger" round style="float: right" @click="deleteSection(eachFormIndex,eachFormObj.sectionTitle)">Delete Section</el-button>
-                    </div>
+                  <el-col :span="6">
+                    <el-button type="danger" round style="float: right" @click="deleteSection(eachFormIndex,eachFormObj.sectionTitle)">Delete Section</el-button>
                   </el-col>
                 </el-row>
               </div>
@@ -235,45 +230,75 @@
 </template>
 
 <script>
-import { FormBuilder } from './formbuilder';
-import { store } from '../../store.js';
-import { Delete } from '@element-plus/icons-vue'
+import { FormBuilder } from '../formbuilder';
+import { store } from '../../../store.js';
+import { Delete } from '@element-plus/icons-vue';
+import axios from 'axios';
+import { BASE_URL } from '../../../api.js';
 
 
 export default {
-  name: 'Home', 
+  name: 'AdminHome',
+
   data(){
     return{
+      formData:[],
       formInfo: store._state.data.formInfo,
-      forms: store._state.data.forms,
+      editableForms:store._state.data.editableForms,
       activeField: store._state.data.activeField,
       activeTabForFields: store._state.data.activeTabForFields,
-      sortElementOptions:FormBuilder.props.sortElementOptions
-      
+      sortElementOptions:FormBuilder.props.sortElementOptions,
     }
   },
-  mounted() {
-    // console.log("form ->", this.forms)
-    // console.log("activeField ->", this.activeField)
-    console.log("store-->",this.$store)
-    // console.log(FormBuilder.components.Properties)
-    store._state.data.forms = this.forms
-    console.log(store._state.data.forms)
+  async created(){
+    if (localStorage.getItem('formNo')!= null){
+      var formNo = localStorage.getItem('formNo');  
+      console.log(formNo);
+      await axios.get(`${BASE_URL}/api/formtemplate/` + formNo)
+        .then(response => {
+          var allData = response.data.data;
+          var formData = allData['formSections']
+
+          console.log(allData)
+
+            this.formInfo = [
+            {
+              formNo:allData['formNo'],
+              formName:allData['formName'],
+              formEffDate:allData['formEffDate'],
+            }]
+          store._state.data.formInfo = this.formInfo
+          
+          //store formSection dict
+          for (let i=0; i<formData.length; i++){
+            let formTitle = formData[i]['sectionName']
+            let allQn = []
+
+            //store questions dict 
+            for (let j =0; j< (formData[i]['questions']).length; j++){
+              let qnDict={
+                fieldType:formData[i]['questions'][j]['inputType'],
+                label: formData[i]['questions'][j]['qnTitle'],
+                //+ required field
+              };
+              allQn.push(qnDict)
+            }
+          
+            this.editableForms.push({ fields: allQn, sectionTitle: formTitle,});
+          }
+
+          store._state.data.editableForms = this.editableForms
+
+        })
+        .catch(error => {
+          console.log(error);
+        });
+        console.log("asfasfa",this.editableForms)
+    }
   },
   components: FormBuilder.components
   ,
   methods: {
-
-    deleteOption(option, index) {
-      option.splice(index, 1)
-    },
-    addOption(option) {
-      let count = option.length + 1;
-      option.push({
-        optionLabel: "Option Label " + count,
-        optionValue: "Option " + count
-      })
-    },
     showTextChange(value) {
       if (value && this.activeField.showScore) {
         this.activeField.showScore = false;
@@ -286,26 +311,37 @@ export default {
     },
     deleteElement(index, form) {
       form.splice(index, 1)
-      this.activeField=[]
       // FormBuilder.deleteElement(index, form)
     },
     cloneElement(index, field, form) {
       FormBuilder.cloneElement(index, field, form)
     },
     async editElementProperties(field) {
-      this.activeField = field;      
+      
+      // console.log("form ->", this.forms)
+      // console.log("activeField ->", this.activeField)
+      
+      this.activeField = field;
+      // this.activeTabForFields = "properties";
+      
+      // store._state.data.activeField= field;
+      // store._state.data.activeTabForFields="properties";
+      
       // FormBuilder.methods.editElementProperties(field);
+      // console.log(store._state.data.activeField);
+      
 
+      
       
     },
     addSection() {
       const formObj = {
-        sectionTitle: "",
-        fields: [],
-        AdminUseOnly: false,
-        ApproverUseOnly: false
+        title: "",
+        fields: []
       };
-      this.forms.push(formObj);
+      
+      this.editableForms.push(formObj);
+      // console.log("form ->", this.forms);
     },
     deleteSection(formIndex,formTitle ) {
       // console.log("form ->", this.forms);
@@ -316,7 +352,7 @@ export default {
           type: 'warning'
         }).then(() => {
           // console.log("formindex", formIndex);
-          this.forms.splice(formIndex, 1)
+          this.editableForms.splice(formIndex, 1)
         });
       
     }

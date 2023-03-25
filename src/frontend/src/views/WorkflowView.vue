@@ -80,11 +80,8 @@ export default {
             });
         },
         EditEachForm(formNo){ //GET FormTemplate API
-            const allData = 'http://localhost:8080/api/formtemplate/'+ formNo
-            axios.get(allData).then(response=>{
-            var seeAllData = response.data.data
-            console.log(seeAllData)  //oh fk is another interface
-            })
+            localStorage.setItem('formNo', formNo)
+            window.location.href = "UpdateFormBuilder";
         },
         TaskCompleted(){
             window.open('http://i.imgflip.com/31fael.jpg', '_blank');
@@ -202,7 +199,7 @@ export default {
     </el-tabs >
     </div>
 
-    <!-- 3) formTable with API calling DONE -->
+    <!-- 3) formTable with API calling -->
     <div v-if="firstNavOption === 'formTable'">
         <div><a href="/FormBuilder"><Button>+ Add Form</Button></a></div>
         <table class="my-table">
@@ -214,6 +211,8 @@ export default {
                 <th>Last Edited</th>
                 <th>Actions</th>
             </tr>
+            WAITING FOR FORMTEMPLATE API FIX
+
             </thead>
             <tbody>
                 <tr v-for="item in allFormData" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">

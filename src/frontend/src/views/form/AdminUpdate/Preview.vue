@@ -1,63 +1,63 @@
 <template>
-<div class="main__wrapper">
-  <el-container>
-    <el-main>
-      <el-form>
-        <!-- header -->
-        <template v-for="element in formInfo">
-            <div class="wrapper--forms ">
-            <el-row >
-                <h3>{{ element.formName }}</h3>
-            </el-row>
-            <el-row>
-              <h6>{{ element.formNo }}</h6>
-            </el-row>
-            <!-- <el-row>
-              <h6>{{ element.revNo }}</h6>
-            </el-row> -->
-            <el-row v-if="element.formName !=''">
-              <i>{{element.formEffDate}}</i>
-            </el-row>           
-          </div>
+  <div class="main__wrapper">
+    <el-container>
+      <el-main>
+        <el-form>
+          <!-- header -->
+          <template v-for="element in formInfo">
+              <div class="wrapper--forms ">
+              <el-row >
+                  <h3>{{ element.formName }}</h3>
+              </el-row>
+              <el-row>
+                <h6>{{ element.formNo }}</h6>
+              </el-row>
+              <el-row>
+                <h6>{{ element.revNo }}</h6>
+              </el-row>
+              <el-row v-if="element.formName !=''">
+                <i>{{element.formEffDate}}</i>
+              </el-row>           
+            </div>
+            </template>
+          
+          <!-- form -->
+          <template v-for="eachFormObj in editableForms">
+            <el-divider content-position="left" >{{ eachFormObj.sectionTitle }}</el-divider>
+              <div class="wrapper--forms">
+                <el-col v-for="field in eachFormObj.fields"  v-bind="field" class="form__group">
+                  <component :is="field.fieldType" :currentField="field"  class="form__field">
+                  </component>
+                </el-col>
+              </div>          
           </template>
-        
-        <!-- form -->
-        <template v-for="eachFormObj in forms">
-          <el-divider content-position="left" >{{ eachFormObj.sectionTitle }}</el-divider>
-            <div class="wrapper--forms">
-              <el-col v-for="field in eachFormObj.fields"  v-bind="field" class="form__group">
-                <component :is="field.fieldType" :currentField="field"  class="form__field">
-                </component>
-              </el-col>
-            </div>          
-        </template>
-
-        <!-- change to submitForm() to post API , put a unique formNo:"XXX" in "data"
- -->
-        <button type="button" class="btn btn-primary" @click=submitForm()>Save</button>
-      </el-form>
-    </el-main>
-  </el-container>
-</div>
+  
+          <!-- change to submitForm() to post API , put a unique formNo:"XXX" in "data"
+   -->
+          <button type="button" class="btn btn-primary" @click=submitForm()>Save</button>
+        </el-form>
+      </el-main>
+    </el-container>
+  </div>
 </template>
 
 <script>
-import {FormBuilder} from './formbuilder'
-import { store } from '../../store.js';
+import {FormBuilder} from '../formbuilder'
+import { store } from '../../../store.js';
 import axios from 'axios';
 
 export default {
   components: FormBuilder.components,
   data(){
     return {
+      editableForms: store._state.data.editableForms,
       formInfo: store._state.data.formInfo,
-      forms: store._state.data.forms,
       AllSections:[], //sectionName , adminUseOnly(default False), doScoreCalculation(default False), 
       AllQuestion:[]
     }
-  },mounted(){
-    console.log(store._state.data.forms)
-    console.log("forminfo -->", store._state.data.formInfo)
+  },
+  mounted() {
+    this.formEffDate = this.getToday();
   },
   methods: {
     // calculate today date
@@ -70,12 +70,14 @@ export default {
     },
      // GET METHOD
     getData(){
-      const formData =this.forms
+      const formData =this.editableForms
       console.log("Data", formData)
+      console.log("formInfo", this.formInfo)
+
       },
     // POST METHOD
-    async submitForm() {
-      const formData =this.forms
+    async editForm() {
+      const formData =this.editableForms
 
       //store formSection dict
       for(let i=0; i<formData.length; i++){
@@ -102,7 +104,7 @@ export default {
         }
       // console.log("OUTPUT", this.AllSections)
 
-        const data = {
+      const data = {
             "formNo": this.formInfo[0]['formNo'],
             "formName": this.formInfo[0]['formName'],
             "formEffDate": this.formInfo[0]['formEffDate'],
@@ -110,7 +112,7 @@ export default {
         }
         console.log(data)
           try {
-          const response = await axios.post('http://localhost:8080/api/formtemplate/create', data);
+          const response = await axios.post('http://localhost:8080/api/formtemplate/edit', data);
           console.log("SUCCESSFULLY POST")
           console.log(response.data); // do something with the response data
         } catch (error) {

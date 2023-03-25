@@ -5,8 +5,9 @@ export const store = createStore({
     formInfo:[{formNo:"",formName:"",formEffDate:new Date().toLocaleDateString()}],
     forms: [],
     activeField: [],
-    activeTabForFields: 'elements'
-  },
+    activeTabForFields: 'elements',
+    editableForms:[]
+  }
 })
 
 export default store
