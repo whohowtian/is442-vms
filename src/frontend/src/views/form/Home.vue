@@ -19,11 +19,11 @@
                 <el-input v-model="element.formNo" placeholder="Form No" style="width: 100%;"></el-input>
               </el-form-item>
             </el-row>
-            <el-row>
+            <!-- <el-row>
               <el-form-item label="Revision No">
                 <el-input v-model="element.revNo" placeholder="Revision" style="width: 100%;"></el-input>
               </el-form-item>
-            </el-row>
+            </el-row> -->
             <el-row>
               <el-form-item label="Date">
                 <el-input v-model="element.formEffDate" disabled  style="width: 100%;"></el-input>
@@ -41,14 +41,19 @@
 
           <!-- section -->
           <template v-for="(eachFormObj, eachFormIndex) in forms" :key="`div-${eachFormIndex}`">
+            <!-- {{ eachFormObj }} -->
             <div  class="section-block">
               <div class="source">
                 <el-row>
-                  <el-col :span="18">
-                    <el-input placeholder="Please input section title" v-model="eachFormObj.sectionTitle" style="width: 100%;"></el-input>
+                  <el-col >
+                    <el-input placeholder="Please input section title" v-model="eachFormObj.sectionTitle" ></el-input>
                   </el-col>
-                  <el-col :span="6">
-                    <el-button type="danger" round style="float: right" @click="deleteSection(eachFormIndex,eachFormObj.sectionTitle)">Delete Section</el-button>
+                  <el-col >
+                    <div >
+                      <el-checkbox v-model="eachFormObj.AdminUseOnly" label="AdminUseOnly"  size="small" />
+                      <!-- <el-checkbox v-model="eachFormObj.ApproverUseOnly"  label="ApproverUseOnly" size="small" /> -->
+                      <el-button type="danger" round style="float: right" @click="deleteSection(eachFormIndex,eachFormObj.sectionTitle)">Delete Section</el-button>
+                    </div>
                   </el-col>
                 </el-row>
               </div>
@@ -296,7 +301,9 @@ export default {
     addSection() {
       const formObj = {
         sectionTitle: "",
-        fields: []
+        fields: [],
+        AdminUseOnly: false,
+        ApproverUseOnly: false
       };
       this.forms.push(formObj);
     },

@@ -12,9 +12,9 @@
             <el-row>
               <h6>{{ element.formNo }}</h6>
             </el-row>
-            <el-row>
+            <!-- <el-row>
               <h6>{{ element.revNo }}</h6>
-            </el-row>
+            </el-row> -->
             <el-row v-if="element.formName !=''">
               <i>{{element.formEffDate}}</i>
             </el-row>           
