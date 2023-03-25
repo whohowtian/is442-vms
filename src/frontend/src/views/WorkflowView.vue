@@ -7,6 +7,7 @@ import fakeWorkflowData from './fakeWorkflowData';
 import fakeTaskData from './fakeTaskData';
 import { Search, Edit } from '@element-plus/icons-vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { BASE_URL } from '../api.js';
 import axios from 'axios';
 
 
@@ -61,7 +62,7 @@ export default {
       },
     methods: {
         async getAllFormAvail(){
-          axios.get('http://localhost:8080/api/formtemplate')
+          axios.get(`${BASE_URL}/api/formtemplate`)
             .then(response => {
               var allForm = response.data.data;
               //data cleaning

@@ -1,5 +1,7 @@
 <script>
 import NavBar from '../components/Navbar.vue';
+import { BASE_URL } from '../api.js';
+
 export default {
         name: "ACCOUNT",
         components: {
@@ -20,7 +22,7 @@ export default {
             window.location.href = '/AccountView';
         },
         async EditAccount(userId){
-            axios.put('http://localhost:8080/api/user/'+ userId)
+            axios.put(`${BASE_URL}/api/user/`+ userId)
             .then(response => {
                 this.allAccount = response.data.data;
                 console.log(this.allAccount)

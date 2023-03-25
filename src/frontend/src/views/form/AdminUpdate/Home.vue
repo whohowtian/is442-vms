@@ -251,8 +251,9 @@ export default {
     }
   },
   async created(){
-    if (localStorage.getItem('formNo')!= null){
-      var formNo = localStorage.getItem('formNo');  
+    // if (localStorage.getItem('formNo')!= null){
+      // var formNo = localStorage.getItem('formNo');
+      var formNo ='kw'  
       console.log(formNo);
       await axios.get(`${BASE_URL}/api/formtemplate/` + formNo)
         .then(response => {
@@ -294,7 +295,7 @@ export default {
           console.log(error);
         });
         console.log("asfasfa",this.editableForms)
-    }
+    // }
   },
   components: FormBuilder.components
   ,

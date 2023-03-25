@@ -5,6 +5,7 @@
     import Table from "../components/Table.vue";
     import { Search, More} from '@element-plus/icons-vue'
     import axios from 'axios';
+    import { BASE_URL } from '../api.js';
 
     export default {
         name: "AccountView",
@@ -38,7 +39,7 @@
         },
         methods: {
             async getAllAccount(){
-            axios.get('http://localhost:8080/api/user')
+            axios.get(`${BASE_URL}/api/user`)
                 .then(response => {
                 this.allAccount = response.data.data;
                 console.log(this.allAccount)
@@ -48,7 +49,7 @@
                 });
             },
             async DeleteAccount(userId){
-                axios.delete('http://localhost:8080/api/user/'+ userId)
+                axios.delete(`${BASE_URL}/api/user/`+ userId)
                 .then(response => {
                     console.log(response.data);
                     alert('Deleted!'); // do verification --> sweet alert

@@ -45,6 +45,7 @@
 import {FormBuilder} from '../formbuilder'
 import { store } from '../../../store.js';
 import axios from 'axios';
+import { BASE_URL } from '../../../api.js';
 
 export default {
   components: FormBuilder.components,
@@ -112,7 +113,7 @@ export default {
         }
         console.log(data)
           try {
-          const response = await axios.post('http://localhost:8080/api/formtemplate/edit', data);
+          const response = await axios.post(`${BASE_URL}/api/formtemplate/edit`, data);
           console.log("SUCCESSFULLY POST")
           console.log(response.data); // do something with the response data
         } catch (error) {
