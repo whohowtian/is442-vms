@@ -85,6 +85,14 @@ public class FormService {
 
         for (Map.Entry<String, FormSection> sectionEntry : newInput.entrySet()) {
             String currSectID = sectionEntry.getKey();
+            FormSection currFormSectDB = currFormObjDB.getFormContent().getFormSections().get(currSectID);
+            boolean forAdminOnly = currFormSectDB.getAdminUseOnly();
+
+            // TODO: to allow admin to edit forAdminUseOnly sections; currently only allow editing for vendor questions
+            if (forAdminOnly) {
+                continue;
+            }
+
             HashMap<String, Question> currSectObj = sectionEntry.getValue().getQuestions();
 
             for (Map.Entry<String, Question> qnEntry : currSectObj.entrySet()) {
