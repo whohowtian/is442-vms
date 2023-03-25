@@ -12,7 +12,7 @@ public interface FormRepo extends MongoRepository<Form, String> {
     ArrayList<Form> findAll();
 
     @Query("{'_id': ?0}")
-    Form getFormByID(ObjectId id);
+    Form getFormByID(String id);
 
     // @Query("{'formContent.formSections.questions._id: ?0'}")
     // Form getQuestionObjByID(ObjectId id);

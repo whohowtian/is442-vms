@@ -45,7 +45,7 @@ public class FormService {
         return forms;
     }
 
-    public Form getFormByFID(ObjectId formID) throws FormNotFoundException, Exception {
+    public Form getFormByFID(String formID) throws FormNotFoundException, Exception {
         
         Form getForm = formRepo.getFormByID(formID);
         if (getForm == null) {
@@ -62,13 +62,13 @@ public class FormService {
 
         System.out.println(newFormInfo.toString());
 
-        FormTemplate getForm = formTemplateRepo.getFormTemplateByNo(formNo);
+        FormTemplate getFormTempt = formTemplateRepo.getFormTemplateByNo(formNo);
 
-        System.out.println(getForm.toString());
+        System.out.println(getFormTempt.toString());
 
-        Form newForm = new Form(formNo, getForm);
+        Form newForm = new Form(formNo, getFormTempt);
 
-        if (getForm == null) {
+        if (getFormTempt == null) {
             throw new NullPointerException("Form Template " + formNo + "does not exist.");
         }
 
@@ -78,32 +78,23 @@ public class FormService {
     }
 
     public void editForm(Form form) throws NullPointerException, DataIntegrityViolationException, Exception {
-        // ObjectId formID = form.getId();
-        // Form currFormObjDB = formRepo.getFormByID(formID);
+        String formID = form.getId();
+        Form currFormObjDB = formRepo.getFormByID(formID);
 
-        // ArrayList<FormSection> newInput = form.getFormContent().getFormSections();
+        Map<String, FormSection> newInput = form.getFormContent().getFormSections();
 
-        // Iterator<FormSection> formSectIter = newInput.iterator();
-        // while (formSectIter.hasNext()) {
-        //     FormSection currSection = formSectIter.next();
-        //     if (currSection.getAdminUseOnly() == false) {
-        //         ObjectId sectID = currSection.getid();
-        //         ArrayList<Question> questions = currSection.getQuestions();
-        //         Iterator<Question> qnIter = questions.iterator();
+        for (Map.Entry<String, FormSection> sectionEntry : newInput.entrySet()) {
+            String currSectID = sectionEntry.getKey();
+            HashMap<String, Question> currSectObj = sectionEntry.getValue().getQuestions();
 
-        //         while (qnIter.hasNext()) {
-        //             Question currQn = qnIter.next();
-        //             ObjectId qnID = currQn.getid();
+            for (Map.Entry<String, Question> qnEntry : currSectObj.entrySet()) {
+                String currQnID = qnEntry.getKey();
+                Question currQnObj = qnEntry.getValue();
 
-        //             FormSection currSectDB = currFormObjDB.getFormSections();
+                currFormObjDB.getFormContent().getFormSections().get(currSectID).getQuestions().get(currQnID).setAnswer(currQnObj.getAnswer());
+            }
+        }
 
-        //             currQnDB.setAnswer(currQn.getAnswer());
-
-        //             Question updatedQnObj = formRepo.save(currQnDB);
-                    
-        //             System.out.println(updatedQnObj);
-        //         }
-        //     } 
-        // }
+        formRepo.save(currFormObjDB);
     }
 }

@@ -62,7 +62,7 @@ public class FormController {
 
     @GetMapping("/{FID}")
     @ResponseBody
-    public ResponseEntity<?> getFormById(@PathVariable ObjectId FID) {
+    public ResponseEntity<?> getFormById(@PathVariable String FID) {
         Form getForm;
         try {
             getForm = service.getFormByFID(FID);
