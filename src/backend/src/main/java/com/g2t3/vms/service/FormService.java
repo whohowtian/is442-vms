@@ -81,6 +81,10 @@ public class FormService {
         String formID = form.getId();
         Form currFormObjDB = formRepo.getFormByID(formID);
 
+        if (currFormObjDB == null) {
+            throw new NullPointerException("Form " + formNo + "does not exist.");
+        }
+
         Map<String, FormSection> newInput = form.getFormContent().getFormSections();
 
         for (Map.Entry<String, FormSection> sectionEntry : newInput.entrySet()) {
@@ -105,4 +109,6 @@ public class FormService {
 
         formRepo.save(currFormObjDB);
     }
+
+
 }
