@@ -55,7 +55,7 @@ public class FormService {
     }
 
     // create new form/workflow
-    public void createForm(Map<String, String> newFormInfo) throws NullPointerException, DataIntegrityViolationException, Exception {
+    public void createForm(Map<String, String> newFormInfo) throws FormNotFoundException, DataIntegrityViolationException, Exception {
 
         String formNo = newFormInfo.get("formNo");
         String assigned_vendor_uid = newFormInfo.get("assigned_vendor_uid");
@@ -69,7 +69,7 @@ public class FormService {
         Form newForm = new Form(formNo, getFormTempt);
 
         if (getFormTempt == null) {
-            throw new NullPointerException("Form Template " + formNo + "does not exist.");
+            throw new FormNotFoundException("Form Template " + formNo + "does not exist.");
         }
 
         // TODO: Check vendor UID exists?
@@ -77,12 +77,12 @@ public class FormService {
         formRepo.save(newForm); 
     }
 
-    public void editForm(Form form) throws NullPointerException, DataIntegrityViolationException, Exception {
+    public void editForm(Form form) throws FormNotFoundException, DataIntegrityViolationException, Exception {
         String formID = form.getId();
         Form currFormObjDB = formRepo.getFormByID(formID);
 
         if (currFormObjDB == null) {
-            throw new NullPointerException("Form " + formNo + "does not exist.");
+            throw new FormNotFoundException("Form " + formID + "does not exist.");
         }
 
         Map<String, FormSection> newInput = form.getFormContent().getFormSections();
@@ -110,5 +110,42 @@ public class FormService {
         formRepo.save(currFormObjDB);
     }
 
+    public void changeStatus(Map<String, String> postQuery, String action) throws FormNotFoundException, Exception {
+        String formID = postQuery.get("formID");
+        Form currFormObjDB = formRepo.getFormByID(formID);
+
+        if (currFormObjDB == null) {
+            throw new FormNotFoundException("Form " + formID + "does not exist.");
+        }
+
+        // TODO: restrict certain status change to admin/approvers
+        switch(action) {
+            case "approve":
+                currFormObjDB.setStatus(FormStatus.APPROVED);
+                // TODO: add approver name and datatime into Form
+                break;
+            case "submit":
+                currFormObjDB.setStatus(FormStatus.PENDING_REVIEW);
+                break;
+            case "adminreviewed":
+                currFormObjDB.setStatus(FormStatus.PENDING_APPROVAL);
+                break;
+            case "archive":
+                currFormObjDB.setStatus(FormStatus.ARCHIVED);
+                break;
+            case "adminreject":
+                currFormObjDB.setStatus(FormStatus.ADMIN_REJECTED);
+                break;
+            case "approverreject":
+                currFormObjDB.setStatus(FormStatus.APPROVER_REJECTED);
+                break;
+            case "created":
+                currFormObjDB.setStatus(FormStatus.PENDING_VENDOR);
+                break;
+        }
+
+        formRepo.save(currFormObjDB);
+
+    } 
 
 }

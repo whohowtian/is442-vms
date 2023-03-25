@@ -82,7 +82,7 @@ public class FormController {
         try {
             service.createForm(newFormInfo); 
             return ResponseHandler.generateResponse("Created form for " + newFormInfo.get("assigned_vendor_uid") + " successfully.", HttpStatus.OK, null);
-        } catch (NullPointerException e) {
+        } catch (FormNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
         } catch (DataIntegrityViolationException e){
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
@@ -96,12 +96,27 @@ public class FormController {
         try {
             service.editForm(editedForm); 
             return ResponseHandler.generateResponse("Form edited successfully.", HttpStatus.OK, null);
-        } catch (NullPointerException e) {
+        } catch (FormNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
         } catch (DataIntegrityViolationException e){
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
         } catch (Exception e) {
             return ResponseHandler.generateResponse("Internal Server Error: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
         } 
+    }
+
+    @PostMapping("/changestatus/{action}")
+    public ResponseEntity<?> changeStatus(@RequestBody Map<String, String> postQuery, @PathVariable String action) {
+        try {
+            service.changeStatus(postQuery, action);
+            return ResponseHandler.generateResponse("Form Status changed successfully.", HttpStatus.OK, null);
+        }
+        catch (FormNotFoundException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
+        }
     }
 }

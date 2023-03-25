@@ -27,7 +27,7 @@ public class FormTemplate {
     private String formName;
     private String formEffDate;
     private int revNo;
-    private boolean isArchived;
+    // private boolean isArchived;
     private HashMap<String, FormSection> formSections;
 
     public FormTemplate(String formNo, String formName, HashMap<String, FormSection> formSections) {
@@ -40,7 +40,7 @@ public class FormTemplate {
         // }
 
         this.revNo = 1;
-        this.isArchived = false;
+        // this.isArchived = false;
         LocalDate date = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         formEffDate = date.format(formatter);

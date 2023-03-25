@@ -46,7 +46,7 @@ public class FormTemplateService {
 
             prevFT.setFormEffDate(formTemplate.getFormEffDate());
             prevFT.setFormName(formTemplate.getFormName());
-            prevFT.setArchived(formTemplate.isArchived());
+            // prevFT.setArchived(formTemplate.isArchived());
             prevFT.setRevNo(prevFT.getRevNo() + 1);
             prevFT.setFormSections(formTemplate.getFormSections());
 
