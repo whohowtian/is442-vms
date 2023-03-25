@@ -56,7 +56,7 @@ public class FormTemplateService {
     }
 
     public void createFormTemplate(FormTemplate formTemplate) throws NullPointerException, DataIntegrityViolationException, Exception {
-
+        // TODO: convert previous formtemplate format into the newer format with HashMap
         String formNo = formTemplate.getFormNo();
         FormTemplate getForm = formTemplateRepo.getFormTemplateByNo(formNo);
 
