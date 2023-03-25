@@ -46,8 +46,9 @@ export default {
         data5:fakeEditFormData, 
         headers5:["Form","Edited By","Last Edited","Actions"],
         fields5:["form","editedby","lastEdited","Actions"],
-    }
-    },
+    search: ""
+    };
+  },
     methods: {
         handleButton() {alert('what is workflow');},
         InactiveClick(item) {
@@ -62,7 +63,18 @@ export default {
         TaskCompleted(){
             window.open('http://i.imgflip.com/31fael.jpg', '_blank');
         } 
-}
+},
+computed: {
+    filteredProducts() {
+      return this.products.filter(p => {
+        // return true if the product should be visible
+
+        // in this example we just check if the search string
+        // is a substring of the product name (case insensitive)
+        return p.name.toLowerCase().indexOf(this.search.toLowerCase()) != -1;
+      });
+    }
+  }
 };
 </script>
 
@@ -97,7 +109,13 @@ export default {
             <Button @click="handleButton">+ Add Workflow</Button>
             </div>
         </div>
-        
+
+
+        <!-- search bar -->
+        <div class="search-wrapper panel-heading col-sm-12">
+            <input type="text" v-model="search" placeholder="Search" /> <br> <br>
+        </div>  
+
         <!-- 1.1) Active Table content -->
         <!-- previous way of hardcoding table, to be changed to table component -->
         <div v-if="activeOption === 'workflowTable'">
@@ -114,7 +132,7 @@ export default {
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="item in data1" :key="item.id">
+                <tr v-for="item in filteredProducts" :key="item.id">
                 <td>{{ item.task }}</td>
                 <td>{{ item.company }}</td>
                 <td>{{ item.formNo }}</td>
