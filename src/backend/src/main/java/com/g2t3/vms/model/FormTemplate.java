@@ -22,7 +22,7 @@ import java.time.format.DateTimeFormatter;
 public class FormTemplate {
     @Id
     private String id;
-    @Indexed(unique = true, background = true)
+    // @Indexed(unique = true, background = true)
     private String formNo;
     private String formName;
     private String formEffDate;

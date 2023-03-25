@@ -3,8 +3,11 @@ package com.g2t3.vms.model;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.bson.types.ObjectId;
+
+import com.g2t3.vms.enums.FormStatus;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +20,7 @@ public class Form {
     @Id
     private String id;
     private String assigned_vendor_uid;
-    private String status;
+    private FormStatus status;
     private FormTemplate formContent;
 
     // should this be in a seperate class?
@@ -26,7 +29,7 @@ public class Form {
 
     public Form (String assigned_vendor_uid, FormTemplate formContent) {
         this.assigned_vendor_uid = assigned_vendor_uid;
-        this.status = "new";
+        this.status = FormStatus.PENDING_VENDOR;
         this.formContent = formContent;
         this.approver = "";
         this.approvalDateTime = null;
