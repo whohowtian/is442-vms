@@ -1,0 +1,36 @@
+{
+    "formNo": "HASHMAPTEST2",
+    "formName": "Subcontractors Safety - Health Performance Evaluation",
+    "formEffDate": "25.03.2023",
+    "formSections": {
+            "helloworld!!!!!!!":
+            {
+                "sectionName": "Subcontractor Details",
+                "adminUseOnly": false,
+                "doScoreCalculation": false,
+                "questions": {
+                    "qn1id":
+                    {
+                        "qnTitle": "Name of Contractor: ",
+                        "inputType": null
+                    },
+                    "qn2id":
+                    {
+                        "qnTitle": "Trade: ",
+                        "inputType": "radio"
+                    },
+                    "qn3id":
+                    {
+                        "qnTitle": "Project/Worksite: ",
+                        "inputType": "radio"
+                    },
+                    "qn4id":
+                    {
+                        "qnTitle": "Date of Evaluation: ",
+                        "inputType": "radio"
+                    }
+                }
+            }
+    },
+    "archived": false
+}
