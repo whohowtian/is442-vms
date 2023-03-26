@@ -56,8 +56,8 @@ export default {
         headers4:["Task","Company Name","Form No.","Date Assigned","Actions"],
         fields4:["task","company","formNo","dateAssign","Actions"],
     search: ""
-    };
-  },
+      }
+    },
     created() {
         this.getAllFormAvail() //trigger FormTemplate API
       },
@@ -112,15 +112,6 @@ export default {
         allRowsSelected() { //table styling function
             return this.selectedRows.length === this.allFormData.length;
         },
-    filteredProducts() {
-      return this.products.filter(p => {
-        // return true if the product should be visible
-
-        // in this example we just check if the search string
-        // is a substring of the product name (case insensitive)
-        return p.name.toLowerCase().indexOf(this.search.toLowerCase()) != -1;
-      });
-    }
   },
     watch: { //table styling function
         selectAll(val) {
@@ -171,10 +162,7 @@ export default {
         </div>
 
 
-        <!-- search bar -->
-        <div class="search-wrapper panel-heading col-sm-12">
-            <input type="text" v-model="search" placeholder="Search" /> <br> <br>
-        </div>  
+         
 
         <!-- 1.1) Active Table content -->
         <!-- previous way of hardcoding table, to be changed to table component -->
@@ -192,7 +180,7 @@ export default {
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="item in filteredProducts" :key="item.id">
+                <tr v-for="item in data1" :key="item.id">
                 <td>{{ item.task }}</td>
                 <td>{{ item.company }}</td>
                 <td>{{ item.formNo }}</td>
