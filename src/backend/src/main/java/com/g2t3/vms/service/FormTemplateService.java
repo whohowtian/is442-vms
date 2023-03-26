@@ -6,7 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import com.g2t3.vms.exception.FormNotFoundException;
+import com.g2t3.vms.exception.ResourceNotFoundException;
+import com.g2t3.vms.exception.ResourceNotFoundException;
 import com.g2t3.vms.model.FormTemplate;
 import com.g2t3.vms.repository.FormTemplateRepo;
 
@@ -16,7 +17,7 @@ public class FormTemplateService {
     @Autowired
     private FormTemplateRepo formTemplateRepo;
 
-    public ArrayList<FormTemplate> getAllFormTemplates() throws FormNotFoundException, Exception {
+    public ArrayList<FormTemplate> getAllFormTemplates() throws ResourceNotFoundException, Exception {
         ArrayList<FormTemplate> formTemplates = new ArrayList<>();
 
         for (FormTemplate form : formTemplateRepo.findAll()) {
@@ -24,22 +25,22 @@ public class FormTemplateService {
         }
 
         if (formTemplates.isEmpty()) {
-            throw new FormNotFoundException("No form templates have been created.");
+            throw new ResourceNotFoundException("No form templates have been created.");
         }
 
         return formTemplates;
     }
 
-    public FormTemplate getFormTemplateByFTID(String formTemplateNo) throws FormNotFoundException, Exception {
+    public FormTemplate getFormTemplateByFTID(String formTemplateNo) throws ResourceNotFoundException, Exception {
         
         FormTemplate getForm = formTemplateRepo.getFormTemplateByNo(formTemplateNo);
         if (getForm == null) {
-            throw new FormNotFoundException("Form " + formTemplateNo +  " does not exist.");
+            throw new ResourceNotFoundException("Form " + formTemplateNo +  " does not exist.");
         }
         return getForm;
     }
 
-    public void updateFormTemplate(FormTemplate formTemplate) throws FormNotFoundException, DataIntegrityViolationException, Exception {
+    public void updateFormTemplate(FormTemplate formTemplate) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
 
             String formNo = formTemplate.getFormNo();
             FormTemplate prevFT = getFormTemplateByFTID(formNo); 
@@ -69,7 +70,7 @@ public class FormTemplateService {
 
     }
 
-    public void deleteFormTemplate(String FTID) throws FormNotFoundException, DataIntegrityViolationException, Exception {
+    public void deleteFormTemplate(String FTID) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
 
         FormTemplate formTemplate = getFormTemplateByFTID(FTID);
 

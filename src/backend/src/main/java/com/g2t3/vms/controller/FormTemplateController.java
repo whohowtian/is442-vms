@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.g2t3.vms.exception.FormNotFoundException;
+import com.g2t3.vms.exception.ResourceNotFoundException;
 import com.g2t3.vms.model.FormTemplate;
 import com.g2t3.vms.response.ResponseHandler;
 import com.g2t3.vms.service.FormTemplateService;
@@ -40,7 +40,7 @@ public class FormTemplateController {
         ArrayList <FormTemplate> formTemplates = new ArrayList<>();
         try {
             formTemplates = service.getAllFormTemplates();
-        } catch (FormNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         } catch (Exception e) {
             return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
@@ -56,7 +56,7 @@ public class FormTemplateController {
         FormTemplate getForm;
         try {
             getForm = service.getFormTemplateByFTID(FITD);
-        } catch (FormNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         } catch (Exception e) {
             e.printStackTrace();
@@ -74,7 +74,7 @@ public class FormTemplateController {
         try {
             service.updateFormTemplate(formTemplate); 
             return ResponseHandler.generateResponse("Updated " + formNo + " successfully.", HttpStatus.OK, null);
-        } catch (FormNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         } catch (DataIntegrityViolationException e){
             return ResponseHandler.generateResponse("Bad Request: " + e.getMessage(), HttpStatus.BAD_REQUEST, null);
@@ -106,7 +106,7 @@ public class FormTemplateController {
         try {
             service.deleteFormTemplate(FTID); 
             return ResponseHandler.generateResponse("Deleted " + FTID + " successfully.", HttpStatus.OK, null);
-        } catch (FormNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         } catch (DataIntegrityViolationException e){
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);

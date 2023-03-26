@@ -5,13 +5,12 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.g2t3.vms.enums.UserType;
 import com.g2t3.vms.exception.ResourceAlreadyExistException;
-import com.g2t3.vms.exception.ResourceNotFoundException;
 import com.g2t3.vms.exception.ResourceNotFoundException;
 import com.g2t3.vms.model.Admin;
 import com.g2t3.vms.model.Approver;
 import com.g2t3.vms.model.User;
-import com.g2t3.vms.model.UserType;
 import com.g2t3.vms.model.Vendor;
 import com.g2t3.vms.repository.UserRepo;
 

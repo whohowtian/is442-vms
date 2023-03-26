@@ -1,4 +1,4 @@
-package com.g2t3.vms.model;
+package com.g2t3.vms.enums;
 
 import lombok.Getter;
 

@@ -10,7 +10,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,17 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.bson.types.ObjectId;
 
-
-import com.g2t3.vms.exception.FormNotFoundException;
-
-import com.g2t3.vms.response.ResponseHandler;
-
+import com.g2t3.vms.exception.ResourceNotFoundException;
 import com.g2t3.vms.model.Form;
-import com.g2t3.vms.repository.FormRepo;
-import com.g2t3.vms.model.FormTemplate;
-import com.g2t3.vms.repository.FormTemplateRepo;
 import com.g2t3.vms.response.ResponseHandler;
 import com.g2t3.vms.service.FormService;
 
@@ -52,7 +43,7 @@ public class FormController {
         ArrayList <Form> forms = new ArrayList<>();
         try {
             forms = service.getAllForms();
-        } catch (FormNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         } catch (Exception e) {
             return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
@@ -66,7 +57,7 @@ public class FormController {
         Form getForm;
         try {
             getForm = service.getFormByFID(FID);
-        } catch (FormNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         } catch (Exception e) {
             e.printStackTrace();
@@ -82,7 +73,7 @@ public class FormController {
         try {
             service.createForm(newFormInfo); 
             return ResponseHandler.generateResponse("Created form for " + newFormInfo.get("assigned_vendor_uid") + " successfully.", HttpStatus.OK, null);
-        } catch (FormNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
         } catch (DataIntegrityViolationException e){
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
@@ -96,7 +87,7 @@ public class FormController {
         try {
             service.editForm(editedForm); 
             return ResponseHandler.generateResponse("Form edited successfully.", HttpStatus.OK, null);
-        } catch (FormNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
         } catch (DataIntegrityViolationException e){
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
@@ -111,7 +102,7 @@ public class FormController {
             service.changeStatus(postQuery, action);
             return ResponseHandler.generateResponse("Form Status changed successfully.", HttpStatus.OK, null);
         }
-        catch (FormNotFoundException e) {
+        catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
         catch (Exception e) {

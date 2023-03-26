@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.g2t3.vms.enums.UserType;
 import com.g2t3.vms.exception.ResourceAlreadyExistException;
 import com.g2t3.vms.exception.ResourceNotFoundException;
 import com.g2t3.vms.model.Admin;
 import com.g2t3.vms.model.Approver;
 import com.g2t3.vms.model.User;
-import com.g2t3.vms.model.UserType;
 import com.g2t3.vms.model.Vendor;
 import com.g2t3.vms.response.ResponseHandler;
 import com.g2t3.vms.service.UserService;

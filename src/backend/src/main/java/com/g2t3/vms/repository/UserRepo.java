@@ -7,8 +7,8 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.g2t3.vms.enums.UserType;
 import com.g2t3.vms.model.User;
-import com.g2t3.vms.model.UserType;
 import com.g2t3.vms.model.Vendor;
 
 @Repository

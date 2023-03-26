@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.bson.types.ObjectId;
 
 
-import com.g2t3.vms.exception.FormNotFoundException;
+import com.g2t3.vms.exception.ResourceNotFoundException;
 import com.g2t3.vms.model.FormTemplate;
 import com.g2t3.vms.model.FormSection;
 import com.g2t3.vms.model.Question;
@@ -31,7 +31,7 @@ public class FormService {
 
 
     // Get all created forms/workflows
-    public ArrayList<Form> getAllForms() throws FormNotFoundException, Exception {
+    public ArrayList<Form> getAllForms() throws ResourceNotFoundException, Exception {
         ArrayList<Form> forms = new ArrayList<>();
 
         for (Form form : formRepo.findAll()) {
@@ -39,23 +39,23 @@ public class FormService {
         }
 
         if (forms.isEmpty()) {
-            throw new FormNotFoundException("No forms/workflows have been created.");
+            throw new ResourceNotFoundException("No forms/workflows have been created.");
         }
 
         return forms;
     }
 
-    public Form getFormByFID(String formID) throws FormNotFoundException, Exception {
+    public Form getFormByFID(String formID) throws ResourceNotFoundException, Exception {
         
         Form getForm = formRepo.getFormByID(formID);
         if (getForm == null) {
-            throw new FormNotFoundException("Form " + formID +  " does not exist.");
+            throw new ResourceNotFoundException("Form " + formID +  " does not exist.");
         }
         return getForm;
     }
 
     // create new form/workflow
-    public void createForm(Map<String, String> newFormInfo) throws FormNotFoundException, DataIntegrityViolationException, Exception {
+    public void createForm(Map<String, String> newFormInfo) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
 
         String formNo = newFormInfo.get("formNo");
         String assigned_vendor_uid = newFormInfo.get("assigned_vendor_uid");
@@ -69,7 +69,7 @@ public class FormService {
         Form newForm = new Form(formNo, getFormTempt);
 
         if (getFormTempt == null) {
-            throw new FormNotFoundException("Form Template " + formNo + "does not exist.");
+            throw new ResourceNotFoundException("Form Template " + formNo + "does not exist.");
         }
 
         // TODO: Check vendor UID exists?
@@ -77,12 +77,12 @@ public class FormService {
         formRepo.save(newForm); 
     }
 
-    public void editForm(Form form) throws FormNotFoundException, DataIntegrityViolationException, Exception {
+    public void editForm(Form form) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
         String formID = form.getId();
         Form currFormObjDB = formRepo.getFormByID(formID);
 
         if (currFormObjDB == null) {
-            throw new FormNotFoundException("Form " + formID + "does not exist.");
+            throw new ResourceNotFoundException("Form " + formID + "does not exist.");
         }
 
         Map<String, FormSection> newInput = form.getFormContent().getFormSections();
@@ -110,12 +110,12 @@ public class FormService {
         formRepo.save(currFormObjDB);
     }
 
-    public void changeStatus(Map<String, String> postQuery, String action) throws FormNotFoundException, Exception {
+    public void changeStatus(Map<String, String> postQuery, String action) throws ResourceNotFoundException, Exception {
         String formID = postQuery.get("formID");
         Form currFormObjDB = formRepo.getFormByID(formID);
 
         if (currFormObjDB == null) {
-            throw new FormNotFoundException("Form " + formID + "does not exist.");
+            throw new ResourceNotFoundException("Form " + formID + "does not exist.");
         }
 
         // TODO: restrict certain status change to admin/approvers

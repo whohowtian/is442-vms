@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import org.springframework.data.annotation.PersistenceCreator;
 
+import com.g2t3.vms.enums.UserType;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
