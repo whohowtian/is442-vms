@@ -51,7 +51,7 @@
                   <el-col >
                     <div >
                       <el-checkbox v-model="eachFormObj.AdminUseOnly" label="AdminUseOnly"  size="small" />
-                      <!-- <el-checkbox v-model="eachFormObj.ApproverUseOnly"  label="ApproverUseOnly" size="small" /> -->
+                      <el-checkbox v-model="eachFormObj.ApproverUseOnly"  label="ApproverUseOnly" size="small" />
                       <el-button type="danger" round style="float: right" @click="deleteSection(eachFormIndex,eachFormObj.sectionTitle)">Delete Section</el-button>
                     </div>
                   </el-col>
