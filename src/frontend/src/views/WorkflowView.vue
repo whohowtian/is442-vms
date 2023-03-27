@@ -26,6 +26,8 @@ export default {
         selectAll: false,
         allFormData:[],
         allWorkflowData:[],
+        ActiveWorkflow:[],
+        InActiveWorkflow:[],
         menuItems: [ //for top nav bar
             { label: 'HOME', route: '/AdminView'  },
             { label: 'ACCOUNT', route: '/AccountView'  },
@@ -41,9 +43,9 @@ export default {
         secNavOption:'ActiveWorkFlow', //default table displaying
 
         //fake data -- in future change to api endpoint
-        data1:fakeWorkflowData.active, 
-        headers1:["Task","Company Name","Form No.","Stage","Status","Date Assigned","Actions"],
-        fields1:["task","company","formNo","stage","status","dateAssign","Actions-Toggle"],
+        // data1:fakeWorkflowData.active, 
+        // headers1:["Task","Company Name","Form No.","Stage","Status","Date Assigned","Actions"],
+        // fields1:["task","company","formNo","stage","status","dateAssign","Actions-Toggle"],
 
         data2:fakeWorkflowData.inactive, 
         headers2:["Task","Company Name","Form No.","Status","Date Assigned","Actions"],
@@ -71,20 +73,29 @@ export default {
                 axios.get(`${BASE_URL}/api/user`)
                 .then(response => {
                     var allUser= response.data.data;
+                    
                     //data cleaning
                     for (const workflow of allWorkflow){
                         console.log(workflow)
                         var id = workflow.id
                         var task = workflow.formContent.formName
                         var userID= workflow.assigned_vendor_uid
-                        var companyName = this.findCompanyName(userID,allUser)
+                        var userName= this.findUserandCompanyName(userID,allUser)[0]
+                        var companyName = this.findUserandCompanyName(userID,allUser)[1]
+                        console.log(userName)
                         var formNo = workflow.formContent.formNo
                         var status=workflow.status
                         var stage= this.addStage(status)
                         var dateAssign = workflow.formContent.formEffDate
-                        this.allWorkflowData.push({ id:id,task: task, companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+                        this.allWorkflowData.push({ id:id,task: task, userName:userName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+
+                        if (status !='ARCHIVED'){
+                            this.ActiveWorkflow.push({ id:id,task: task, userName:userName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+                        }else{
+                            this.InActiveWorkflow.push({ id:id,task: task, userName:userName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+                        }
                     }
-                    console.log(this.allWorkflowData)
+                    
                 })
             })
             .catch(error => {
@@ -109,10 +120,12 @@ export default {
                 console.log(error);
             });
         },
-        findCompanyName(userID,allUser){
+        findUserandCompanyName(userID,allUser){
             var companyName = '';
+            var userName = '';
             for (const user of allUser){
                 if (userID == user.userId){
+                    userName= user.name
                     if(user.admin== true || user.approver==true){
                         companyName = 'Quantum Leap Incorporation'
                     }else{
@@ -120,7 +133,7 @@ export default {
                     }
                 }
             }
-            return companyName;
+            return [userName,companyName];
         },
         addStage(status){ //add stage according to the status
             var stage = '';
@@ -199,10 +212,10 @@ export default {
         <!-- sub nav bar [Active / Inactive] -->
         <el-tabs v-model="secNavOption"  type="border-card" >
             <el-tab-pane label="Active" name="ActiveWorkFlow"  >
-                <template #label>Active({{ allWorkflowData.length }})</template>
+                <template #label>Active({{ ActiveWorkflow.length }})</template>
             </el-tab-pane>
             <el-tab-pane label="Inactive" name="InActiveworkflowTable"  @tab-click="secNavOption = 'InActiveworkflowTable'">
-                <template #label>Inctive({{ data2.length }})</template>
+                <template #label>Inctive({{ InActiveWorkflow.length }})</template>
             </el-tab-pane>
 
         <!-- search bar and button (still unable to fit to inline) -->
@@ -228,6 +241,7 @@ export default {
                 <tr>
                     <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
                     <th>Task</th>
+                    <th>User</th>
                     <th>Company Name</th>
                     <th>Form No.</th>
                     <th>Stage</th>
@@ -237,9 +251,10 @@ export default {
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="item in allWorkflowData" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
+                <tr v-for="item in ActiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
                 <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
                 <td>{{ item.task }}</td>
+                <td>{{ item.userName }}</td>
                 <td>{{ item.companyName }}</td>
                 <td>{{ item.formNo }}</td>
                 <td>{{ item.stage }}</td>
@@ -247,14 +262,14 @@ export default {
                 <td>{{ item.dateAssign }}</td>
                 <td >
                     <div  class="btn-group dropup">
-
                         <Button buttonStyle="none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             ...
                         </Button>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="#">Edit</a></li>
-                            <li><a class="dropdown-item" href="#">Delete</a></li>
                             <li><a class="dropdown-item" href="#">Email</a></li>
+                            <li v-if="item.status=='APPROVED'"><a class="dropdown-item" href="#">PDF</a></li>
+                            <li><a class="dropdown-item" href="#">Delete</a></li>
                         </ul>
                     </div>
 
@@ -266,7 +281,45 @@ export default {
         
         <!-- 1.2) InActive Table content -->
         <div v-if="secNavOption === 'InActiveworkflowTable'">
-            <Table :data="data2" :headers="headers2" :fields="fields2" :options="dropdownOptions" />
+            <!-- <Table :data="data2" :headers="headers2" :fields="fields2" :options="dropdownOptions" /> -->
+            <table class="my-table">
+            <thead>
+                <tr>
+                    <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
+                    <th>Task</th>
+                    <th>User</th>
+                    <th>Company Name</th>
+                    <th>Form No.</th>
+                    <th>Status</th>
+                    <th>Date Assigned</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in InActiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
+                <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
+                <td>{{ item.task }}</td>
+                <td>{{ item.userName }}</td>
+                <td>{{ item.companyName }}</td>
+                <td>{{ item.formNo }}</td>
+                <td>{{ item.status }}</td>
+                <td>{{ item.dateAssign }}</td>
+                <td >
+                    <div  class="btn-group dropup">
+                        <Button buttonStyle="none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            ...
+                        </Button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">View</a></li>
+                            <li><a class="dropdown-item" href="#">Activate</a></li>
+                        </ul>
+                    </div>
+
+                </td>
+                </tr>
+            </tbody>
+            </table>
+
         </div>
         </el-tabs>
     </div>
