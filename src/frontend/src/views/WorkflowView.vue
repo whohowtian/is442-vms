@@ -57,53 +57,87 @@ export default {
         headers4:["Task","Company Name","Form No.","Date Assigned","Actions"],
         fields4:["task","company","formNo","dateAssign","Actions"],
     search: ""
-      }
+        }
     },
     created() {
         this.getAllFormAvail() //trigger FormTemplate API
-        this.getAllWorkflow()
+        this.getAllWorkflow() //trigger Form API
         },
     methods: {
         async getAllWorkflow(){
             axios.get(`${BASE_URL}/api/form`)
             .then(response => {
                 var allWorkflow = response.data.data;
-                console.log(allWorkflow)
-              //data cleaning
-                for (const workflow of allWorkflow){
-                    var id = workflow.id
-                    var task = workflow.formContent.formName
-                    // var companyName = workflow.formName
-                    var formNo = workflow.formContent.formNo
-                    var status=workflow.status
-                    var dateAssign = workflow.formContent.formEffDate
-                    this.allWorkflowData.push({ id:id,task: task, companyName:"",formNo: formNo, stage: "",status: status, dateAssign:dateAssign})
-                }
-                console.log(this.allWorkflowData)
-
+                axios.get(`${BASE_URL}/api/user`)
+                .then(response => {
+                    var allUser= response.data.data;
+                    //data cleaning
+                    for (const workflow of allWorkflow){
+                        console.log(workflow)
+                        var id = workflow.id
+                        var task = workflow.formContent.formName
+                        var userID= workflow.assigned_vendor_uid
+                        var companyName = this.findCompanyName(userID,allUser)
+                        var formNo = workflow.formContent.formNo
+                        var status=workflow.status
+                        var stage= this.addStage(status)
+                        var dateAssign = workflow.formContent.formEffDate
+                        this.allWorkflowData.push({ id:id,task: task, companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+                    }
+                    console.log(this.allWorkflowData)
+                })
             })
             .catch(error => {
-              console.log(error);
+                console.log(error);
             });
         },
         async getAllFormAvail(){
-          axios.get(`${BASE_URL}/api/formtemplate`)
+            axios.get(`${BASE_URL}/api/formtemplate`)
             .then(response => {
-              var allForm = response.data.data;
-              //data cleaning
-              for (const form of allForm){
-                var id = form.id
-                var formName = form.formName
-                var formNo = form.formNo
-                var lastEdited=form.formEffDate
-                this.allFormData.push({ id: id, formName: formName, formNo: formNo, editedby:"", lastEdited: lastEdited})
-              }
+                var allForm = response.data.data;
+                //data cleaning
+                for (const form of allForm){
+                    var id = form.id
+                    var formName = form.formName
+                    var formNo = form.formNo
+                    var lastEdited=form.formEffDate
+                    this.allFormData.push({ id: id, formName: formName, formNo: formNo, editedby:"", lastEdited: lastEdited})
+                }
             //   console.log(this.allFormData)
-
             })
             .catch(error => {
-              console.log(error);
+                console.log(error);
             });
+        },
+        findCompanyName(userID,allUser){
+            var companyName = '';
+            for (const user of allUser){
+                if (userID == user.userId){
+                    if(user.admin== true || user.approver==true){
+                        companyName = 'Quantum Leap Incorporation'
+                    }else{
+                        companyName = user.entityName
+                    }
+                }
+            }
+            return companyName;
+        },
+        addStage(status){ //add stage according to the status
+            var stage = '';
+            if (status == "PENDING_VENDOR"){
+                stage = 'Vendor'
+            }else if (status == "PENDING_REVIEW"){
+                stage = 'Admin'
+            }else if(status == "PENDING_APPROVAL"){
+                stage = 'Approver'
+            }else if(status == "APPROVED"){
+                stage = 'Completed'
+            }else if(status =='ADMIN_REJECTED'){
+                stage = 'Vendor'
+            }else if (status == "APPROVER_REJECTED"){
+                stage = 'Vendor'
+            }
+            return stage
         },
         EditEachForm(formNo){ //GET FormTemplate API
             localStorage.setItem('formNo', formNo)
@@ -136,7 +170,7 @@ export default {
         allRowsSelected() { //table styling function
             return this.selectedRows.length === this.allFormData.length;
         },
-  },
+    },
     watch: { //table styling function
         selectAll(val) {
         this.selectedRows = val ? [...this.allFormData] : [];
@@ -184,10 +218,7 @@ export default {
                 <Button @click="AddWorkflow">+ Add Workflow</Button>
             </div>
         </div>
-        {{ firstNavOption, secNavOption}}
-
-         
-
+        
         <!-- 1.1) Active Table content -->
         <!-- previous way of hardcoding table, to be changed to table component -->
         
