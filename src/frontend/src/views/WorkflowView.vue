@@ -3,7 +3,6 @@ import NavBar from '../components/Navbar.vue';
 import Header from '../components/Header.vue';
 import Button from '../components/Button.vue';
 import Table from "../components/Table.vue";
-import fakeWorkflowData from './fakeWorkflowData';
 import fakeTaskData from './fakeTaskData';
 import { Search, Edit } from '@element-plus/icons-vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -44,13 +43,6 @@ export default {
         secNavOption:'ActiveWorkFlow', //default table displaying
 
         //fake data -- in future change to api endpoint
-        // data1:fakeWorkflowData.active, 
-        // headers1:["Task","Company Name","Form No.","Stage","Status","Date Assigned","Actions"],
-        // fields1:["task","company","formNo","stage","status","dateAssign","Actions-Toggle"],
-
-        data2:fakeWorkflowData.inactive, 
-        headers2:["Task","Company Name","Form No.","Status","Date Assigned","Actions"],
-        fields2:["task","company","formNo","status","dateAssign","Actions-Toggle"],
 
         data3:fakeTaskData.todo, 
         headers3:["Task","Company Name","Form No.","Date Assigned","Actions"],
@@ -152,7 +144,12 @@ export default {
             return stage
         },
         deleteWorkflow(id,vendorID){
-            console.log(id, vendorID)
+            console.log("id",id)
+            console.log("vendor",vendorID)
+            // id = '"'+ id.trim() + '"'
+            // vendorID = '"'+ vendorID.trim() + '"'
+            console.log("id",id)
+            
             Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -164,16 +161,17 @@ export default {
             }).then((result) => {
                 if (result.isConfirmed) {
                     var url = `${BASE_URL}/api/form/changestatus/archive`
-                    const data = { formID: id, assigned_vendor_uid: vendorID}
-                    axios.get(url, {
-                        params: data
+                    axios.post(url, {
+                        formID:id,assigned_vendor_uid:vendorID
                     })
                     .then(response => {
                         Swal.fire(
                         'Deleted!',
                         'Your file has been archived.',
                         'success'
-                        )
+                        ).then(function () {
+                            window.location.href = "/WorkflowView";
+                        })
                     })
                 }
             })
