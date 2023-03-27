@@ -7,8 +7,8 @@ const fakeWorkflowData = {
     { id: 5, task: 'zfgdfg', company: "EB534",formNo: 2235,stage:'Vendor', status:'Draft', dateAssign:'feb 2, 2023', },
   ],
   inactive:[    
-    { id: 7, task: 'AAA', company: "HBERHERH",formNo: 22452455,stage:'Vendor', status:'Draft', dateAssign:'feb 2, 2023'},
-    { id: 8, task: 'BBBB', company: "BWRBWE",formNo: 2262455,stage:'Vendor', status:'Draft', dateAssign:'feb 2, 2023'},
+    { id: 7, task: 'AAA', company: "HBERHERH",formNo: 22452455, status:'Deleted', dateAssign:'feb 2, 2023'},
+    { id: 8, task: 'BBBB', company: "BWRBWE",formNo: 2262455, status:'Deleted', dateAssign:'feb 2, 2023'},
   ],
 }
   
