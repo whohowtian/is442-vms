@@ -28,6 +28,7 @@ export default {
         allWorkflowData:[],
         ActiveWorkflow:[],
         InActiveWorkflow:[],
+        SearchCompany:'',
         menuItems: [ //for top nav bar
             { label: 'HOME', route: '/AdminView'  },
             { label: 'ACCOUNT', route: '/AccountView'  },
@@ -79,20 +80,21 @@ export default {
                         console.log(workflow)
                         var id = workflow.id
                         var task = workflow.formContent.formName
-                        var userID= workflow.assigned_vendor_uid
-                        var userName= this.findUserandCompanyName(userID,allUser)[0]
-                        var companyName = this.findUserandCompanyName(userID,allUser)[1]
-                        console.log(userName)
+                        var vendorID= workflow.assigned_vendor_uid
+                        var VendorName= this.findVendorandCompanyName(vendorID,allUser)[0]
+                        var companyName = this.findVendorandCompanyName(vendorID,allUser)[1]
                         var formNo = workflow.formContent.formNo
                         var status=workflow.status
                         var stage= this.addStage(status)
                         var dateAssign = workflow.formContent.formEffDate
-                        this.allWorkflowData.push({ id:id,task: task, userName:userName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+                        this.allWorkflowData.push({ id:id,task: task, vendorID:vendorID,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
 
+                        //for active workflow
                         if (status !='ARCHIVED'){
-                            this.ActiveWorkflow.push({ id:id,task: task, userName:userName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+                            this.ActiveWorkflow.push({ id:id,task: task, vendorID:vendorID,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
                         }else{
-                            this.InActiveWorkflow.push({ id:id,task: task, userName:userName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+                            // inactive workflow
+                            this.InActiveWorkflow.push({ id:id,task: task, vendorID:vendorID,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
                         }
                     }
                     
@@ -120,20 +122,17 @@ export default {
                 console.log(error);
             });
         },
-        findUserandCompanyName(userID,allUser){
+        findVendorandCompanyName(vendorID,allUser){
             var companyName = '';
-            var userName = '';
+            var VendorName = '';
             for (const user of allUser){
-                if (userID == user.userId){
-                    userName= user.name
-                    if(user.admin== true || user.approver==true){
-                        companyName = 'Quantum Leap Incorporation'
-                    }else{
-                        companyName = user.entityName
-                    }
+                if (vendorID == user.userId){
+                    VendorName= user.name
+                    companyName = user.entityName
+                    
                 }
             }
-            return [userName,companyName];
+            return [VendorName,companyName];
         },
         addStage(status){ //add stage according to the status
             var stage = '';
@@ -151,6 +150,33 @@ export default {
                 stage = 'Vendor'
             }
             return stage
+        },
+        deleteWorkflow(id,vendorID){
+            console.log(id, vendorID)
+            Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var url = `${BASE_URL}/api/form/changestatus/archive`
+                    const data = { formID: id, assigned_vendor_uid: vendorID}
+                    axios.get(url, {
+                        params: data
+                    })
+                    .then(response => {
+                        Swal.fire(
+                        'Deleted!',
+                        'Your file has been archived.',
+                        'success'
+                        )
+                    })
+                }
+            })
         },
         EditEachForm(formNo){ //GET FormTemplate API
             localStorage.setItem('formNo', formNo)
@@ -221,7 +247,7 @@ export default {
         <!-- search bar and button (still unable to fit to inline) -->
         <div class="row" >
             <div class="col-sm-2">
-                <el-input placeholder="Search Company Name" style="width:fit-content" size="large">
+                <el-input v-model="SearchCompany" placeholder="Search Company Name" style="width:fit-content" size="large">
                 <template #suffix>
                 <el-icon class="el-input__icon"><Search /></el-icon>
                 </template>
@@ -241,7 +267,7 @@ export default {
                 <tr>
                     <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
                     <th>Task</th>
-                    <th>User</th>
+                    <th>Vendor</th>
                     <th>Company Name</th>
                     <th>Form No.</th>
                     <th>Stage</th>
@@ -254,7 +280,7 @@ export default {
                 <tr v-for="item in ActiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
                 <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
                 <td>{{ item.task }}</td>
-                <td>{{ item.userName }}</td>
+                <td>{{ item.VendorName }}</td>
                 <td>{{ item.companyName }}</td>
                 <td>{{ item.formNo }}</td>
                 <td>{{ item.stage }}</td>
@@ -269,7 +295,7 @@ export default {
                             <li><a class="dropdown-item" href="#">Edit</a></li>
                             <li><a class="dropdown-item" href="#">Email</a></li>
                             <li v-if="item.status=='APPROVED'"><a class="dropdown-item" href="#">PDF</a></li>
-                            <li><a class="dropdown-item" href="#">Delete</a></li>
+                            <li><a class="dropdown-item" @click="deleteWorkflow(item.id, item.vendorID)">Delete</a></li>
                         </ul>
                     </div>
 
@@ -287,7 +313,7 @@ export default {
                 <tr>
                     <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
                     <th>Task</th>
-                    <th>User</th>
+                    <th>Vendor</th>
                     <th>Company Name</th>
                     <th>Form No.</th>
                     <th>Status</th>
@@ -299,7 +325,7 @@ export default {
                 <tr v-for="item in InActiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
                 <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
                 <td>{{ item.task }}</td>
-                <td>{{ item.userName }}</td>
+                <td>{{ item.VendorName }}</td>
                 <td>{{ item.companyName }}</td>
                 <td>{{ item.formNo }}</td>
                 <td>{{ item.status }}</td>
