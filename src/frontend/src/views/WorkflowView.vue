@@ -253,7 +253,6 @@ export default {
                 <th>Last Edited</th>
                 <th>Actions</th>
             </tr>
-            WAITING FOR FORMTEMPLATE API FIX
 
             </thead>
             <tbody>

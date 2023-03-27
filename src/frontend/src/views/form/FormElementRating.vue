@@ -19,9 +19,6 @@ export default {
     return {
       value: null
     }
-  },
-  mounted() {
-    console.log('currentField', this.currentField)
   }
 }
 </script>
