@@ -81,7 +81,7 @@ public class FormController {
     public ResponseEntity<?> createForm(@RequestBody Map<String, String> newFormInfo) {
         try {
             service.createForm(newFormInfo); 
-            return ResponseHandler.generateResponse("Created form for " + newFormInfo.get("assigned_vendor_uid") + " successfully.", HttpStatus.OK, null);
+            return ResponseHandler.generateResponse("Created form for " + newFormInfo.get("assigned_vendor_email") + " successfully.", HttpStatus.OK, null);
         } catch (FormNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
         } catch (DataIntegrityViolationException e){

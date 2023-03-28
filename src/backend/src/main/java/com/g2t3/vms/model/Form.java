@@ -19,7 +19,7 @@ import lombok.Setter;
 public class Form {
     @Id
     private String id;
-    private String assigned_vendor_uid;
+    private String assigned_vendor_email;
     private FormStatus status;
     private FormTemplate formContent;
 
@@ -27,8 +27,8 @@ public class Form {
     private String approver;
     private LocalDateTime approvalDateTime;
 
-    public Form (String assigned_vendor_uid, FormTemplate formContent) {
-        this.assigned_vendor_uid = assigned_vendor_uid;
+    public Form (String assigned_vendor_email, FormTemplate formContent) {
+        this.assigned_vendor_email = assigned_vendor_email;
         this.status = FormStatus.PENDING_VENDOR;
         this.formContent = formContent;
         this.approver = "";
