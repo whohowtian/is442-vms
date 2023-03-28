@@ -35,8 +35,8 @@
         TaskCompleted(){
             window.open('http://i.imgflip.com/31fael.jpg', '_blank');
         },
-        EditEachForm(formNo){
-            localStorage.setItem('formNo', formNo)
+        EditEachForm(formNo,formId){
+            localStorage.setItem('formNo', [formNo,formId])
             window.location.href = "VendorForm";
         },
 }
@@ -86,7 +86,7 @@
                     <td>{{ item.id }}</td>
                     <td>{{ item.dateAssign }}</td>
                     <td >
-                        <el-icon class="el-input__icon" @click="EditEachForm(item.formNo)">
+                        <el-icon class="el-input__icon" @click="EditEachForm(item.formNo, item.id)">
                             <Edit />
                         </el-icon>
                     </td>
