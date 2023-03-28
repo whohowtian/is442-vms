@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.g2t3.vms.model.Email;
 import com.g2t3.vms.response.ResponseHandler;
-import com.g2t3.vms.service.EmailSenderService;
+import com.g2t3.vms.service.EmailService;
 
 import jakarta.mail.MessagingException;
 
@@ -22,7 +22,7 @@ import jakarta.mail.MessagingException;
 public class EmailController {
 
         @Autowired
-        private EmailSenderService service;
+        private EmailService service;
 
         @PostMapping(value = "/sendEmail", consumes = "application/json", produces = "application/json")
         public ResponseEntity<?> sendEmail(@RequestBody Email email) {
@@ -36,6 +36,48 @@ public class EmailController {
             } catch(Exception e) {
                 return ResponseHandler.generateResponse("Error Occured: Exception " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
             }
+        }
 
-    }
+        // templates
+        // @GetMapping("/template")
+        // @ResponseBody
+        // public ResponseEntity<?> getAllTemplates() {
+        //     ArrayList <EmailTemplate> users = new ArrayList<>();
+        //     try {
+        //         users = service.getAllTemplates();
+        //     } catch (ResourceNotFoundException e) {
+        //         return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+        //     } catch (Exception e) {
+        //         return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
+        //     }
+        //     return ResponseHandler.generateResponse("Successful", HttpStatus.OK, users);
+        // }
+
+        // @GetMapping("/template/{id}")
+        // @ResponseBody
+        // public ResponseEntity<?> getUserById(@PathVariable String id) {
+        //     EmailTemplate template = null;
+        //     try {
+        //         template = service.getTemplateById(id);
+        //     } catch (ResourceNotFoundException e) {
+        //         return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+        //     } catch (Exception e) {
+        //         return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
+        //     }
+        //     return ResponseHandler.generateResponse("Successful", HttpStatus.OK, template);
+        // }
+
+        // @PostMapping("/template")
+        // public ResponseEntity<?> createAdmin(@RequestBody EmailTemplate template) {
+
+        //     try {
+        //         service.createTemplate(template);
+        //         return ResponseHandler.generateResponse("Successful", HttpStatus.OK, null);
+        //     } catch (ResourceAlreadyExistException e) {
+        //         return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
+        //     } catch (Exception e) {
+        //         return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
+        //     }
+
+        // }
 }

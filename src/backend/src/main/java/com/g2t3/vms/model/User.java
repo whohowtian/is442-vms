@@ -10,13 +10,13 @@ import com.g2t3.vms.enums.UserType;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Document(collection = "User")
 @SuperBuilder(toBuilder = true)
-@Data
-@EqualsAndHashCode(callSuper=false)
-// @NoArgsConstructor
+@Data @EqualsAndHashCode(callSuper=false)
+@NoArgsConstructor
 public abstract class User {
 
     @Id
@@ -49,6 +49,14 @@ public abstract class User {
         this.userType = userType;
         this.isAdmin = isAdmin;
         this.isApprover = isApprover;
+    }
+
+    public User(String email, String password, String name, String number, UserType userType) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.number = number;
+        this.userType = userType;
     }
     
 }
