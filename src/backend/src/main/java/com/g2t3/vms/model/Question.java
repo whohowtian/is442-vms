@@ -19,6 +19,12 @@ public class Question {
     private String inputType;
     private ArrayList<String> inputOptions;
     private String answer;
+    private boolean isRequired;
+
+    public Question(String qnTitle, String inputType, ArrayList inputOptions, boolean isRequired) {
+        this(qnTitle, inputType, inputOptions);
+        this.isRequired = isRequired;
+    }
 
     public Question(String qnTitle, String inputType, ArrayList inputOptions) {
         this.qnTitle = qnTitle;
