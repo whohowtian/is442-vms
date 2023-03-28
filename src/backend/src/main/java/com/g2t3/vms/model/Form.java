@@ -27,12 +27,15 @@ public class Form {
     private String approver;
     private LocalDateTime approvalDateTime;
 
+    private String archivedBy;
+
     public Form (String assigned_vendor_email, FormTemplate formContent) {
         this.assigned_vendor_email = assigned_vendor_email;
         this.status = FormStatus.PENDING_VENDOR;
         this.formContent = formContent;
         this.approver = "";
         this.approvalDateTime = null;
+        this.archivedBy = null;
 
     }
 

@@ -132,6 +132,7 @@ public class FormService {
                 break;
             case "archive":
                 currFormObjDB.setStatus(FormStatus.ARCHIVED);
+                // currFormObjDB.setArchivedBy();
                 break;
             case "adminreject":
                 currFormObjDB.setStatus(FormStatus.ADMIN_REJECTED);
