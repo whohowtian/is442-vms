@@ -17,7 +17,7 @@ public class Question {
     // private String id;
     private String qnTitle;
     private String inputType;
-    private ArrayList inputOptions;
+    private ArrayList<String> inputOptions;
     private String answer;
 
     public Question(String qnTitle, String inputType, ArrayList inputOptions) {
