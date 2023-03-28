@@ -66,7 +66,7 @@ public class FormService {
 
         System.out.println(getFormTempt.toString());
 
-        Form newForm = new Form(formNo, getFormTempt);
+        Form newForm = new Form(assigned_vendor_uid, getFormTempt);
 
         if (getFormTempt == null) {
             throw new FormNotFoundException("Form Template " + formNo + "does not exist.");
