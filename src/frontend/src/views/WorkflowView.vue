@@ -144,11 +144,6 @@ export default {
             return stage
         },
         deleteWorkflow(id,vendorID){
-            console.log("id",id)
-            console.log("vendor",vendorID)
-            // id = '"'+ id.trim() + '"'
-            // vendorID = '"'+ vendorID.trim() + '"'
-            console.log("id",id)
             
             Swal.fire({
             title: 'Are you sure?',
@@ -170,7 +165,7 @@ export default {
                         'Your file has been archived.',
                         'success'
                         ).then(function () {
-                            window.location.href = "/WorkflowView";
+                            location.reload();
                         })
                     })
                 }
