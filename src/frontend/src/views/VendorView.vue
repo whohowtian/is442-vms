@@ -34,7 +34,11 @@
         },
         TaskCompleted(){
             window.open('http://i.imgflip.com/31fael.jpg', '_blank');
-        } 
+        },
+        EditEachForm(formNo){
+            localStorage.setItem('formNo', formNo)
+            window.location.href = "VendorForm";
+        },
 }
     };
 </script>
@@ -60,7 +64,35 @@
 
         <!-- 2.1) To-do Table content -->
         <div v-if="activeOption === 'taskTable'">
-            <Table :data="data1" :headers="headers1" :fields="fields1" icon-class="pen-square" @action-click="TaskToDoAction" />
+            <table class="my-table">
+            <thead>
+            <tr>
+                <th class="checkbox-col"><input type="checkbox"></th>
+                <th>Task</th>
+                <th>Form No.</th>
+                <th>Stage</th>
+                <th>Status</th>
+                <th>Date Assigned</th>
+                <th>Actions</th>
+            </tr>
+
+            </thead>
+            <tbody>
+                <tr v-for="item in data1" :key="item.id">
+                    <td class="checkbox-col"><input type="checkbox" ></td>
+                    <td>{{ item.task }}</td>
+                    <td>{{ item.formNo }}</td>
+                    <td>{{ item.company }}</td>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.dateAssign }}</td>
+                    <td >
+                        <el-icon class="el-input__icon" @click="EditEachForm(item.formNo)">
+                            <Edit />
+                        </el-icon>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
         </div>
 
         <!-- 2.2) Completed Table content -->

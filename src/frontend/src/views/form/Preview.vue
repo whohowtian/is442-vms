@@ -57,8 +57,9 @@ export default {
      // GET METHOD
     getData(){
       const formData =this.forms
-      console.log("Data", formData)
-      console.log("info",  this.formInfo)      },
+      // console.log("Data", formData)
+      // console.log("info",  this.formInfo)     
+     },
     // POST METHOD
     async submitForm() {
       const formData =this.forms
@@ -92,16 +93,43 @@ export default {
         formEffDate: this.formInfo[0].formEffDate,
         formSections
       }
-      console.log(data)
-        try {
-        const response = await axios.post(`${BASE_URL}/api/formtemplate/create`, data);
-        console.log("SUCCESSFULLY POST")
-        console.log(response.data); // 
-      } catch (error) {
-        console.error(error);
-      }
-      },
-  }
+      // console.log(data)
 
+      Swal.fire({
+            title: 'Save the Form?',
+            text: "Please check information before saving!",
+            icon: "warning",
+            showCancelButton: true,
+            cancelButtonColor: '#c7c6c5',
+            confirmButtonColor: '#6A79F3',
+            confirmButtonText: 'Yes, save it!',
+            cancelButtonText: 'No, Cancel',
+            width: 'auto',
+        }).then((result) => {
+            if (result.isConfirmed) {
+              try {
+                const response = axios.post(`${BASE_URL}/api/formtemplate/create`, data);
+                console.log("SUCCESSFULLY POST")
+                console.log(response.data); // 
+              } catch (error) {
+                if(error){
+                  console.error("ascas",error)
+                  // alert('Error: ${error}. <br/> Please Try Again Later')
+                  Swal.fire({
+                          icon: 'warning',
+                          title: error,
+                          timer: 2000,
+                          timerProgressBar: true,
+                          showConfirmButton: false
+                      })
+                }else{
+                  window.location.href = "/WorkflowView";
+                }
+                }
+            }
+      })
+    },
+  
+}
 }
 </script>

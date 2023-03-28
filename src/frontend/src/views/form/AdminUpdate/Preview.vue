@@ -32,7 +32,7 @@
               </div>          
           </template>
   
-          <button type="button" class="btn btn-primary" @click=getData()>Save</button>
+          <button type="button" class="btn btn-primary" @click=submitForm()>Save</button>
         </el-form>
       </el-main>
     </el-container>
@@ -53,9 +53,25 @@
         editableForms: store._state.data.editableForms,
       }
     },
-    created(){
-      console.log("aha->",store._state.data.editableFormInfo)
-      console.log("form->",store._state.data.editableForms)
+    async created(){ //remove in the future 
+      if (localStorage.getItem('formNo')!= null){
+        var formNo = localStorage.getItem('formNo');
+        await axios.get(`${BASE_URL}/api/formtemplate/` + formNo)
+        .then(response => {
+          var allData = response.data.data;
+
+          this.editableFormInfo = [
+            {
+            formNo:allData['formNo'],
+            formName:allData['formName'],
+            formEffDate:allData['formEffDate'],
+          }]
+          store._state.data.editableFormInfo = this.editableFormInfo
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
     },
     methods: {
        // GET METHOD
@@ -98,7 +114,7 @@
         }
         console.log(data)
           try {
-          const response = await axios.post(`${BASE_URL}/api/formtemplate/create`, data);
+          const response = await axios.post(`${BASE_URL}/api/formtemplate/edit`, data);
           console.log("SUCCESSFULLY POST")
           console.log(response.data); // 
         } catch (error) {

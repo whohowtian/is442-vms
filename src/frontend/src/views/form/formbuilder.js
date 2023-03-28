@@ -226,6 +226,7 @@ export const FormBuilder ={
           label: 'Text',
           text: 'Text',
           group: 'form', //form group
+          input:"",
           isRequired: false,
           isHelpBlockVisible: false,
           isPlaceholderVisible: true,
@@ -246,6 +247,7 @@ export const FormBuilder ={
           label: 'Number',
           text: 'Number',
           group: 'form',
+          input:"",
           isRequired: false,
           isHelpBlockVisible: false,
           isPlaceholderVisible: false,
