@@ -24,7 +24,6 @@ public class PdfService {
     @Autowired
     private GridFsTemplate gridFsTemplate;
 
-
     @Autowired
     private GridFsOperations operations;
 
@@ -36,10 +35,11 @@ public class PdfService {
         // Store PDF in database
         metaData.put("type", "pdf");
         metaData.put("title", title);
-        // InputStream inputStream = new FileInputStream(System.getProperty("user.home") + "/Downloads/" + title + ".pdf");
         ObjectId id = gridFsTemplate.store(
             file.getInputStream(), file.getName(), file.getContentType(), metaData
         );
+
+        // TO BE DELETED
         System.out.println("file id stored: " + id.toString() + " ,  " + file.getName());
         System.out.println("input stream: " + file.getInputStream().toString());
 
@@ -49,27 +49,25 @@ public class PdfService {
 
     public void retrievePDF(String fileId) throws IllegalStateException, IOException{
 
-        // GridFSFile file =  pdfRepo.findbyId(fileId);
-
+        // Query
         GridFSFile dbFile = operations.findOne(new Query(Criteria.where("_id").is(fileId)));
+
+        // Convert binary data to pdf
         OutputStream outputStream = new FileOutputStream(System.getProperty("user.home") + "/Downloads/" + "testing2" + ".pdf");
         operations.getResource(dbFile).getInputStream().transferTo(outputStream);;
         
-        // InputStream inputStream = fsResource.getInputStream();
-        // GridFsResource fsResource = new GridFsResource(dbFile, getGridFs().open)
-
         Pdf pdf = new Pdf();
         pdf.setTitle(dbFile.getMetadata().get("title").toString()); 
         pdf.setStream(operations.getResource(dbFile).getInputStream());
-
         // return fsResource;
-
 
     }
 
     public Pdf streamPDF(String id) throws IllegalStateException, IOException {
 
+        // Query
         GridFSFile file = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(id)));
+
         Pdf pdf = new Pdf();
         pdf.setTitle(file.getMetadata().get("title").toString()); 
         pdf.setStream(operations.getResource(file).getInputStream());

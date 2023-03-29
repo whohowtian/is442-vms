@@ -45,7 +45,6 @@ public class UserController {
     @Autowired
     private EmailService emailService;
 
-    // CHANGE TO A SINGLE API ENDPOINT FOR CREATE
     
     @Operation(summary = "Creates a vendor account", responses = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),

@@ -18,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.g2t3.vms.model.Pdf;
 import com.g2t3.vms.response.ResponseHandler;
 import com.g2t3.vms.service.PdfService;
-import com.g2t3.vms.util.PdfGenerator;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,11 +31,9 @@ import jakarta.servlet.http.HttpServletResponse;
 public class PdfController {
 
     @Autowired
-    private PdfGenerator pdfGenerator;
-
-    @Autowired
     private PdfService pdfService;
 
+    
     @Operation(summary = "Download PDF in Downloads folder", responses = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pdf.class))),
     })
@@ -44,17 +41,10 @@ public class PdfController {
     public ResponseEntity<?> retrievePDF(@PathVariable String fileId, Model model) {
 
         try {
-            System.out.println("retrieve pdf");
 
             pdfService.retrievePDF(fileId);
             model.addAttribute("title", "test");
-            model.addAttribute("url", System.getProperty("user.home") + "/Downloads/" + "rest" + ".pdf");
-            // model.addAttribute("url", "/pdfs/stream/" + fileId);
-
-            
-
-            System.out.println("done");
-
+            model.addAttribute("url", System.getProperty("user.home") + "/Downloads/" + fileId + ".pdf");
             
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, null);
         } catch (IllegalStateException e) {
@@ -65,6 +55,7 @@ public class PdfController {
         return null;
     }
 
+
     @Operation(summary = "Stream PDF and look at it directly in Postman", responses = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pdf.class))),
     })
@@ -74,6 +65,7 @@ public class PdfController {
         FileCopyUtils.copy(pdf.getStream(), response.getOutputStream());
     }
 
+
     @Operation(summary = "Save PDF (binary data) in database", responses = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pdf.class))),
     })
@@ -81,7 +73,7 @@ public class PdfController {
     public ResponseEntity<?> savePDF(@RequestParam("title") String title, @RequestParam("file") MultipartFile file) {
 
         try {
-            String fileId = pdfService.savePDF(title, file);
+            pdfService.savePDF(title, file);
             return new ResponseEntity<String>("PDF saved", HttpStatus.OK);
         } catch (IOException e) {
             e.printStackTrace();
@@ -91,8 +83,5 @@ public class PdfController {
         return null;
 
     }
-
-    
-
 
 }
