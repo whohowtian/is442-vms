@@ -1,7 +1,6 @@
 package com.g2t3.vms.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +11,7 @@ import com.g2t3.vms.exception.ResourceNotFoundException;
 import com.g2t3.vms.model.Admin;
 import com.g2t3.vms.model.Approver;
 import com.g2t3.vms.model.User;
+import com.g2t3.vms.model.UserUpdateRequest;
 import com.g2t3.vms.model.Vendor;
 import com.g2t3.vms.repository.UserRepo;
 
@@ -113,104 +113,84 @@ public class UserService {
         return users;
     }
 
-    public <T> UserType getType(T type) {
-
-        UserType result = null;
-        switch((String) type) {
-            case "VENDOR":
-                result = UserType.VENDOR;
-                break;
-            case "ADMIN":
-                result = UserType.ADMIN;
-                break;
-            case "APPROVER":
-                result = UserType.APPROVER;
-                break;
-        }
-        return result;
-
-    }
-
-    public <T> User updateAdmin(UserType prevType, HashMap<String, T> user) throws ResourceNotFoundException, Exception {
+    public void updateAdmin(UserType prevType, UserUpdateRequest user) throws ResourceNotFoundException, Exception {
 
         // check
-        getUserById((String) user.get("userId"));
+        getUserById(user.getUserId());
         
-        UserType type = getType((String) user.get("userType"));
+        UserType type = user.getUserType();
         if (prevType != type) {
-            deleteUser((String) user.get("userId"));
+            deleteUser(user.getUserId());
         }
         
         Admin newDetails = new Admin();
         newDetails = newDetails.toBuilder()
-            .userId( (String) user.get("userId"))
-            .name( (String) user.get("name"))
-            .email( (String) user.get("email"))
-            .password( (String) user.get("password"))
-            .number( (String) user.get("number"))
+            .userId(user.getUserId())
+            .name(user.getName())
+            .email(user.getEmail())
+            .password(user.getPassword())
+            .number(user.getNumber())
             .userType(type)
             .isApprover(false)
             .isAdmin(true)
             .build();
-        System.out.println("check2");
 
         userRepo.save(newDetails);
-        return newDetails;
 
     }
 
-    public <T> User updateApprover(UserType prevType, HashMap<String, T> user) throws ResourceNotFoundException, Exception {
+    public void updateApprover(UserType prevType, UserUpdateRequest user) throws ResourceNotFoundException, Exception {
 
         // check
-        getUserById((String) user.get("userId"));
-
-        UserType type = getType((String) user.get("userType"));
+        getUserById(user.getUserId());
+        
+        UserType type = user.getUserType();
         if (prevType != type) {
-            deleteUser((String) user.get("userId"));
+            deleteUser(user.getUserId());
         }
 
         Approver newDetails = new Approver();
         newDetails = newDetails.toBuilder()
-            .userId( (String) user.get("userId"))
-            .name( (String) user.get("name"))
-            .email( (String) user.get("email"))
-            .password( (String) user.get("password"))
-            .number( (String) user.get("number"))
+            .userId(user.getUserId())
+            .name(user.getName())
+            .email(user.getEmail())
+            .password(user.getPassword())
+            .number(user.getNumber())
             .userType(type)
-            .isApprover(true)
-            .isAdmin(false)
+            .isApprover(false)
+            .isAdmin(true)
             .build();
-
         userRepo.save(newDetails);
-        return newDetails;
 
     }
 
-    public <T> User updateVendor(UserType prevType, HashMap<String, T> user) throws ResourceNotFoundException, Exception {
+    public void updateVendor(UserType prevType, UserUpdateRequest user) throws ResourceNotFoundException, Exception {
 
-        // check
-        getUserById((String) user.get("userId"));
+         // check
+         getUserById(user.getUserId());
         
-        UserType type = getType((String) user.get("userType"));
+         UserType type = user.getUserType();
         if (prevType != type) {
-            deleteUser((String) user.get("userId"));
+            deleteUser(user.getUserId());
         }
 
         Vendor newDetails = new Vendor();
         newDetails = newDetails.toBuilder()
-            .userId( (String) user.get("userId"))
-            .name( (String) user.get("name"))
-            .email( (String) user.get("email"))
-            .password( (String) user.get("password"))
-            .number( (String) user.get("number"))
+            .userId(user.getUserId())
+            .name(user.getName())
+            .email(user.getEmail())
+            .password(user.getPassword())
+            .number(user.getNumber())
             .userType(type)
-            .entityName((String) user.get("entityName"))
-            .entityActivities((ArrayList<String>) user.get("entityActivities"))
-            .isGSTRegistered((boolean) user.get("isGSTRegistered"))
+            .entityUEN(user.getEntityUEN())
+            .entityName(user.getEntityName())
+            .entityActivities(user.getEntityActivities())
+            .isGSTRegistered(user.isGSTRegistered())
+            .isApprover(false)
+            .isAdmin(false)
             .build();
 
         userRepo.save(newDetails);
-        return newDetails;
 
     }
 

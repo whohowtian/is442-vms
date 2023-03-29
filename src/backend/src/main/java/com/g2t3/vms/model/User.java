@@ -58,5 +58,10 @@ public abstract class User {
         this.number = number;
         this.userType = userType;
     }
+
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
     
 }

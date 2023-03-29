@@ -20,4 +20,12 @@ public class Admin extends User {
         super(userId, email, password, name, number, UserType.ADMIN, true, false);
     }
 
+    public Admin switchtoAdmin(Approver approver) {
+
+        User user = approver;
+        Admin admin = (Admin) user;
+        return admin;
+
+    }
+
 }
