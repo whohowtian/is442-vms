@@ -173,4 +173,14 @@ public class FormService {
         return forms;
     }
 
+    public ArrayList<Form> getFormByVendor(String vendorEmail) throws ResourceNotFoundException, Exception {
+        ArrayList<Form> forms = formRepo.getFormByVendor(vendorEmail);
+
+        if (forms.isEmpty()) {
+            throw new ResourceNotFoundException("No forms/workflows have been created.");
+        }
+
+        return forms;
+    }
+
 }

@@ -18,6 +18,9 @@ public interface FormRepo extends MongoRepository<Form, String> {
     @Query("{'status': ?0}")
     ArrayList<Form> getFormByStatus(String status);
 
+    @Query("{'assigned_vendor_email': ?0}")
+    ArrayList<Form> getFormByVendor(String vendorEmail);
+
     // @Query("{'formContent.formSections.questions._id: ?0'}")
     // Form getQuestionObjByID(ObjectId id);
 }

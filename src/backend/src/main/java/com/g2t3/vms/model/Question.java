@@ -24,12 +24,12 @@ public class Question {
     private String answer;
     private boolean isRequired;
 
-    public Question(String qnTitle, String inputType, ArrayList inputOptions, boolean isRequired) {
-        this(qnTitle, inputType, inputOiptions);
+    public Question(String qnTitle, String inputType, ArrayList<HashMap<String, String>> inputOptions, boolean isRequired) {
+        this(qnTitle, inputType, inputOptions);
         this.isRequired = isRequired;
     }
 
-    public Question(String qnTitle, String inputType, ArrayList inputOptions) {
+    public Question(String qnTitle, String inputType, ArrayList<HashMap<String, String>> inputOptions) {
         this.qnTitle = qnTitle;
         this.inputType = inputType;
         this.inputOptions = inputOptions;
