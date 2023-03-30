@@ -3,22 +3,16 @@ package com.g2t3.vms.model;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.annotation.PersistenceConstructor;
-
-
-import org.bson.types.ObjectId;
 
 import com.g2t3.vms.enums.FormStatus;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Document("Form")
-@Getter
-@Setter
+@Data @EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
 public class Form {
     @Id

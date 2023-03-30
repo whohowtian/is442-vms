@@ -34,5 +34,4 @@ public class UserUpdateRequest {
 
     private String gstRegisteredNo;
 
-
 }

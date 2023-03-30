@@ -93,7 +93,7 @@ public class UserController {
 
         try {
             Approver user = userService.createApprover(approverRequest);
-            // emailService.sendAccountConfirmationEmail(user);
+            emailService.sendAccountConfirmationEmail(user);
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
         } catch (ResourceAlreadyExistException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);

@@ -1,24 +1,18 @@
 package com.g2t3.vms.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.bson.types.ObjectId;
-
-
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 
 @Document("FormTemplate")
-@Getter
-@Setter
+@Data @EqualsAndHashCode(callSuper=false)
 public class FormTemplate {
     @Id
     private String id;
