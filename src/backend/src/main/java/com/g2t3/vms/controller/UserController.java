@@ -55,7 +55,7 @@ public class UserController {
 
         try {
             Vendor user = userService.createVendor(vendorRequest);
-            emailService.sendAccountConfirmationEmail(user);
+            // emailService.sendAccountConfirmationEmail(user);
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
         } catch (ResourceAlreadyExistException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
@@ -74,7 +74,7 @@ public class UserController {
 
         try {
             Admin user = userService.createAdmin(adminRequest);
-            emailService.sendAccountConfirmationEmail(user);
+            // emailService.sendAccountConfirmationEmail(user);
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
         } catch (ResourceAlreadyExistException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
@@ -93,7 +93,7 @@ public class UserController {
 
         try {
             Approver user = userService.createApprover(approverRequest);
-            emailService.sendAccountConfirmationEmail(user);
+            // emailService.sendAccountConfirmationEmail(user);
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
         } catch (ResourceAlreadyExistException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
@@ -190,9 +190,8 @@ public class UserController {
                 userService.updateAdmin(prevType, user);
             } else if (type.equals(UserType.APPROVER)) {
                 userService.updateApprover(prevType, user);
-            } else if (type.equals(UserType.VENDOR)) {
-                userService.updateVendor(prevType, user);
             }
+            
             return ResponseHandler.generateResponse("Updated User with email of " + user.getEmail() + " successfully.", HttpStatus.OK, null);
         } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);

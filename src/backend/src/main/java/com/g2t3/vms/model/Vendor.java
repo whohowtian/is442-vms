@@ -24,14 +24,17 @@ public class Vendor extends User {
 
     private boolean isGSTRegistered;
 
+    private String GSTRegisteredNo;
+
     @PersistenceCreator
     public Vendor(String userId, String email, String password, String name, String number,String entityUEN, String entityName,
-            ArrayList<String> entityActivities, boolean isGSTRegistered) {
-        super(userId, email, password, name, number, UserType.VENDOR, false, false);
+            ArrayList<String> entityActivities, boolean isGSTRegistered, String GSTRegisteredNo) {
+        super(userId, email, password, name, number, UserType.VENDOR);
         this.entityUEN = entityUEN;
         this.entityName = entityName;
         this.entityActivities = entityActivities;
         this.isGSTRegistered = isGSTRegistered;
+        this.GSTRegisteredNo = GSTRegisteredNo;
     }
     
 }

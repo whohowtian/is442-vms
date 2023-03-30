@@ -116,81 +116,38 @@ public class UserService {
     public void updateAdmin(UserType prevType, UserUpdateRequest user) throws ResourceNotFoundException, Exception {
 
         // check
-        getUserById(user.getUserId());
-        
-        UserType type = user.getUserType();
-        if (prevType != type) {
-            deleteUser(user.getUserId());
-        }
-        
-        Admin newDetails = new Admin();
-        newDetails = newDetails.toBuilder()
+        User prevDetails = getUserById(user.getUserId());
+
+        Admin admin  = new Admin();
+        admin = admin.toBuilder()
             .userId(user.getUserId())
             .name(user.getName())
             .email(user.getEmail())
             .password(user.getPassword())
             .number(user.getNumber())
-            .userType(type)
-            .isApprover(false)
-            .isAdmin(true)
+            .userType(UserType.ADMIN)
             .build();
-
-        userRepo.save(newDetails);
+        userRepo.save(admin);
+        
 
     }
 
     public void updateApprover(UserType prevType, UserUpdateRequest user) throws ResourceNotFoundException, Exception {
 
         // check
-        getUserById(user.getUserId());
-        
-        UserType type = user.getUserType();
-        if (prevType != type) {
-            deleteUser(user.getUserId());
-        }
+        User prevDetails = getUserById(user.getUserId());
 
-        Approver newDetails = new Approver();
-        newDetails = newDetails.toBuilder()
+        Approver approver  = new Approver();
+        approver = approver.toBuilder()
             .userId(user.getUserId())
             .name(user.getName())
             .email(user.getEmail())
             .password(user.getPassword())
             .number(user.getNumber())
-            .userType(type)
-            .isApprover(false)
-            .isAdmin(true)
+            .userType(UserType.APPROVER)
             .build();
-        userRepo.save(newDetails);
-
-    }
-
-    public void updateVendor(UserType prevType, UserUpdateRequest user) throws ResourceNotFoundException, Exception {
-
-         // check
-         getUserById(user.getUserId());
+        userRepo.save(approver);
         
-         UserType type = user.getUserType();
-        if (prevType != type) {
-            deleteUser(user.getUserId());
-        }
-
-        Vendor newDetails = new Vendor();
-        newDetails = newDetails.toBuilder()
-            .userId(user.getUserId())
-            .name(user.getName())
-            .email(user.getEmail())
-            .password(user.getPassword())
-            .number(user.getNumber())
-            .userType(type)
-            .entityUEN(user.getEntityUEN())
-            .entityName(user.getEntityName())
-            .entityActivities(user.getEntityActivities())
-            .isGSTRegistered(user.isGSTRegistered())
-            .isApprover(false)
-            .isAdmin(false)
-            .build();
-
-        userRepo.save(newDetails);
 
     }
 

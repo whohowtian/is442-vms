@@ -34,21 +34,14 @@ public abstract class User {
     @Field("userType")
     private UserType userType;
 
-    private boolean isAdmin;
-
-    private boolean isApprover;
-
     @PersistenceCreator
-    public User(String userId, String email, String password, String name, String number, UserType userType,
-            boolean isAdmin, boolean isApprover) {
+    public User(String userId, String email, String password, String name, String number, UserType userType) {
         this.userId = userId;
         this.email = email;
         this.password = password;
         this.name = name;
         this.number = number;
         this.userType = userType;
-        this.isAdmin = isAdmin;
-        this.isApprover = isApprover;
     }
 
     public User(String email, String password, String name, String number, UserType userType) {

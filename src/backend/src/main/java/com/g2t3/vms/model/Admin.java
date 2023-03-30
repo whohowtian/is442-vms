@@ -17,15 +17,7 @@ public class Admin extends User {
     
     @PersistenceCreator
     public Admin(String userId, String email, String password, String name, String number) {
-        super(userId, email, password, name, number, UserType.ADMIN, true, false);
-    }
-
-    public Admin switchtoAdmin(Approver approver) {
-
-        User user = approver;
-        Admin admin = (Admin) user;
-        return admin;
-
+        super(userId, email, password, name, number, UserType.ADMIN);
     }
 
 }
