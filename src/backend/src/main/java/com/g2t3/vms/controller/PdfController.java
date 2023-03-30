@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,19 +32,15 @@ public class PdfController {
     @Autowired
     private PdfService pdfService;
 
-    
-    @Operation(summary = "Download PDF in Downloads folder", responses = {
+    @Operation(summary = "Retrieve PDF by file name, Download PDF in Downloads folder", description="file name convention: <entityUEN>_<formName>",
+    responses = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pdf.class))),
     })
-    @GetMapping("/{fileId}")
-    public ResponseEntity<?> retrievePDF(@PathVariable String fileId, Model model) {
+    @GetMapping("/{fileName}")
+    public ResponseEntity<?> retrievePDFByFileName(@PathVariable String fileName) {
 
         try {
-
-            pdfService.retrievePDF(fileId);
-            model.addAttribute("title", "test");
-            model.addAttribute("url", System.getProperty("user.home") + "/Downloads/" + fileId + ".pdf");
-            
+            pdfService.retrievePDFByFileName(fileName);
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, null);
         } catch (IllegalStateException e) {
             e.printStackTrace();

@@ -22,8 +22,9 @@ import com.g2t3.vms.exception.ResourceAlreadyExistException;
 import com.g2t3.vms.exception.ResourceNotFoundException;
 import com.g2t3.vms.model.Admin;
 import com.g2t3.vms.model.Approver;
+import com.g2t3.vms.model.InputUserLogin;
+import com.g2t3.vms.model.InputUserUpdate;
 import com.g2t3.vms.model.User;
-import com.g2t3.vms.model.UserUpdateRequest;
 import com.g2t3.vms.model.Vendor;
 import com.g2t3.vms.response.ResponseHandler;
 import com.g2t3.vms.service.EmailService;
@@ -93,7 +94,7 @@ public class UserController {
 
         try {
             Approver user = userService.createApprover(approverRequest);
-            emailService.sendAccountConfirmationEmail(user);
+            // emailService.sendAccountConfirmationEmail(user);
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
         } catch (ResourceAlreadyExistException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
@@ -180,7 +181,7 @@ public class UserController {
         @ApiResponse(responseCode = "404", description = "User does not exist.", content = @Content)
     })
     @PutMapping("")
-    public ResponseEntity<?> update(@RequestBody UserUpdateRequest user) {
+    public ResponseEntity<?> update(@RequestBody InputUserUpdate user) {
         
         try {
             UserType prevType = (userService.getUserById(user.getUserId())).getUserType();
@@ -208,11 +209,11 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
         @ApiResponse(responseCode = "404", description = "User does not exist.", content = @Content)
     })
-    @PutMapping("/setpassword")
-    public ResponseEntity<?> setPassword(@RequestBody User user) {
+    @PutMapping("/activate-account")
+    public ResponseEntity<?> setPassword(@RequestBody InputUserLogin user) {
 
         try {
-            User newUser = userService.setPassword(user);            
+            User newUser = userService.activateAccount(user);            
             return ResponseHandler.generateResponse("Updated password for user with email of " + user.getEmail() + " successfully.", HttpStatus.OK, newUser);
         } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Data @EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
-public class UserUpdateRequest {
+public class InputUserUpdate {
     
     private String userId;
 

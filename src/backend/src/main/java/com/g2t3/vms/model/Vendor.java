@@ -11,8 +11,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-@SuperBuilder(toBuilder = true)
-@Data @EqualsAndHashCode(callSuper=false)
+@SuperBuilder(toBuilder = true) 
+@Data @EqualsAndHashCode(callSuper=false) 
 @NoArgsConstructor
 public class Vendor extends User {
     
@@ -27,8 +27,9 @@ public class Vendor extends User {
     private String gstRegisteredNo;
 
     @PersistenceCreator
-    public Vendor(String userId, String email, String password, String name, String number,String entityUEN, String entityName,
-            ArrayList<String> entityActivities, boolean isGSTRegistered, String gstRegisteredNo) {
+    public Vendor(String userId, String email, String password, String name, String number,
+            String entityUEN, String entityName, ArrayList<String> entityActivities, boolean isGSTRegistered,
+            String gstRegisteredNo) {
         super(userId, email, password, name, number, UserType.VENDOR);
         this.entityUEN = entityUEN;
         this.entityName = entityName;
@@ -37,4 +38,6 @@ public class Vendor extends User {
         this.gstRegisteredNo = gstRegisteredNo;
     }
     
+    
+
 }

@@ -36,7 +36,7 @@ public class PdfService {
         metaData.put("type", "pdf");
         metaData.put("title", title);
         ObjectId id = gridFsTemplate.store(
-            file.getInputStream(), file.getName(), file.getContentType(), metaData
+            file.getInputStream(), title, file.getContentType(), metaData
         );
 
         // TO BE DELETED
@@ -47,20 +47,42 @@ public class PdfService {
 
     }
 
-    public void retrievePDF(String fileId) throws IllegalStateException, IOException{
+    public void retrievePDFById(String fileId) throws IllegalStateException, IOException{
 
         // Query
         GridFSFile dbFile = operations.findOne(new Query(Criteria.where("_id").is(fileId)));
+        String fileTitle = dbFile.getMetadata().get("title").toString();
+
+        Pdf pdf = new Pdf();
+        pdf.setTitle(fileTitle); 
+        pdf.setStream(operations.getResource(dbFile).getInputStream());
 
         // Convert binary data to pdf
-        OutputStream outputStream = new FileOutputStream(System.getProperty("user.home") + "/Downloads/" + "testing2" + ".pdf");
-        operations.getResource(dbFile).getInputStream().transferTo(outputStream);;
-        
-        Pdf pdf = new Pdf();
-        pdf.setTitle(dbFile.getMetadata().get("title").toString()); 
-        pdf.setStream(operations.getResource(dbFile).getInputStream());
-        // return fsResource;
+        OutputStream outputStream = new FileOutputStream(System.getProperty("user.home") + "/Downloads/" + fileTitle + ".pdf");
+        operations.getResource(dbFile).getInputStream().transferTo(outputStream); 
 
+        // Close output stream
+        outputStream.close();
+        
+    }
+
+    public void retrievePDFByFileName(String fileName) throws IllegalStateException, IOException{
+
+        // Query
+        GridFSFile dbFile = operations.findOne(new Query(Criteria.where("filename").is(fileName)));
+        String fileTitle = dbFile.getMetadata().get("title").toString();
+
+        Pdf pdf = new Pdf();
+        pdf.setTitle(fileTitle); 
+        pdf.setStream(operations.getResource(dbFile).getInputStream());
+
+        // Convert binary data to pdf
+        OutputStream outputStream = new FileOutputStream(System.getProperty("user.home") + "/Downloads/" + fileTitle + ".pdf");
+        operations.getResource(dbFile).getInputStream().transferTo(outputStream); 
+
+        // Close output stream
+        outputStream.close();
+        
     }
 
     public Pdf streamPDF(String id) throws IllegalStateException, IOException {

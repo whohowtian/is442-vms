@@ -10,8 +10,9 @@ import com.g2t3.vms.exception.ResourceAlreadyExistException;
 import com.g2t3.vms.exception.ResourceNotFoundException;
 import com.g2t3.vms.model.Admin;
 import com.g2t3.vms.model.Approver;
+import com.g2t3.vms.model.InputUserLogin;
 import com.g2t3.vms.model.User;
-import com.g2t3.vms.model.UserUpdateRequest;
+import com.g2t3.vms.model.InputUserUpdate;
 import com.g2t3.vms.model.Vendor;
 import com.g2t3.vms.repository.UserRepo;
 
@@ -113,7 +114,7 @@ public class UserService {
         return users;
     }
 
-    public void updateAdmin(UserType prevType, UserUpdateRequest user) throws ResourceNotFoundException, Exception {
+    public void updateAdmin(UserType prevType, InputUserUpdate user) throws ResourceNotFoundException, Exception {
 
         // check
         getUserById(user.getUserId());
@@ -132,7 +133,7 @@ public class UserService {
 
     }
 
-    public void updateApprover(UserType prevType, UserUpdateRequest user) throws ResourceNotFoundException, Exception {
+    public void updateApprover(UserType prevType, InputUserUpdate user) throws ResourceNotFoundException, Exception {
 
         // check
         getUserById(user.getUserId());
@@ -150,7 +151,7 @@ public class UserService {
     
     }
 
-    public void updateVendor(UserType prevType, UserUpdateRequest user) throws ResourceNotFoundException, Exception {
+    public void updateVendor(UserType prevType, InputUserUpdate user) throws ResourceNotFoundException, Exception {
 
         // check
         getUserById(user.getUserId());
@@ -174,12 +175,14 @@ public class UserService {
 
     }
 
-    public User setPassword(User user) throws ResourceNotFoundException, Exception {
+    public User activateAccount(InputUserLogin user) throws ResourceNotFoundException, Exception {
 
         User prevDetails = getUserByEmail(user.getEmail());
-        prevDetails.setPassword(user.getPassword());
 
+        prevDetails.setPassword(user.getPassword());
+        prevDetails.setEnabled(true);
         userRepo.save(prevDetails);
+
         return prevDetails;
 
     }

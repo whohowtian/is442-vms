@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Data @EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
-public class UserRequest {
+public class InputUserLogin {
     
     private String email;
 

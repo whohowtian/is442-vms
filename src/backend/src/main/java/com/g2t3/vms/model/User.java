@@ -14,15 +14,15 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Document(collection = "User")
-@SuperBuilder(toBuilder = true)
-@Data @EqualsAndHashCode(callSuper=false)
+@SuperBuilder(toBuilder = true) // Generates a protected constructor on the class that takes a builder instance as a parameter
+@Data @EqualsAndHashCode(callSuper=false) // Creates Getters, Setters and Constructor with All Arguments
 @NoArgsConstructor
 public abstract class User {
 
     @Id
     private String userId;
 
-    @Indexed(unique = true)
+    @Indexed(unique = true) // MongoDB will reject duplicate values for the indexed field
     private String email;
 
     private String password;
@@ -31,10 +31,12 @@ public abstract class User {
 
     private String number;
 
-    @Field("userType")
+    private boolean isEnabled = false; // User needs to set a password before account is activated
+
+    @Field("userType") // Configure the name of a field we want to use when MongoDB presists the document
     private UserType userType;
 
-    @PersistenceCreator
+    @PersistenceCreator // Telling MongoDB that this constructor should be used when creating instances of the User class
     public User(String userId, String email, String password, String name, String number, UserType userType) {
         this.userId = userId;
         this.email = email;
@@ -44,17 +46,4 @@ public abstract class User {
         this.userType = userType;
     }
 
-    public User(String email, String password, String name, String number, UserType userType) {
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.number = number;
-        this.userType = userType;
-    }
-
-    public User(String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
-    
 }
