@@ -3,6 +3,8 @@ package com.g2t3.vms.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.bson.types.ObjectId;
+import lombok.NoArgsConstructor;
+
 
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +18,7 @@ import java.util.Map;
 @Document("FormSection")
 @Getter
 @Setter
+@NoArgsConstructor
 public class FormSection {
     // @Id
     // private String id;

@@ -8,25 +8,28 @@ import org.bson.types.ObjectId;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
+
 
 @Document("Question")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Question {
     // @Id
     // private String id;
     private String qnTitle;
     private String inputType;
-    private ArrayList<String> inputOptions;
+    private ArrayList<HashMap<String, String>> inputOptions;
     private String answer;
     private boolean isRequired;
 
-    public Question(String qnTitle, String inputType, ArrayList inputOptions, boolean isRequired) {
+    public Question(String qnTitle, String inputType, ArrayList<HashMap<String, String>> inputOptions, boolean isRequired) {
         this(qnTitle, inputType, inputOptions);
         this.isRequired = isRequired;
     }
 
-    public Question(String qnTitle, String inputType, ArrayList inputOptions) {
+    public Question(String qnTitle, String inputType, ArrayList<HashMap<String, String>> inputOptions) {
         this.qnTitle = qnTitle;
         this.inputType = inputType;
         this.inputOptions = inputOptions;

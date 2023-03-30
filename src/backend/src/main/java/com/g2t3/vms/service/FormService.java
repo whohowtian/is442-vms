@@ -57,24 +57,33 @@ public class FormService {
     // create new form/workflow
     public void createForm(Map<String, String> newFormInfo) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
 
-        String formNo = newFormInfo.get("formNo");
-        String assigned_vendor_uid = newFormInfo.get("assigned_vendor_uid");
+        String formNo = newFormInfo.get("formNo"); 
+        
+        String assigned_vendor_email = newFormInfo.get("assigned_vendor_email");
 
         System.out.println(newFormInfo.toString());
 
         FormTemplate getFormTempt = formTemplateRepo.getFormTemplateByNo(formNo);
-
-        System.out.println(getFormTempt.toString());
-
-        Form newForm = new Form(assigned_vendor_uid, getFormTempt);
-
         if (getFormTempt == null) {
             throw new ResourceNotFoundException("Form Template " + formNo + "does not exist.");
         }
 
+        System.out.println(getFormTempt.toString());
+
+        if (assigned_vendor_email == null) {
+            Form newForm = new Form(getFormTempt);
+            formRepo.save(newForm); 
+        } else {
+            Form newForm = new Form(assigned_vendor_email, getFormTempt);
+            formRepo.save(newForm); 
+
+
+        }
+        
+
+
         // TODO: Check vendor UID exists?
 
-        formRepo.save(newForm); 
     }
 
     public void editForm(Form form) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
@@ -131,7 +140,8 @@ public class FormService {
                 currFormObjDB.setStatus(FormStatus.PENDING_APPROVAL);
                 break;
             case "archive":
-                currFormObjDB.setStatus(FormStatus.ARCHIVED);
+                // currFormObjDB.setStatus(FormStatus.ARCHIVED);
+                currFormObjDB.setArchived(true);
                 // currFormObjDB.setArchivedBy();
                 break;
             case "adminreject":
@@ -148,5 +158,29 @@ public class FormService {
         formRepo.save(currFormObjDB);
 
     } 
+
+    public ArrayList<Form> getFormByStatus(String statusID) throws ResourceNotFoundException, Exception {
+        ArrayList<Form> forms = new ArrayList<>();
+
+        for (Form form : formRepo.getFormByStatus(statusID)) {
+            forms.add(form);
+        }
+
+        if (forms.isEmpty()) {
+            throw new ResourceNotFoundException("No forms/workflows have been created.");
+        }
+
+        return forms;
+    }
+
+    public ArrayList<Form> getFormByVendor(String vendorEmail) throws ResourceNotFoundException, Exception {
+        ArrayList<Form> forms = formRepo.getFormByVendor(vendorEmail);
+
+        if (forms.isEmpty()) {
+            throw new ResourceNotFoundException("No forms/workflows have been created.");
+        }
+
+        return forms;
+    }
 
 }
