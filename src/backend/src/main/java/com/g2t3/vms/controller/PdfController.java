@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.g2t3.vms.model.Pdf;
+import com.g2t3.vms.exception.ResourceAlreadyExistException;
+import com.g2t3.vms.model.InputPdf;
 import com.g2t3.vms.response.ResponseHandler;
 import com.g2t3.vms.service.PdfService;
 
@@ -34,10 +35,10 @@ public class PdfController {
 
     @Operation(summary = "Retrieve PDF by file name, Download PDF in Downloads folder", description="file name convention: <entityUEN>_<formName>",
     responses = {
-        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pdf.class))),
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InputPdf.class))),
     })
-    @GetMapping("/{fileName}")
-    public ResponseEntity<?> retrievePDFByFileName(@PathVariable String fileName) {
+    @GetMapping("/retrieve")
+    public ResponseEntity<?> retrievePDFByFileName(@RequestParam String fileName) {
 
         try {
             pdfService.retrievePDFByFileName(fileName);
@@ -52,17 +53,17 @@ public class PdfController {
 
 
     @Operation(summary = "Stream PDF and look at it directly in Postman", responses = {
-        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pdf.class))),
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InputPdf.class))),
     })
     @GetMapping("/stream/{fileId}")
     public void streamPdf(@PathVariable String fileId, HttpServletResponse response) throws IllegalStateException, IOException {
-        Pdf pdf = pdfService.streamPDF(fileId);
+        InputPdf pdf = pdfService.streamPDF(fileId);
         FileCopyUtils.copy(pdf.getStream(), response.getOutputStream());
     }
 
 
     @Operation(summary = "Save PDF (binary data) in database", responses = {
-        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pdf.class))),
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InputPdf.class))),
     })
     @PostMapping("/save")
     public ResponseEntity<?> savePDF(@RequestParam("title") String title, @RequestParam("file") MultipartFile file) {
@@ -70,6 +71,8 @@ public class PdfController {
         try {
             pdfService.savePDF(title, file);
             return new ResponseEntity<String>("PDF saved", HttpStatus.OK);
+        } catch (ResourceAlreadyExistException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Exception e) {
