@@ -34,23 +34,20 @@ public class FormSection {
         // this.id = new ObjectId().toString();
     }
 
-    public FormSection (String sectionName, boolean doScoreCalculation, HashMap<String, Question> questions, boolean adminUseOnly) {
+    public FormSection (String sectionName, boolean doScoreCalculation, HashMap<String, Question> questions, boolean adminUseOnly, boolean approvalViewOnly) {
         this(sectionName, doScoreCalculation, questions);
         this.adminUseOnly = adminUseOnly;
-    }
-
-    public FormSection (String sectionName, boolean doScoreCalculation, HashMap<String, Question> questions, boolean approvalViewOnly) {
-        this(sectionName, doScoreCalculation, questions);
         this.approvalViewOnly = approvalViewOnly;
     }
+
 
     // @Override
     // public String toString() {
     //     return String.format("{ \"sectionName\": '%s', \"questions\": %s", sectionName, questions + "}");
     // }
 
-    public boolean getAdminUseOnly() {
-        return adminUseOnly;
-    }
+    // public boolean getAdminUseOnly() {
+    //     return adminUseOnly;
+    // }
 
 }

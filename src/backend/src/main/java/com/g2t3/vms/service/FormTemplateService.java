@@ -50,7 +50,8 @@ public class FormTemplateService {
             // prevFT.setArchived(formTemplate.isArchived());
             prevFT.setRevNo(prevFT.getRevNo() + 1);
             prevFT.setFormSections(formTemplate.getFormSections());
-            prevFT.setLastEdited(LocalDate.now());
+
+            prevFT.setLastEdited("need-session");
 
             formTemplateRepo.save(prevFT); 
 
