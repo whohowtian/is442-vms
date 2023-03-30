@@ -1,0 +1,57 @@
+[
+    {
+        "name": "Veronica Teng",
+        "email": "yyteng.2019@scis.smu.edu.sg",
+        "password": "imveron",
+        "number": "+6589891313",
+        "userType": "VENDOR",
+        "entityUEN": "52865514X",
+        "entityName": "POLYART AQUARIUM",
+        "entityActivities": [
+            "RETAIL SALE OF AQUARIUM FISHES",
+            "RETAIL SALE OF PET BIRDS AND ANIMALS"
+        ],
+        "isGSTRegistered": true
+    },
+    {
+        "name": "Chua Kai Wei",
+        "email": "kaiwei.chua.2020@scis.smu.edu.sg",
+        "password": "imkaiwei",
+        "number": "+6589891313",
+        "userType": "ADMIN"
+    },
+    {
+        "name": "Chan Yu Han",
+        "email": "yuhan.chan.2020@scis.smu.edu.sg",
+        "password": "imyuhan",
+        "number": "+6589891313",
+        "userType": "ADMIN"
+    },
+    {
+        "name": "Neo Fang Ting",
+        "email": "ftneo.2020@scis.smu.edu.sg",
+        "password": "imfangting",
+        "number": "+6589891313",
+        "userType": "ADMIN"
+    },
+    {
+        "name": "Justin Lee Wei Yang",
+        "email": "justin.lee.2020@scis.smu.edu.sg",
+        "password": "imjustin",
+        "number": "+6589891313"
+    },
+    {
+        "name": "Hu Hao Tian",
+        "email": "haotian.hu.2021@scis.smu.edu.sg",
+        "password": "imhaotian",
+        "number": "+6589891313",
+        "userType": "ADMIN"
+    },
+    {
+        "name": "Swavek Wlodkowski",
+        "email": "veronicatengyy@gmail.com",
+        "password": "improf",
+        "number": "+4930901820",
+        "userType": "APPROVER"
+    }
+]

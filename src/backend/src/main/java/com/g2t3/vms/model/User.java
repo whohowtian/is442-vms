@@ -1,42 +1,67 @@
 package com.g2t3.vms.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
+import com.g2t3.vms.enums.UserType;
 
-@Document("User")
-@Getter
-@Setter
-public class User {
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
+@Document(collection = "User")
+@SuperBuilder(toBuilder = true)
+@Data @EqualsAndHashCode(callSuper=false)
+@NoArgsConstructor
+public abstract class User {
 
     @Id
     private String userId;
 
-    @NotBlank
-    private String name;
-
-    @NotBlank
-    private UserType userType;
-
-    @NotBlank
-    private String vendorName; // not sure if we need to create a model for Company
-    
-    @NotBlank
+    @Indexed(unique = true)
     private String email;
-    
-    @NotBlank
-    private String country;
-    
+
     private String password;
 
-    public User(String name, UserType userType, String email, String country, String password) {
-        this.name = name;
-        this.userType = userType;
+    private String name;
+
+    private String number;
+
+    @Field("userType")
+    private UserType userType;
+
+    private boolean isAdmin;
+
+    private boolean isApprover;
+
+    @PersistenceCreator
+    public User(String userId, String email, String password, String name, String number, UserType userType,
+            boolean isAdmin, boolean isApprover) {
+        this.userId = userId;
         this.email = email;
-        this.country = country;
+        this.password = password;
+        this.name = name;
+        this.number = number;
+        this.userType = userType;
+        this.isAdmin = isAdmin;
+        this.isApprover = isApprover;
+    }
+
+    public User(String email, String password, String name, String number, UserType userType) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.number = number;
+        this.userType = userType;
+    }
+
+    public User(String email, String password) {
+        this.email = email;
         this.password = password;
     }
+    
 }
