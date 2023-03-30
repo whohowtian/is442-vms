@@ -1,5 +1,5 @@
 <template>
-  <el-form-item :label="currentField.label" :label-width="currentField.labelWidth + 'px'">
+  <el-form-item :label="currentField.label" :label-width="currentField.labelWidth + 'px'" :required="this.currentField.isRequired">
     <el-date-picker
       v-model="currentField.input"
       type="date"

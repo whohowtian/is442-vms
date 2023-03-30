@@ -1,5 +1,5 @@
 <template>
-<el-form-item :label="currentField.label" :label-width="currentField.labelWidth + 'px'">
+<el-form-item :label="currentField.label" :label-width="currentField.labelWidth + 'px'"  :required="this.currentField.isRequired">
   <el-select v-if="update" v-model="currentField.input" placeholder="Select" :loading="loading" v-bind="attributesBinding">
     <el-option v-for="item in currentField.options" :key="item.optionLabel" :value="item.optionValue" :label="item.optionLabel" :disabled="item.disabled">
     </el-option>

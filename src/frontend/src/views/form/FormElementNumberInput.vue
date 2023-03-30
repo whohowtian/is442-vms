@@ -1,5 +1,5 @@
 <template>
-<el-form-item :label="currentField.label" :label-width="currentField.labelWidth + 'px'">
+<el-form-item :label="currentField.label" :label-width="currentField.labelWidth + 'px'" :required="this.currentField.isRequired">
   <el-input-number v-model="currentField.input" controls-position="right" v-bind="attributesBinding">
   </el-input-number>
 </el-form-item>

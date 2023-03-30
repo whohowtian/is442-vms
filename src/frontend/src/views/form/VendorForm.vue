@@ -18,10 +18,12 @@
           <template v-for="eachFormObj in formattedData" >
             <el-divider content-position="left" >{{ eachFormObj.sectionTitle }}</el-divider>
               <div class="wrapper--forms">
-                <el-col v-for="field in eachFormObj.fields"  v-bind="field" class="form__group">
+                <el-col v-for="field in eachFormObj.fields"  v-bind="field" class="form__group" >
                   <component 
                       :is="field.fieldType" 
                       :currentField="field" 
+                      :disabled= true
+                      :required= true
                       v-model="field.input" 
                       class="form__field">
                   </component>
@@ -51,6 +53,7 @@
         assigned_vendor_uid:'',
         formData:[],
         formattedData:[], //data structure to match formBuilder component style
+        nullField:[]
       }
     },
     async created(){
@@ -65,7 +68,7 @@
           const allData = response.data.data;
           this.formData = allData.formContent
           const sectionData = this.formData.formSections
-          // console.log(this.formData)
+          console.log(this.formData)
           
           //store questions dict 
           for(let i=1; i<Object.keys(sectionData).length +1; i++){
@@ -98,15 +101,20 @@
   methods: {
   async submitForm() {
         const formSections = {};
-
         //retrieve form data
         for (let i = 0; i < this.formattedData.length; i++) {
           const formSection = this.formattedData[i];
           const questions = {};
 
+          const allNull=[]
           for (let j = 0; j < formSection.fields.length; j++) {
             const field = formSection.fields[j];
             const inputOptions = field.options || null;
+
+          if(!(typeof field.input === 'string' && Boolean(field.input.trim()))){
+            console.log(field.input, typeof (field.input))
+              allNull.push(field.label)
+            }
             const question = {
               qnTitle: field.label,
               inputType: field.fieldType,
@@ -117,50 +125,66 @@
             questions[j + 1] = question;
             // console.log("question-->",question)
           }
-
-          const section = {
+          if(allNull.length>0){ //store only if there is error msg
+            this.nullField.push({formSection: formSection.sectionTitle,
+              nullQns:allNull})
+            }        
+            console.log("allNull-->",allNull)
+            const section = {
             sectionName: formSection.sectionTitle,
             adminUseOnly: formSection.AdminUseOnly,
             approvalUseOnly: formSection.ApproverUseOnly,
             doScoreCalculation: false,
             questions
           };
-
           formSections[i + 1] = section;
         }
-        const submitData = {
-          id: this.formNo,
-          "formContent": {formSections}
-          };
-         
-        const statusData ={
-          formID: this.formNo,
-          assigned_vendor_uid :this.assigned_vendor_uid 
-        }
+        console.log("check null-->",this.nullField)
+        if(this.nullField.length>0){
+            const nullError = this.nullField.map((nullObj) => {
+              return `Section: ${nullObj.formSection} - Null Fields: ${nullObj.nullQns.join(', ')}`
+            })
+            this.nullField=[]
+            Swal.fire({
+              icon: 'error',
+              title: 'Error submitting form',
+              text: nullError.join('\n')
+            });
+          }
+          else{
+            const submitData = {
+              id: this.formNo,
+              "formContent": {formSections}
+              };
+             
+            const statusData ={
+              formID: this.formNo,
+              assigned_vendor_uid :this.assigned_vendor_uid 
+            }
+            console.log(submitData)
 
-      try{
-        await axios.post(`${BASE_URL}/api/form/edit`, submitData);
-        await axios.post(`${BASE_URL}/api/form/changestatus/submit`, statusData);
-        
-    // Display success message for a few seconds
-    Swal.fire({
-      icon: 'success',
-      title: 'Form submitted successfully',
-      timer: 3000, // Display message for 3 seconds
-      timerProgressBar: true,
-      didClose: () => {
-        // Redirect to other page after message is closed
-        window.location.href = 'VendorView'
-      }
-    });
-  } catch (error) {
-    // Display error message
-    await Swal.fire({
-      icon: 'error',
-      title: 'Error submitting form',
-      text: error.message
-    });
-  }
+            try{
+              await axios.post(`${BASE_URL}/api/form/edit`, submitData);
+              await axios.post(`${BASE_URL}/api/form/changestatus/submit`, statusData);
+              
+          // Display success message for a few seconds
+          Swal.fire({
+            icon: 'success',
+            title: 'Form submitted successfully',
+            timer: 3000, // Display message for 3 seconds
+            timerProgressBar: true,
+            didClose: () => {
+              // Redirect to other page after message is closed
+              window.location.href = 'VendorView'
+            }
+          });
+        } catch (error) {
+          // Display error message
+          alert(error.message)
+          };
+        }
+          
+
   }}
 }
     </script>

@@ -12,9 +12,7 @@
               <el-row>
                 <h6>{{ element.formNo }}</h6>
               </el-row>
-              <!-- <el-row>
-                <h6>{{ element.revNo }}</h6>
-              </el-row> -->
+
               <el-row v-if="element.formName !=''">
                 <i>{{element.formEffDate}}</i>
               </el-row>           
@@ -25,8 +23,11 @@
           <template v-for="eachFormObj in editableForms">
             <el-divider content-position="left" >{{ eachFormObj.sectionTitle }}</el-divider>
               <div class="wrapper--forms">
-                <el-col v-for="field in eachFormObj.fields"  v-bind="field" class="form__group">
-                  <component :is="field.fieldType" :currentField="field"  class="form__field">
+                <el-col v-for="field in eachFormObj.fields" v-bind="field" class="form__group">
+                  <component :is="field.fieldType" 
+                  :currentField="field" 
+                  :disabled="true"
+                  :required= true class="form__field">
                   </component>
                 </el-col>
               </div>          

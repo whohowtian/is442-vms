@@ -289,7 +289,7 @@ export default {
                 //+ isRequired field
               };
               allQn.push(qnDict)
-              console.log("all Qn-->",allQn)
+              // console.log("all Qn-->",allQn)
             }
           
             this.editableForms.push({ fields: allQn, sectionTitle: formTitle, AdminUseOnly:adminUseOnly});
