@@ -64,23 +64,26 @@ public class FormService {
         System.out.println(newFormInfo.toString());
 
         FormTemplate getFormTempt = formTemplateRepo.getFormTemplateByNo(formNo);
+        if (getFormTempt == null) {
+            throw new ResourceNotFoundException("Form Template " + formNo + "does not exist.");
+        }
 
         System.out.println(getFormTempt.toString());
 
         if (assigned_vendor_email == null) {
             Form newForm = new Form(getFormTempt);
+            formRepo.save(newForm); 
         } else {
             Form newForm = new Form(assigned_vendor_email, getFormTempt);
+            formRepo.save(newForm); 
+
 
         }
         
-        if (getFormTempt == null) {
-            throw new ResourceNotFoundException("Form Template " + formNo + "does not exist.");
-        }
+
 
         // TODO: Check vendor UID exists?
 
-        formRepo.save(newForm); 
     }
 
     public void editForm(Form form) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
@@ -138,7 +141,7 @@ public class FormService {
                 break;
             case "archive":
                 // currFormObjDB.setStatus(FormStatus.ARCHIVED);
-                currFormObjDB.isArchived(true);
+                currFormObjDB.setArchived(true);
                 // currFormObjDB.setArchivedBy();
                 break;
             case "adminreject":

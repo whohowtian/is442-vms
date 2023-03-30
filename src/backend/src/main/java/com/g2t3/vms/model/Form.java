@@ -28,7 +28,7 @@ public class Form {
     private LocalDateTime approvalDateTime;
 
     private String archivedBy;
-    private String isArchived;
+    private boolean isArchived;
 
     public Form (String assigned_vendor_email, FormTemplate formContent) {
         this(formContent);
