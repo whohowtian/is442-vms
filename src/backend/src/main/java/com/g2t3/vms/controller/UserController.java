@@ -1,6 +1,7 @@
 package com.g2t3.vms.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,7 +26,13 @@ import com.g2t3.vms.model.Approver;
 import com.g2t3.vms.model.User;
 import com.g2t3.vms.model.Vendor;
 import com.g2t3.vms.response.ResponseHandler;
+import com.g2t3.vms.service.EmailService;
 import com.g2t3.vms.service.UserService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @CrossOrigin
 @RestController
@@ -34,11 +42,21 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private EmailService emailService;
+
+    // CHANGE TO A SINGLE API ENDPOINT FOR CREATE
+    
+    @Operation(summary = "Creates a vendor account", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+        @ApiResponse(responseCode = "400", description = "A user with the inputted entityUEN or email already exist.", content = @Content),
+    })
     @PostMapping("/vendor")
     public ResponseEntity<?> createVendor(@RequestBody Vendor vendorRequest) {
 
         try {
             Vendor user = userService.createVendor(vendorRequest);
+            emailService.sendAccountConfirmationEmail(user);
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
         } catch (ResourceAlreadyExistException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
@@ -48,11 +66,16 @@ public class UserController {
 
     }
 
+    @Operation(summary = "Creates an admin account", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+        @ApiResponse(responseCode = "400", description = "A user with the inputted email already exist.", content = @Content),
+    })
     @PostMapping("/admin")
     public ResponseEntity<?> createAdmin(@RequestBody Admin adminRequest) {
 
         try {
             Admin user = userService.createAdmin(adminRequest);
+            emailService.sendAccountConfirmationEmail(user);
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
         } catch (ResourceAlreadyExistException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
@@ -62,11 +85,16 @@ public class UserController {
 
     }
 
+    @Operation(summary = "Creates an approver account", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+        @ApiResponse(responseCode = "400", description = "A user with the inputted email already exist.", content = @Content),
+    })
     @PostMapping("/approver")
     public ResponseEntity<?> createAdmin(@RequestBody Approver approverRequest) {
 
         try {
             Approver user = userService.createApprover(approverRequest);
+            emailService.sendAccountConfirmationEmail(user);
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
         } catch (ResourceAlreadyExistException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
@@ -76,6 +104,10 @@ public class UserController {
 
     }
 
+    @Operation(summary = "Get all user details", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+        @ApiResponse(responseCode = "404", description = "No users have been created.", content = @Content)
+    })
     @GetMapping("")
     @ResponseBody
     public ResponseEntity<?> getAllUsers() {
@@ -90,6 +122,10 @@ public class UserController {
         return ResponseHandler.generateResponse("Successful", HttpStatus.OK, users);
     }
 
+    @Operation(summary = "Get users by user type", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+        @ApiResponse(responseCode = "404", description = "No user of inputted user type has been created.", content = @Content)
+    })
     @GetMapping("/type/{userType}")
     @ResponseBody
     public ResponseEntity<?> getAllUsers(@PathVariable UserType userType) {
@@ -104,6 +140,10 @@ public class UserController {
         return ResponseHandler.generateResponse("Successful", HttpStatus.OK, users);
     }
 
+    @Operation(summary = "Get user by id", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+        @ApiResponse(responseCode = "404", description = "User does not exist.", content = @Content)
+    })
     @GetMapping("/{userId}")
     @ResponseBody
     public ResponseEntity<?> getUserById(@PathVariable String userId) {
@@ -118,6 +158,10 @@ public class UserController {
         return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
     }
 
+    @Operation(summary = "Get user by email", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+        @ApiResponse(responseCode = "404", description = "User does not exist.", content = @Content)
+    })
     @GetMapping("/email/{userEmail}")
     @ResponseBody
     public ResponseEntity<?> getUserByEmail(@PathVariable String userEmail) {
@@ -132,11 +176,39 @@ public class UserController {
         return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
     }
 
-    // @PutMapping("/{userId}")
-    // public ResponseEntity<?> updateUser(@PathVariable String userId, @RequestBody User user) {
+    @Operation(summary = "Update user details", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+        @ApiResponse(responseCode = "404", description = "User does not exist.", content = @Content)
+    })
+    @PutMapping("")
+    public <T> ResponseEntity<?> update(@RequestBody HashMap<String, T> user) {
+        
+        try {
+            UserType prevType = (userService.getUserById((String) user.get("userId"))).getUserType();
+            T type = user.get("userType");
+            if (type.equals("ADMIN")) {
+                userService.updateAdmin(prevType, user);
+            } else if (type.equals("APPROVER")) {
+                userService.updateApprover(prevType, user);
+            } else if (type.equals("VENDOR")) {
+                userService.updateVendor(prevType, user);
+            }
+            return ResponseHandler.generateResponse("Updated User with email of " + " successfully.", HttpStatus.OK, null);
+        } catch (ResourceNotFoundException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+        } catch (DataIntegrityViolationException e){
+            return ResponseHandler.generateResponse("Bad Request: " + e.getMessage(), HttpStatus.BAD_REQUEST, null);
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("Internal Server Error: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
+        }
+    }
+
+    // @PutMapping("/setpassword")
+    // public ResponseEntity<?> setPassword(@RequestBody User user) {
+
     //     try {
-    //         userService.updateUser(userId, user); 
-    //         return ResponseHandler.generateResponse("Updated User " + userId + "'s details successfully.", HttpStatus.OK, null);
+    //         User newUser = userService.setPassword(user);            
+    //         return ResponseHandler.generateResponse("Updated password for user with email of " + user + " successfully.", HttpStatus.OK, newUser);
     //     } catch (ResourceNotFoundException e) {
     //         return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
     //     } catch (DataIntegrityViolationException e){
@@ -146,6 +218,10 @@ public class UserController {
     //     }
     // }
 
+    @Operation(summary = "Delete user by email", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+        @ApiResponse(responseCode = "404", description = "User does not exist.", content = @Content)
+    })
     @DeleteMapping("/{email}")
     public ResponseEntity<?> deleteUserByEmail(@PathVariable String email) { 
         try {
@@ -160,6 +236,11 @@ public class UserController {
         }
     } 
 
+
+    @Operation(summary = "Delete user by id", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+        @ApiResponse(responseCode = "404", description = "User does not exist.", content = @Content)
+    })
     @DeleteMapping("/id/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable String userId) { 
         try {

@@ -3,7 +3,6 @@ import NavBar from '../components/Navbar.vue';
 import Header from '../components/Header.vue';
 import Button from '../components/Button.vue';
 import Table from "../components/Table.vue";
-import fakeWorkflowData from './fakeWorkflowData';
 import fakeTaskData from './fakeTaskData';
 import { Search, Edit } from '@element-plus/icons-vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -25,6 +24,10 @@ export default {
         selectedRows: [], //tick checkbox
         selectAll: false,
         allFormData:[],
+        allWorkflowData:[],
+        ActiveWorkflow:[],
+        InActiveWorkflow:[],
+        SearchCompany:'',
         menuItems: [ //for top nav bar
             { label: 'HOME', route: '/AdminView'  },
             { label: 'ACCOUNT', route: '/AccountView'  },
@@ -40,13 +43,6 @@ export default {
         secNavOption:'ActiveWorkFlow', //default table displaying
 
         //fake data -- in future change to api endpoint
-        data1:fakeWorkflowData.active, 
-        headers1:["Task","Company Name","Form No.","Stage","Status","Date Assigned","Actions"],
-        fields1:["task","company","formNo","stage","status","dateAssign","Actions-Toggle"],
-
-        data2:fakeWorkflowData.inactive, 
-        headers2:["Task","Company Name","Form No.","Stage","Status","Date Assigned","Actions"],
-        fields2:["task","company","formNo","stage","status","dateAssign","Actions-Toggle"],
 
         data3:fakeTaskData.todo, 
         headers3:["Task","Company Name","Form No.","Date Assigned","Actions"],
@@ -56,30 +52,124 @@ export default {
         headers4:["Task","Company Name","Form No.","Date Assigned","Actions"],
         fields4:["task","company","formNo","dateAssign","Actions"],
     search: ""
-      }
+        }
     },
     created() {
         this.getAllFormAvail() //trigger FormTemplate API
-      },
+        this.getAllWorkflow() //trigger Form API
+        },
     methods: {
-        async getAllFormAvail(){
-          axios.get(`${BASE_URL}/api/formtemplate`)
+        async getAllWorkflow(){
+            axios.get(`${BASE_URL}/api/form`)
             .then(response => {
-              var allForm = response.data.data;
-              //data cleaning
-              for (const form of allForm){
-                var id = form.id
-                var formName = form.formName
-                var formNo = form.formNo
-                var lastEdited=form.formEffDate
-                this.allFormData.push({ id: id, formName: formName, formNo: formNo, editedby:"", lastEdited: lastEdited})
-              }
-              console.log(this.allFormData)
+                var allWorkflow = response.data.data;
+                axios.get(`${BASE_URL}/api/user`)
+                .then(response => {
+                    var allUser= response.data.data;
+                    
+                    //data cleaning
+                    for (const workflow of allWorkflow){
+                        console.log(workflow)
+                        var id = workflow.id
+                        var task = workflow.formContent.formName
+                        var vendorID= workflow.assigned_vendor_uid
+                        var VendorName= this.findVendorandCompanyName(vendorID,allUser)[0]
+                        var companyName = this.findVendorandCompanyName(vendorID,allUser)[1]
+                        var formNo = workflow.formContent.formNo
+                        var status=workflow.status
+                        var stage= this.addStage(status)
+                        var dateAssign = workflow.formContent.formEffDate
+                        this.allWorkflowData.push({ id:id,task: task, vendorID:vendorID,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
 
+                        //for active workflow
+                        if (status !='ARCHIVED'){
+                            this.ActiveWorkflow.push({ id:id,task: task, vendorID:vendorID,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+                        }else{
+                            // inactive workflow
+                            this.InActiveWorkflow.push({ id:id,task: task, vendorID:vendorID,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+                        }
+                    }
+                    
+                })
             })
             .catch(error => {
-              console.log(error);
+                console.log(error);
             });
+        },
+        async getAllFormAvail(){
+            axios.get(`${BASE_URL}/api/formtemplate`)
+            .then(response => {
+                var allForm = response.data.data;
+                //data cleaning
+                for (const form of allForm){
+                    var id = form.id
+                    var formName = form.formName
+                    var formNo = form.formNo
+                    var lastEdited=form.formEffDate
+                    this.allFormData.push({ id: id, formName: formName, formNo: formNo, editedby:"", lastEdited: lastEdited})
+                }
+            //   console.log(this.allFormData)
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        },
+        findVendorandCompanyName(vendorID,allUser){
+            var companyName = '';
+            var VendorName = '';
+            for (const user of allUser){
+                if (vendorID == user.userId){
+                    VendorName= user.name
+                    companyName = user.entityName
+                    
+                }
+            }
+            return [VendorName,companyName];
+        },
+        addStage(status){ //add stage according to the status
+            var stage = '';
+            if (status == "PENDING_VENDOR"){
+                stage = 'Vendor'
+            }else if (status == "PENDING_REVIEW"){
+                stage = 'Admin'
+            }else if(status == "PENDING_APPROVAL"){
+                stage = 'Approver'
+            }else if(status == "APPROVED"){
+                stage = 'Completed'
+            }else if(status =='ADMIN_REJECTED'){
+                stage = 'Vendor'
+            }else if (status == "APPROVER_REJECTED"){
+                stage = 'Vendor'
+            }
+            return stage
+        },
+        deleteWorkflow(id,vendorID){
+            
+            Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var url = `${BASE_URL}/api/form/changestatus/archive`
+                    axios.post(url, {
+                        formID:id,assigned_vendor_uid:vendorID
+                    })
+                    .then(response => {
+                        Swal.fire(
+                        'Deleted!',
+                        'Your file has been archived.',
+                        'success'
+                        ).then(function () {
+                            location.reload();
+                        })
+                    })
+                }
+            })
         },
         EditEachForm(formNo){ //GET FormTemplate API
             localStorage.setItem('formNo', formNo)
@@ -112,7 +202,7 @@ export default {
         allRowsSelected() { //table styling function
             return this.selectedRows.length === this.allFormData.length;
         },
-  },
+    },
     watch: { //table styling function
         selectAll(val) {
         this.selectedRows = val ? [...this.allFormData] : [];
@@ -140,37 +230,37 @@ export default {
     <div v-if="firstNavOption === 'workflowTable'" >
         <!-- sub nav bar [Active / Inactive] -->
         <el-tabs v-model="secNavOption"  type="border-card" >
-            <el-tab-pane label="Active" name="ActiveWorkFlow"   @tab-click="secNavOption = 'ActiveWorkFlow'">
-                <template #label>Active({{ data1.length }})</template>
+            <el-tab-pane label="Active" name="ActiveWorkFlow"  >
+                <template #label>Active({{ ActiveWorkflow.length }})</template>
             </el-tab-pane>
             <el-tab-pane label="Inactive" name="InActiveworkflowTable"  @tab-click="secNavOption = 'InActiveworkflowTable'">
-                <template #label>Inctive({{ data2.length }})</template>
+                <template #label>Inctive({{ InActiveWorkflow.length }})</template>
             </el-tab-pane>
 
         <!-- search bar and button (still unable to fit to inline) -->
         <div class="row" >
             <div class="col-sm-2">
-                <el-input placeholder="Search Company Name" style="width:fit-content" size="large">
+                <el-input v-model="SearchCompany" placeholder="Search Company Name" style="width:fit-content" size="large">
                 <template #suffix>
                 <el-icon class="el-input__icon"><Search /></el-icon>
                 </template>
                 </el-input>
             </div>
             <div class="col-sm-2">
-                <Button @click="AddWorkflow">+ Add Account</Button>
+                <Button @click="AddWorkflow">+ Add Workflow</Button>
             </div>
         </div>
-
-
-         
-
+        
         <!-- 1.1) Active Table content -->
         <!-- previous way of hardcoding table, to be changed to table component -->
-        <div v-if="activeOption === 'workflowTable'">
+        
+        <div v-if="firstNavOption === 'workflowTable' && secNavOption !== 'InActiveworkflowTable'" >
             <table class="my-table">
             <thead>
                 <tr>
+                    <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
                     <th>Task</th>
+                    <th>Vendor</th>
                     <th>Company Name</th>
                     <th>Form No.</th>
                     <th>Stage</th>
@@ -180,23 +270,25 @@ export default {
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="item in data1" :key="item.id">
+                <tr v-for="item in ActiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
+                <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
                 <td>{{ item.task }}</td>
-                <td>{{ item.company }}</td>
+                <td>{{ item.VendorName }}</td>
+                <td>{{ item.companyName }}</td>
                 <td>{{ item.formNo }}</td>
                 <td>{{ item.stage }}</td>
                 <td>{{ item.status }}</td>
                 <td>{{ item.dateAssign }}</td>
                 <td >
                     <div  class="btn-group dropup">
-
                         <Button buttonStyle="none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             ...
                         </Button>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="#">Edit</a></li>
-                            <li><a class="dropdown-item" href="#">Delete</a></li>
                             <li><a class="dropdown-item" href="#">Email</a></li>
+                            <li v-if="item.status=='APPROVED'"><a class="dropdown-item" href="#">PDF</a></li>
+                            <li><a class="dropdown-item" @click="deleteWorkflow(item.id, item.vendorID)">Delete</a></li>
                         </ul>
                     </div>
 
@@ -208,7 +300,45 @@ export default {
         
         <!-- 1.2) InActive Table content -->
         <div v-if="secNavOption === 'InActiveworkflowTable'">
-            <Table :data="data2" :headers="headers2" :fields="fields2" :options="dropdownOptions" />
+            <!-- <Table :data="data2" :headers="headers2" :fields="fields2" :options="dropdownOptions" /> -->
+            <table class="my-table">
+            <thead>
+                <tr>
+                    <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
+                    <th>Task</th>
+                    <th>Vendor</th>
+                    <th>Company Name</th>
+                    <th>Form No.</th>
+                    <th>Status</th>
+                    <th>Date Assigned</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in InActiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
+                <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
+                <td>{{ item.task }}</td>
+                <td>{{ item.VendorName }}</td>
+                <td>{{ item.companyName }}</td>
+                <td>{{ item.formNo }}</td>
+                <td>{{ item.status }}</td>
+                <td>{{ item.dateAssign }}</td>
+                <td >
+                    <div  class="btn-group dropup">
+                        <Button buttonStyle="none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            ...
+                        </Button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">View</a></li>
+                            <li><a class="dropdown-item" href="#">Activate</a></li>
+                        </ul>
+                    </div>
+
+                </td>
+                </tr>
+            </tbody>
+            </table>
+
         </div>
         </el-tabs>
     </div>
@@ -228,7 +358,8 @@ export default {
                 <template #suffix>
                 <el-icon class="el-input__icon"><Search /></el-icon>
                 </template>
-            </el-input>      
+            </el-input>    
+            
         <!-- 2.1) To-do Table content -->
         <div v-if="firstNavOption === 'taskTable' && secNavOption !== 'CompletedtaskTable'">
             <Table :data="data3" :headers="headers3" :fields="fields3" icon-class="pen-square" @action-click="TaskToDoAction" />
@@ -253,7 +384,6 @@ export default {
                 <th>Last Edited</th>
                 <th>Actions</th>
             </tr>
-            WAITING FOR FORMTEMPLATE API FIX
 
             </thead>
             <tbody>

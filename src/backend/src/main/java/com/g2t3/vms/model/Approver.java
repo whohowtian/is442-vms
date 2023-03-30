@@ -6,11 +6,12 @@ import com.g2t3.vms.enums.UserType;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @SuperBuilder(toBuilder = true)
-@Data
-@EqualsAndHashCode(callSuper=false)
+@Data @EqualsAndHashCode(callSuper=false)
+@NoArgsConstructor
 public class Approver extends User {
     
     @PersistenceCreator

@@ -1,6 +1,6 @@
 <template>
-<el-form-item :label="currentField.label" :label-width="currentField.labelWidth + 'px'">
-  <el-input-number v-model="currentField.input" controls-position="right" v-bind="attributesBinding">
+<el-form-item :label="currentField.label" :label-width="currentField.labelWidth + 'px'" :required="this.currentField.isRequired">
+  <el-input-number v-model="currentField.input" controls-position="right" v-bind="attributesBinding" :disabled="this.currentField.disabled">
   </el-input-number>
 </el-form-item>
 </template>
