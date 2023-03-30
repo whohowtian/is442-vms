@@ -3,7 +3,7 @@
     <el-date-picker
       v-model="currentField.input"
       type="date"
-      placeholder="Pick a day">
+      placeholder="Pick a day" :disabled="this.currentField.disabled">
     </el-date-picker>
   </el-form-item>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <el-form-item  :label="currentField.label" :label-width="currentField.labelWidth + 'px'" :required="this.currentField.isRequired" >
-    <el-input v-model="currentField.input" v-bind="attributesBinding">
+    <el-input v-model="currentField.input" :disabled="this.currentField.disabled">
       <template v-if="currentField.prepend !== ''" slot="prepend">{{ currentField.prepend }}</template>
       <template v-if="currentField.append !== ''" slot="append">{{ currentField.append }}</template>
       

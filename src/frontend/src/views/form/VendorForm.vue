@@ -19,11 +19,11 @@
             <el-divider content-position="left" >{{ eachFormObj.sectionTitle }}</el-divider>
               <div class="wrapper--forms">
                 <el-col v-for="field in eachFormObj.fields"  v-bind="field" class="form__group" >
+                  
                   <component 
                       :is="field.fieldType" 
                       :currentField="field" 
-                      :disabled= true
-                      :required= true
+                      :required= false
                       v-model="field.input" 
                       class="form__field">
                   </component>
@@ -77,6 +77,13 @@
             let allQn = []
             // console.log(formTitle, adminUseOnly)
 
+            // only for admin use only TODO: need to change when approver use field added
+            let disable_section = false
+            if (adminUseOnly==true){
+              disable_section = true
+
+            }
+
             //store questions dict 
             for (let j =1; j< Object.keys(sectionData[i]['questions']).length +1 ; j++){
               const inputOptions = sectionData[i]['questions'][j]['inputOptions'] || null
@@ -85,6 +92,7 @@
                 label: sectionData[i]['questions'][j]['qnTitle'],
                 options : inputOptions,
                 input: sectionData[i].questions[j].answer, 
+                disabled: disable_section
                 //+ isRequired field
               };
               allQn.push(qnDict)
