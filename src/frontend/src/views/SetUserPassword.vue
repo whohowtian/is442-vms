@@ -1,6 +1,6 @@
-
 <script>
-import NavBar from '../components/Navbar.vue';
+import NavBar from '../components/Navbar.vue'
+
 export default {
         name: "PasswordView",
         components: {
@@ -9,7 +9,16 @@ export default {
         data() {
             
             return {
-            selectedRole: null,
+            password: null,
+            password2: null,
+            password_length: 0,
+            contains_eight_characters: false,
+            contains_number: false,
+            contains_uppercase: false,
+            contains_special_character: false,
+            valid_password: false,
+            password_match: false,
+            
             menuItems: [
                 { label: 'HOME', route: '/AdminView'  },
                 { label: 'ACCOUNT', route: '/AccountView'  },
@@ -19,16 +28,38 @@ export default {
             }
         },
         methods: {
-        setPassword() {alert('Password set!');
-            window.location.href = '/AccountView';
+            setPassword() {alert('Password set!');
+                window.location.href = '/AccountView';
+            },
+            checkPassword() {
+                this.password_length = this.password.length;
+                const format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+                        
+                if (this.password_length > 8) {
+                    this.contains_eight_characters = true;
+                } else {
+                    this.contains_eight_characters = false;
+                        }
+                        
+                if (this.password === this.password2 && this.password.length != 0 && this.password2.length != 0){
+                    this.password_match = true;
+                }
+                this.contains_number = /\d/.test(this.password);
+                this.contains_uppercase = /[A-Z]/.test(this.password);
+                this.contains_special_character = format.test(this.password);
+                
+                if (this.contains_eight_characters === true &&
+                                this.contains_special_character === true &&
+                                this.contains_uppercase === true &&
+                                this.contains_number === true) {
+                                    this.valid_password = true;			
+                } else {
+                    this.valid_password = false;
+                }
+
             }
-        },
-        computed: {
-            selectedR() {
-                return this.selectedRole;
-            }
-        }
     }
+}
 </script>
 <template >
     <NavBar :items="menuItems" />
@@ -44,28 +75,95 @@ export default {
         <form class="row g-3 p-2">
             <div><h1>SET USER PASSWORD</h1></div>
             <div><span style="color:red">* Required</span></div>
-            <div class="col-lg-6 col-md-6">
-                <div class="col-lg-6 col-md-6">
-                    <h4><label for="pw" class="form-label">Password</label> <span style="color:red">*</span></h4>
-                    <input class="form-control" >
-                </div>
+            	
 
-                <div class="col-lg-6 col-md-6">
-                    <h4><label for="pw2" class="form-label">Confirm Password</label> <span style="color:red">*</span></h4>
-                    <input class="form-control" >
+            <div class="input_container">
+                <ul class="criteriaList">
+                    <li class="criteria" v-bind:class="{ is_valid: contains_eight_characters }">- 8 Characters</li>
+                    <li class="criteria" v-bind:class="{ is_valid: contains_number }">- Contains Number</li>
+                    <li class="criteria" v-bind:class="{ is_valid: contains_uppercase }">- Contains Uppercase</li>
+                    <li class="criteria" v-bind:class="{ is_valid: contains_special_character }">- Contains Special Character</li>
+                    <li class="criteria" v-bind:class="{ is_valid: password_match }">- Passwords Match</li>
+                </ul>
+                    <div class="col-lg-6 col-md-6">
+                        <h4><label for="password" class="form-label">Password</label> <span style="color:red">*</span></h4>
+                        <input id="password" type="password" @input="checkPassword" v-model="password" autocomplete="off" placeholder="Password" />
+                    </div>
+
+                    <div class="col-lg-6 col-md-6">
+                        <h4><label for="password" class="form-label">Confirm Password</label> <span style="color:red">*</span></h4>
+                        <input id="password2" type="password" @input="checkPassword" v-model="password2" autocomplete="off" placeholder="Confirm Password" />
+                    </div>
                 </div>
-            </div>
             
 
                 
             <div class="col">
-            <button type="button" class="btn btn-outline-primary px-4 mt-5 float-end" id="createBtn"
+                <button v-if="this.checkPassword == true" type="button" class="btn btn-outline-primary px-4 mt-5 float-end" id="createBtn"
             style="border-radius: 5px;" @click="setPassword()" >Set Password</button>
-            </div>
+            
+                </div>
             </form>
     </div>
 </template>
 
 <style>
 body{background-color:#0079B3}
+
+.criteriaList {
+	padding-left: 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.criteria { 
+	margin-bottom: 8px;
+	color: #525f7f;
+	position: relative;
+}
+
+.criteria:before {
+  content: "";
+	width: 0%; height: 2px;
+	background: #2ecc71;
+	position: absolute;
+	left: 0; top: 50%;
+	display: block;
+	transition: all .6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+
+/* Password Input --------- */
+
+input[type="password"] {
+	line-height: 1.5;
+	display: block;
+	color: rgba(136, 152, 170, 1);
+	font-weight: 300;
+	width: 100%;
+	height: calc(2.75rem + 2px);
+	padding: .625rem .75rem;
+	border-radius: .25rem;
+	background-color: #fff;
+	transition: border-color .4s ease;
+	border: 1px solid #cad1d7;
+	outline: 0;
+}
+
+input[type="password"]:focus {
+	border-color: rgba(50, 151, 211, .45);
+}
+
+
+/* Checkmark & Strikethrough --------- */
+
+.is_valid { color: rgba(136, 152, 170, 0.8); }
+.is_valid:before { width: 100%; }
+
+.checked { animation: draw 0.5s ease forwards; }
+
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
 </style>
