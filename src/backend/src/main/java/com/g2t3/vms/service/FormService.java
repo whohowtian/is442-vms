@@ -131,7 +131,8 @@ public class FormService {
                 currFormObjDB.setStatus(FormStatus.PENDING_APPROVAL);
                 break;
             case "archive":
-                currFormObjDB.setStatus(FormStatus.ARCHIVED);
+                // currFormObjDB.setStatus(FormStatus.ARCHIVED);
+                currFormObjDB.isArchived(true);
                 // currFormObjDB.setArchivedBy();
                 break;
             case "adminreject":

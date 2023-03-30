@@ -7,6 +7,4 @@ public enum FormStatus {
     APPROVED, //completed
     ADMIN_REJECTED, //sent back to vendor todo
     APPROVER_REJECTED, //sent back to vendor todo
-    ARCHIVED //soft delete
-
 }
