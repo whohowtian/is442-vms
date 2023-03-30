@@ -19,7 +19,7 @@ export default {
         },
         methods: {
         createAcc() {alert('Created!');
-            window.location.href = '/AccountView';
+            window.location.href = '/SetUserPassword';
             }
         },
         computed: {
@@ -101,15 +101,7 @@ export default {
                     <textarea   class="form-control"  rows="1"></textarea>
                 </div>
 
-                <div class="col-lg-6 col-md-6">
-                    <h4><label for="pw" class="form-label">Password</label> <span style="color:red">*</span></h4>
-                    <input class="form-control" >
-                </div>
-
-                <div class="col-lg-6 col-md-6">
-                    <h4><label for="pw2" class="form-label">Confirm Password</label> <span style="color:red">*</span></h4>
-                    <input class="form-control" >
-                </div>
+                
             
             </div>
 
