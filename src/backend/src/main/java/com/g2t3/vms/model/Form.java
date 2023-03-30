@@ -31,7 +31,12 @@ public class Form {
     private String isArchived;
 
     public Form (String assigned_vendor_email, FormTemplate formContent) {
+        this(formContent);
         this.assigned_vendor_email = assigned_vendor_email;
+
+    }
+
+    public Form (FormTemplate formContent) {
         this.status = FormStatus.PENDING_VENDOR;
         this.formContent = formContent;
         this.approver = "";

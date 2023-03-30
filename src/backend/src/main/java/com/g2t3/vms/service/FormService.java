@@ -57,8 +57,9 @@ public class FormService {
     // create new form/workflow
     public void createForm(Map<String, String> newFormInfo) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
 
-        String formNo = newFormInfo.get("formNo");  
-        String assigned_vendor_uid = newFormInfo.get("assigned_vendor_email");
+        String formNo = newFormInfo.get("formNo"); 
+        
+        String assigned_vendor_email = newFormInfo.get("assigned_vendor_email");
 
         System.out.println(newFormInfo.toString());
 
@@ -66,8 +67,13 @@ public class FormService {
 
         System.out.println(getFormTempt.toString());
 
-        Form newForm = new Form(assigned_vendor_uid, getFormTempt);
+        if (assigned_vendor_email == null) {
+            Form newForm = new Form(getFormTempt);
+        } else {
+            Form newForm = new Form(assigned_vendor_email, getFormTempt);
 
+        }
+        
         if (getFormTempt == null) {
             throw new ResourceNotFoundException("Form Template " + formNo + "does not exist.");
         }
