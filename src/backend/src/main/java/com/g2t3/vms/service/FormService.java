@@ -66,7 +66,7 @@ public class FormService {
 
         System.out.println(getFormTempt.toString());
 
-        Form newForm = new Form(formNo, getFormTempt);
+        Form newForm = new Form(assigned_vendor_uid, getFormTempt);
 
         if (getFormTempt == null) {
             throw new ResourceNotFoundException("Form Template " + formNo + "does not exist.");
@@ -90,7 +90,7 @@ public class FormService {
         for (Map.Entry<String, FormSection> sectionEntry : newInput.entrySet()) {
             String currSectID = sectionEntry.getKey();
             FormSection currFormSectDB = currFormObjDB.getFormContent().getFormSections().get(currSectID);
-            boolean forAdminOnly = currFormSectDB.getAdminUseOnly();
+            boolean forAdminOnly = currFormSectDB.isAdminUseOnly();
 
             // TODO: to allow admin to edit forAdminUseOnly sections; currently only allow editing for vendor questions
             if (forAdminOnly) {
@@ -132,6 +132,7 @@ public class FormService {
                 break;
             case "archive":
                 currFormObjDB.setStatus(FormStatus.ARCHIVED);
+                // currFormObjDB.setArchivedBy();
                 break;
             case "adminreject":
                 currFormObjDB.setStatus(FormStatus.ADMIN_REJECTED);

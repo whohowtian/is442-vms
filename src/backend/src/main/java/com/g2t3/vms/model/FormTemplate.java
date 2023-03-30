@@ -9,10 +9,10 @@ import org.bson.types.ObjectId;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 
@@ -29,8 +29,9 @@ public class FormTemplate {
     private int revNo;
     // private boolean isArchived;
     private HashMap<String, FormSection> formSections;
+    private String lastEdited;
 
-    public FormTemplate(String formNo, String formName, HashMap<String, FormSection> formSections) {
+    public FormTemplate(String formNo, String formName, String lastEdited, HashMap<String, FormSection> formSections) {
         this.formNo = formNo;
         this.formName = formName;
         this.formSections = formSections;
@@ -41,9 +42,12 @@ public class FormTemplate {
 
         this.revNo = 1;
         // this.isArchived = false;
-        LocalDate date = LocalDate.now();
+        LocalDate dateTimeNow = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        formEffDate = date.format(formatter);
+
+        this.lastEdited = lastEdited;
+        this.formEffDate = dateTimeNow.format(formatter);
+
     }
 
 }

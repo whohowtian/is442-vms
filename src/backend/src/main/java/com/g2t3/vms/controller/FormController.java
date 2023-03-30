@@ -24,7 +24,7 @@ import com.g2t3.vms.response.ResponseHandler;
 import com.g2t3.vms.service.FormService;
 
 
-
+// TODO: capture last edit for edit/create 
 
 @CrossOrigin(origins= {"*"}, maxAge = 4800, allowCredentials = "false" )
 @RestController
@@ -72,7 +72,7 @@ public class FormController {
     public ResponseEntity<?> createForm(@RequestBody Map<String, String> newFormInfo) {
         try {
             service.createForm(newFormInfo); 
-            return ResponseHandler.generateResponse("Created form for " + newFormInfo.get("assigned_vendor_uid") + " successfully.", HttpStatus.OK, null);
+            return ResponseHandler.generateResponse("Created form for " + newFormInfo.get("assigned_vendor_email") + " successfully.", HttpStatus.OK, null);
         } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
         } catch (DataIntegrityViolationException e){
@@ -110,4 +110,7 @@ public class FormController {
             return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
         }
     }
+
+    // @GetMapping("/user/{UID}")
+    // public
 }

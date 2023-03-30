@@ -22,6 +22,7 @@ public class FormSection {
     // section name may be optional?
     private String sectionName;
     private boolean adminUseOnly;
+    private boolean approvalViewOnly;
     private boolean doScoreCalculation;
     private HashMap<String, Question> questions;
 
@@ -33,13 +34,20 @@ public class FormSection {
         // this.id = new ObjectId().toString();
     }
 
+    public FormSection (String sectionName, boolean doScoreCalculation, HashMap<String, Question> questions, boolean adminUseOnly, boolean approvalViewOnly) {
+        this(sectionName, doScoreCalculation, questions);
+        this.adminUseOnly = adminUseOnly;
+        this.approvalViewOnly = approvalViewOnly;
+    }
+
+
     // @Override
     // public String toString() {
     //     return String.format("{ \"sectionName\": '%s', \"questions\": %s", sectionName, questions + "}");
     // }
 
-    public boolean getAdminUseOnly() {
-        return adminUseOnly;
-    }
+    // public boolean getAdminUseOnly() {
+    //     return adminUseOnly;
+    // }
 
 }
