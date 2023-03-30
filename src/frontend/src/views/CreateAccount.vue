@@ -7,7 +7,9 @@ export default {
          },
          
         data() {
+            
             return {
+            selectedRole: null,
             menuItems: [
                 { label: 'HOME', route: '/AdminView'  },
                 { label: 'ACCOUNT', route: '/AccountView'  },
@@ -20,9 +22,14 @@ export default {
         },
         methods: {
         createAcc() {alert('Created!');
-            window.location.href = '/AccountView';
+            window.location.href = '/SetUserPassword';
+            }
+        },
+        computed: {
+            selectedR() {
+                return this.selectedRole;
+            }
         }
-    }
     }
 </script>
 <template >
