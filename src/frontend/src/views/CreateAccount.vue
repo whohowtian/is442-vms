@@ -6,7 +6,9 @@ export default {
             NavBar,
          },
         data() {
+            
             return {
+            selectedRole: null,
             menuItems: [
                 { label: 'HOME', route: '/AdminView'  },
                 { label: 'ACCOUNT', route: '/AccountView'  },
@@ -18,8 +20,13 @@ export default {
         methods: {
         createAcc() {alert('Created!');
             window.location.href = '/AccountView';
+            }
+        },
+        computed: {
+            selectedR() {
+                return this.selectedRole;
+            }
         }
-    }
     }
 </script>
 <template >
@@ -42,23 +49,76 @@ export default {
             </div>
             <div class="col-lg-6 col-md-6">
                 <h4><label for="inputRole" class="form-label">Role <span style="color:red">*</span></label></h4>
-                <select id="inputRole" class="form-select">
+                <select id="inputRole" class="form-select" v-model='selectedRole'>
                     <option disabled selected value>Select Role</option>
-                    <option value ='Inactive'>Vendor</option>
-                    <option value="Inactive">Admin</option>
-                    <option value="Inactive">Approver</option>
+                    <option :value ='Vendor'>Vendor</option>
+                    <option :value='Admin'>Admin</option>
+                    <option :value='Approver'>Approver</option>
                 </select>
             </div>
+
+            <div v-if="this.selectedRole == 'Approver'">
+                <h1>HELLO</h1>
+            </div>
+
+            <div v-else-if="this.selectedRole == 'Admin'">
+                <h1>BYEBYE</h1>
+            </div>
+
+            <div v-else> <!--if role is "Vendor"-->
+                <div class="col-lg-6 col-md-6">
+                    <h4><label for="inputCompany" class="form-label">Company Name</label> <span style="color:red">*</span></h4>
+                    <textarea class="form-control"   rows = '1'></textarea>
+                </div>
+
+                <div class="col-lg-6 col-md-6">
+                    <h4><label for="pw" class="form-label">Company UEN</label> <span style="color:red">*</span></h4>
+                    <input class="form-control" >
+                </div>
+
+                <div class="col-lg-6 col-md-6">
+                    <h4><label for="pw" class="form-label">Company Activites</label> <span style="color:red">*</span></h4>
+                    <input class="form-control" >
+                </div>
+
+                <div class="col-lg-6 col-md-6">
+                <h4><label for="inputRole" class="form-label">Approver <span style="color:red">*</span></label></h4>
+                <select id="inputApprover" class="form-select" v-model='inputApprover'>
+                    
+                </select>
+                </div>
+
+                <div class="col-lg-6 col-md-6">
+                <h4><label for="inputRole" class="form-label">Admin <span style="color:red">*</span></label></h4>
+                <select id="inputAdmin" class="form-select" v-model='inputAdmin'>
+                    
+                </select>
+                </div>
+                
+
+                <div class="col-lg-6 col-md-6">
+                    <h4><label for="inputEmail" class="form-label">Email <span style="color:red">*</span></label></h4>
+                    <textarea   class="form-control"  rows="1"></textarea>
+                </div>
+
+                <div class="col-lg-6 col-md-6">
+                    <h4><label for="pw" class="form-label">Password</label> <span style="color:red">*</span></h4>
+                    <input class="form-control" >
+                </div>
+
+                <div class="col-lg-6 col-md-6">
+                    <h4><label for="pw2" class="form-label">Confirm Password</label> <span style="color:red">*</span></h4>
+                    <input class="form-control" >
+                </div>
             
-            <div class="col-lg-12 col-md-12">
-                <h4><label for="inputCompany" class="form-label">Company Name</label> <span style="color:red">*</span></h4>
-                <textarea class="form-control"   rows = '1'></textarea>
             </div>
-            <div class="col-lg-6 col-md-6">
-                <h4><label for="inputEmail" class="form-label">Email <span style="color:red">*</span></label></h4>
-                <textarea   class="form-control"  rows="1"></textarea>
-            </div>
-            <div class="col-lg-6 col-md-6">
+
+            
+
+            <template v-if="role === 'Admin'">
+                <label>Username</label>
+                <input placeholder="Enter your username">
+                <div class="col-lg-6 col-md-6">
                 <h4><label for="inputCountry" class="form-label">Country <span style="color:red">*</span></label></h4>
                 <select id="inputCountry" class="form-select" >
                     <option disabled selected value>Select Country</option>
@@ -66,8 +126,12 @@ export default {
                     <option value="China">China</option>
                     <option value="Japan">Japan</option>
                 </select>
-                
-            </div>    
+            </div> 
+            </template>
+
+
+            
+               
             <div class="col">
             <button type="button" class="btn btn-outline-primary px-4 mt-5 float-end" id="createBtn"
             style="border-radius: 5px;" @click="createAcc()" >Create</button>
