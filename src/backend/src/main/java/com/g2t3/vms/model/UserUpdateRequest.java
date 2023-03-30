@@ -32,4 +32,7 @@ public class UserUpdateRequest {
 
     private boolean isGSTRegistered;
 
+    private String gstRegisteredNo;
+
+
 }

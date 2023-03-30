@@ -116,7 +116,7 @@ public class UserService {
     public void updateAdmin(UserType prevType, UserUpdateRequest user) throws ResourceNotFoundException, Exception {
 
         // check
-        User prevDetails = getUserById(user.getUserId());
+        getUserById(user.getUserId());
 
         Admin admin  = new Admin();
         admin = admin.toBuilder()
@@ -135,7 +135,7 @@ public class UserService {
     public void updateApprover(UserType prevType, UserUpdateRequest user) throws ResourceNotFoundException, Exception {
 
         // check
-        User prevDetails = getUserById(user.getUserId());
+        getUserById(user.getUserId());
 
         Approver approver  = new Approver();
         approver = approver.toBuilder()
@@ -147,6 +147,29 @@ public class UserService {
             .userType(UserType.APPROVER)
             .build();
         userRepo.save(approver);
+    
+    }
+
+    public void updateVendor(UserType prevType, UserUpdateRequest user) throws ResourceNotFoundException, Exception {
+
+        // check
+        getUserById(user.getUserId());
+
+        Vendor vendor  = new Vendor();
+        vendor = vendor.toBuilder()
+            .userId(user.getUserId())
+            .name(user.getName())
+            .email(user.getEmail())
+            .password(user.getPassword())
+            .number(user.getNumber())
+            .userType(UserType.VENDOR)
+            .entityUEN(user.getEntityUEN())
+            .entityName(user.getEntityName())
+            .entityActivities(user.getEntityActivities())
+            .isGSTRegistered(user.isGSTRegistered())
+            .gstRegisteredNo(user.getGstRegisteredNo())
+            .build();
+        userRepo.save(vendor);
         
 
     }

@@ -190,6 +190,8 @@ public class UserController {
                 userService.updateAdmin(prevType, user);
             } else if (type.equals(UserType.APPROVER)) {
                 userService.updateApprover(prevType, user);
+            } else if (type.equals(UserType.VENDOR)) {
+                userService.updateVendor(prevType, user);
             }
             
             return ResponseHandler.generateResponse("Updated User with email of " + user.getEmail() + " successfully.", HttpStatus.OK, null);
