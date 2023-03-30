@@ -159,4 +159,18 @@ public class FormService {
 
     } 
 
+    public ArrayList<Form> getFormByStatus(String statusID) throws ResourceNotFoundException, Exception {
+        ArrayList<Form> forms = new ArrayList<>();
+
+        for (Form form : formRepo.getFormByStatus(statusID)) {
+            forms.add(form);
+        }
+
+        if (forms.isEmpty()) {
+            throw new ResourceNotFoundException("No forms/workflows have been created.");
+        }
+
+        return forms;
+    }
+
 }

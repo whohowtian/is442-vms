@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import java.util.*;
 import org.bson.types.ObjectId;
+import com.g2t3.vms.enums.FormStatus;
 
 public interface FormRepo extends MongoRepository<Form, String> {
     
@@ -13,6 +14,9 @@ public interface FormRepo extends MongoRepository<Form, String> {
 
     @Query("{'_id': ?0}")
     Form getFormByID(String id);
+
+    @Query("{'status': ?0}")
+    ArrayList<Form> getFormByStatus(String status);
 
     // @Query("{'formContent.formSections.questions._id: ?0'}")
     // Form getQuestionObjByID(ObjectId id);

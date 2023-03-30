@@ -111,6 +111,22 @@ public class FormController {
         }
     }
 
+    @GetMapping("/formstatus/{statusID}")
+    @ResponseBody
+    public ResponseEntity<?> getFormByStatus(@PathVariable String statusID) {
+        ArrayList<Form> formsArr;
+        try {
+            formsArr = service.getFormByStatus(statusID);
+        } catch (ResourceNotFoundException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
+        }
+        return ResponseHandler.generateResponse("Successful", HttpStatus.OK, formsArr);
+        
+    }
+
     // @GetMapping("/user/{UID}")
     // public
 }
