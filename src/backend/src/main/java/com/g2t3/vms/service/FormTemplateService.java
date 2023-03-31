@@ -63,7 +63,7 @@ public class FormTemplateService {
         FormTemplate getForm = formTemplateRepo.getFormTemplateByNo(formNo);
 
         if (getForm != null) {
-            throw new NullPointerException("Form Template " + formNo + "already exist.");
+            throw new NullPointerException("Form Template " + formNo + " already exist.");
         }
         
         formTemplateRepo.save(formTemplate); 
