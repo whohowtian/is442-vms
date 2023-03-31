@@ -4,17 +4,18 @@ import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import com.g2t3.vms.enums.UserType;
 import com.g2t3.vms.exception.ResourceAlreadyExistException;
 import com.g2t3.vms.exception.ResourceNotFoundException;
 import com.g2t3.vms.model.Admin;
 import com.g2t3.vms.model.Approver;
-import com.g2t3.vms.model.InputUserLogin;
 import com.g2t3.vms.model.User;
-import com.g2t3.vms.model.InputUserUpdate;
 import com.g2t3.vms.model.Vendor;
 import com.g2t3.vms.repository.UserRepo;
+import com.g2t3.vms.request.UserLoginRequest;
+import com.g2t3.vms.request.UserUpdateRequest;
 
 @Service
 public class UserService {
@@ -44,7 +45,7 @@ public class UserService {
         
     }
 
-    public Admin createAdmin(Admin admin) throws ResourceAlreadyExistException, Exception {
+    public Admin createAdmin(Admin admin) throws MethodArgumentNotValidException, ResourceAlreadyExistException, Exception {
         
         // errors
         Admin user = (Admin) userRepo.findByEmail(admin.getEmail());
@@ -126,7 +127,7 @@ public class UserService {
         return users;
     }
 
-    public void updateAdmin(UserType prevType, InputUserUpdate user) throws ResourceNotFoundException, Exception {
+    public void updateAdmin(UserType prevType, UserUpdateRequest user) throws ResourceNotFoundException, Exception {
 
         // check
         getUserById(user.getUserId());
@@ -145,7 +146,7 @@ public class UserService {
 
     }
 
-    public void updateApprover(UserType prevType, InputUserUpdate user) throws ResourceNotFoundException, Exception {
+    public void updateApprover(UserType prevType, UserUpdateRequest user) throws ResourceNotFoundException, Exception {
 
         // check
         getUserById(user.getUserId());
@@ -163,7 +164,7 @@ public class UserService {
     
     }
 
-    public void updateVendor(UserType prevType, InputUserUpdate user) throws ResourceNotFoundException, Exception {
+    public void updateVendor(UserType prevType, UserUpdateRequest user) throws ResourceNotFoundException, Exception {
 
         // check
         getUserById(user.getUserId());
@@ -187,7 +188,7 @@ public class UserService {
 
     }
 
-    public User activateAccount(InputUserLogin user) throws ResourceNotFoundException, Exception {
+    public User activateAccount(UserLoginRequest user) throws ResourceNotFoundException, Exception {
 
         User prevDetails = getUserByEmail(user.getEmail());
 
