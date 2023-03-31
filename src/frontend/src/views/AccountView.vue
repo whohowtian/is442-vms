@@ -41,8 +41,8 @@
             async getAllAccount(){
             axios.get(`${BASE_URL}/api/user`)
                 .then(response => {
-                this.allAccount = response.data.data;
-                console.log(this.allAccount)
+                    console.log(response)
+                // this.allAccount = response.data;
                 })
                 .catch(error => {
                 console.log(error);

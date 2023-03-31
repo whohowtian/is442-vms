@@ -19,14 +19,16 @@
                 <el-input v-model="element.formNo" placeholder="Form No" style="width: 100%;"></el-input>
               </el-form-item>
             </el-row>
-            <!-- <el-row>
-              <el-form-item label="Revision No">
-                <el-input v-model="element.revNo" placeholder="Revision" style="width: 100%;"></el-input>
+            <el-row>
+              <el-form-item label="Deadline">
+                <el-input v-model.number="element.deadlineDays" placeholder="Deadline days" style="width: 100%;" type="number">
+                  <template #append>days</template>
+                </el-input>
               </el-form-item>
-            </el-row> -->
+            </el-row>
             <el-row>
               <el-form-item label="Date">
-                <el-input v-model="element.formEffDate" disabled  style="width: 100%;"></el-input>
+                <el-input v-model="element.lastEdited" disabled  style="width: 100%;"></el-input>
               </el-form-item>
               
             </el-row>
@@ -254,6 +256,8 @@ export default {
       sortElementOptions:FormBuilder.props.sortElementOptions,
     }
   },
+  components: FormBuilder.components
+  ,
   async created(){
     if (localStorage.getItem('formNo')!= null){
       var formNo = localStorage.getItem('formNo');
@@ -262,21 +266,23 @@ export default {
         .then(response => {
           var allData = response.data.data;
           var formData = allData['formSections']
-          console.log(formData[1])
+          console.log("all-->", allData)
 
           this.editableFormInfo = [
             {
             formNo:allData['formNo'],
             formName:allData['formName'],
-            formEffDate:allData['formEffDate'],
+            lastEdited:allData['lastEdited'],
+            deadlineDays:allData['deadlineDays'],
           }]
           store._state.data.editableFormInfo = this.editableFormInfo
-          console.log("store-->",store._state.data.editableFormInfo)
+          // console.log("store-->",store._state.data.editableFormInfo)
           
           //store formSection dict
           for (let i=1; i<Object.keys(formData).length +1; i++){
             let formTitle = formData[i]['sectionName']
             let adminUseOnly = formData[i]['adminUseOnly']
+            let approvalUseOnly = formData[i]['approvalViewOnly']
             let allQn = []
 
             //store questions dict 
@@ -285,18 +291,18 @@ export default {
               let qnDict={
                 fieldType:formData[i]['questions'][j]['inputType'],
                 label: formData[i]['questions'][j]['qnTitle'],
-                options : inputOptions
-                //+ isRequired field
+                options : inputOptions,
+                required: formData[i]['questions'][j]['required']
               };
               allQn.push(qnDict)
               // console.log("all Qn-->",allQn)
             }
           
-            this.editableForms.push({ fields: allQn, sectionTitle: formTitle, AdminUseOnly:adminUseOnly});
+            this.editableForms.push({ fields: allQn, sectionTitle: formTitle, AdminUseOnly:adminUseOnly, ApproverUseOnly:approvalUseOnly});
           }
 
           store._state.data.editableForms = this.editableForms
-          console.log(this.editableForms)
+          console.log("inner data-->",this.editableForms)
 
         })
         .catch(error => {
@@ -304,9 +310,18 @@ export default {
         });
     }
   },
-  components: FormBuilder.components
-  ,
+
   methods: {
+    deleteOption(option, index) {
+      option.splice(index, 1)
+    },
+    addOption(option) {
+      let count = option.length + 1;
+      option.push({
+        optionLabel: "Option Label " + count,
+        optionValue: "Option " + count
+      })
+    },
     showTextChange(value) {
       if (value && this.activeField.showScore) {
         this.activeField.showScore = false;

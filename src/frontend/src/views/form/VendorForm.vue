@@ -1,5 +1,5 @@
 <template>
-  <div class="main__wrapper">
+  <div class="main__wrapper" id="pdf-content">
     <el-container>
       <el-main>
         <el-form>
@@ -11,7 +11,7 @@
               <h6>{{ formData.formNo }}</h6>
             </el-row>
             <el-row>
-              <i>{{ formData.formEffDate }}</i>
+              <i>Fill in by: {{ formDeadline}}</i>
             </el-row>
 
           <!-- form -->
@@ -23,7 +23,7 @@
                   <component 
                       :is="field.fieldType" 
                       :currentField="field" 
-                      :required= false
+                      :required= "field.isRequired"
                       v-model="field.input" 
                       class="form__field">
                   </component>
@@ -32,9 +32,13 @@
           </template>
 
           <button type="button" class="btn btn-primary" @click="submitForm">Save</button>
+          <button type="button" class="btn btn-primary" @click="submitDraft">Draft</button>
+          <!-- pdf function visible only if is approval -->
+          <button type="button" class="btn btn-primary" @click="exportToPdf">Print</button>
         </el-form>
       </el-main>
     </el-container>
+
   </div>
 </template>
 
@@ -43,6 +47,7 @@
   import {FormBuilder} from './formbuilder'
   import axios from 'axios';
   import { BASE_URL } from '../../api.js';
+  import html2pdf from 'html2pdf.js'
 
   export default {
     components: FormBuilder.components,
@@ -50,6 +55,8 @@
     data(){
       return {
         formNo :'',
+        entityUEN:'', //for pdf
+        formDeadline:'',
         assigned_vendor_uid:'',
         formData:[],
         formattedData:[], //data structure to match formBuilder component style
@@ -62,26 +69,33 @@
       const datalist = dataValue.split(',');
       this.formNo = datalist[0]
       this.assigned_vendor_uid = datalist[1]
+      this.entityUEN=datalist[1] //for pdf, index[1] passed the companyName
       console.log("formNo-->",this.formNo, this.assigned_vendor_uid)
       await axios.get(`${BASE_URL}/api/form/` + this.formNo)
       .then(response => {
           const allData = response.data.data;
           this.formData = allData.formContent
+          this.formDeadline = allData.deadline.slice(0, allData.deadline.indexOf('T'));
           const sectionData = this.formData.formSections
-          console.log(this.formData)
+          console.log("allData-->",allData)
           
           //store questions dict 
           for(let i=1; i<Object.keys(sectionData).length +1; i++){
             let formTitle = sectionData[i]['sectionName']
             let adminUseOnly = sectionData[i]['adminUseOnly']
+            let approvalUseOnly = sectionData[i]['approvalViewOnly']
             let allQn = []
             // console.log(formTitle, adminUseOnly)
 
-            // only for admin use only TODO: need to change when approver use field added
+            // only for admin use only 
             let disable_section = false
             if (adminUseOnly==true){
               disable_section = true
+            }
 
+            // only for admin use only
+            if (approvalUseOnly==true){
+              disable_section = true
             }
 
             //store questions dict 
@@ -92,13 +106,13 @@
                 label: sectionData[i]['questions'][j]['qnTitle'],
                 options : inputOptions,
                 input: sectionData[i].questions[j].answer, 
-                disabled: disable_section
-                //+ isRequired field
+                disabled: disable_section,
+                isRequired: sectionData[i]['questions'][j]['required']
               };
               allQn.push(qnDict)
               // console.log("all Qn-->",allQn)
             }
-            this.formattedData.push({ fields: allQn, sectionTitle: formTitle, AdminUseOnly:adminUseOnly});
+            this.formattedData.push({ fields: allQn, sectionTitle: formTitle, AdminUseOnly:adminUseOnly,  ApproverUseOnly:approvalUseOnly });
 
           }
         }).catch(error => {
@@ -108,92 +122,238 @@
   },
   methods: {
   async submitForm() {
-        const formSections = {};
-        //retrieve form data
-        for (let i = 0; i < this.formattedData.length; i++) {
-          const formSection = this.formattedData[i];
-          const questions = {};
+  //submit with validation
+    const formSections = {};
+    this.nullField=[] //initialise
+    for (let i = 0; i < this.formattedData.length; i++) {
+      const formSection = this.formattedData[i];
+      const questions = {};
 
-          const allNull=[]
-          for (let j = 0; j < formSection.fields.length; j++) {
-            const field = formSection.fields[j];
-            const inputOptions = field.options || null;
+      const allNull=[]
+      for (let j = 0; j < formSection.fields.length; j++) {
+        const field = formSection.fields[j];
+        const inputOptions = field.options || null;
 
-          if(!(typeof field.input === 'string' && Boolean(field.input.trim()))){
-            console.log(field.input, typeof (field.input))
-              allNull.push(field.label)
-            }
-            const question = {
-              qnTitle: field.label,
-              inputType: field.fieldType,
-              inputOptions,
-              // isRequired: field.isRequired,
-              answer: field.input // get value from input property
-            };
-            questions[j + 1] = question;
-            // console.log("question-->",question)
+        if(field.isRequired){
+          if(field.input== null){
+            allNull.push(field.label)
+          }else{
+            console.log("none")
           }
-          if(allNull.length>0){ //store only if there is error msg
-            this.nullField.push({formSection: formSection.sectionTitle,
-              nullQns:allNull})
-            }        
-            console.log("allNull-->",allNull)
-            const section = {
-            sectionName: formSection.sectionTitle,
-            adminUseOnly: formSection.AdminUseOnly,
-            approvalUseOnly: formSection.ApproverUseOnly,
-            doScoreCalculation: false,
-            questions
-          };
-          formSections[i + 1] = section;
         }
-        console.log("check null-->",this.nullField)
-        if(this.nullField.length>0){
-            const nullError = this.nullField.map((nullObj) => {
-              return `Section: ${nullObj.formSection} - Null Fields: ${nullObj.nullQns.join(', ')}`
-            })
-            this.nullField=[]
+        const question = {
+          qnTitle: field.label,
+          inputType: field.fieldType,
+          inputOptions,
+          required: field.isRequired,
+          answer: field.input // get value from input property
+        };
+        questions[j + 1] = question;
+        // console.log("question-->",question)
+      }
+      if(allNull.length>0){ //store only if there is error msg
+        this.nullField.push({formSection: formSection.sectionTitle, nullQns:allNull})
+        }        
+        // console.log("allNull-->",allNull)
+        const section = {
+        sectionName: formSection.sectionTitle,
+        adminUseOnly: formSection.AdminUseOnly,
+        approvalViewOnly: formSection.ApproverUseOnly,
+        doScoreCalculation: false,
+        questions
+      };
+      formSections[i + 1] = section;
+    }
+    console.log("have null?-->",this.nullField)
+    if(this.nullField.length>0){
+        const nullError = this.nullField.map((nullObj) => {
+          return `${nullObj.formSection} - ${nullObj.nullQns.join(', ')}`
+        })
+        this.nullField=[]
+        Swal.fire({
+          icon: 'error',
+          title: 'The following required fields are blank:',
+          text: nullError.join('\n\n & \n\n')
+        });
+      }
+      else{
+        const submitData = {
+          id: this.formNo,
+          "formContent": {formSections}
+          };
+
+        console.log("submit-->",submitData)
+        Swal.fire({
+        title: 'Save the Form?',
+        text: "Please check information before saving!",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonColor: '#c7c6c5',
+        confirmButtonColor: '#6A79F3',
+        confirmButtonText: 'Yes, save it!',
+        cancelButtonText: 'No, Cancel',
+        width: 'auto',
+    }).then((result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = axios.post(`${BASE_URL}/api/form/submit`, submitData);
+            console.log("SUCCESSFULLY POST")
+            console.log(response.data); // 
+          
             Swal.fire({
-              icon: 'error',
-              title: 'Error submitting form',
-              text: nullError.join('\n')
+              title: 'Success',
+              text: 'Form saved successfully! It will be reviewed by Admin in the next 7 days ',
+              icon: 'success',
+              timer: 2000,
+              timerProgressBar: true,
+              showConfirmButton: false
+            }).then(() => {
+              window.location.href = "/VendorView";
             });
-          }
-          else{
-            const submitData = {
-              id: this.formNo,
-              "formContent": {formSections}
-              };
-             
-            const statusData ={
-              formID: this.formNo,
-              assigned_vendor_uid :this.assigned_vendor_uid 
-            }
-            console.log(submitData)
 
-            try{
-              await axios.post(`${BASE_URL}/api/form/edit`, submitData);
-              await axios.post(`${BASE_URL}/api/form/changestatus/submit`, statusData);
-              
-          // Display success message for a few seconds
-          Swal.fire({
-            icon: 'success',
-            title: 'Form submitted successfully',
-            timer: 3000, // Display message for 3 seconds
-            timerProgressBar: true,
-            didClose: () => {
-              // Redirect to other page after message is closed
-              window.location.href = 'VendorView'
+          } catch (error) {
+            if (error) {
+              console.error("errrr", error)
+
+              Swal.fire({
+                icon: 'warning',
+                title: error,
+                timer: 2000,
+                timerProgressBar: true,
+                showConfirmButton: false
+              })
             }
-          });
-        } catch (error) {
-          // Display error message
-          alert(error.message)
-          };
+            }
         }
+  })
+      }
           
 
-  }}
+  },
+  async submitDraft() {
+    //submit without validation
+    const formSections = {};
+    //retrieve form data
+    for (let i = 0; i < this.formattedData.length; i++) {
+      const formSection = this.formattedData[i];
+      const questions = {};
+
+      for (let j = 0; j < formSection.fields.length; j++) {
+        const field = formSection.fields[j];
+        const inputOptions = field.options || null;
+        const question = {
+          qnTitle: field.label,
+          inputType: field.fieldType,
+          inputOptions,
+          required: field.isRequired,
+          answer: field.input // get value from input property
+        };
+        questions[j + 1] = question;
+        // console.log("question-->",question)
+      }
+        const section = {
+        sectionName: formSection.sectionTitle,
+        adminUseOnly: formSection.AdminUseOnly,
+        approvalViewOnly: formSection.ApproverUseOnly,
+        doScoreCalculation: false,
+        questions
+      };
+      formSections[i + 1] = section;
+    }
+        const submitData = {
+          id: this.formNo,
+          "formContent": {formSections}
+          };
+        // console.log("submit-->",submitData)
+    
+        Swal.fire({
+        title: 'Save the Form as Draft?',
+        text: "Please check information before saving!",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonColor: '#c7c6c5',
+        confirmButtonColor: '#6A79F3',
+        confirmButtonText: 'Yes, save it!',
+        cancelButtonText: 'No, Cancel',
+        width: 'auto',
+    }).then((result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = axios.post(`${BASE_URL}/api/form/edit`, submitData);
+            console.log("SUCCESSFULLY POST")
+            console.log(response.data); // 
+          
+            Swal.fire({
+              title: 'Success',
+              text: 'Form saved as Draft successfully!',
+              icon: 'success',
+              timer: 2000,
+              timerProgressBar: true,
+              showConfirmButton: false
+            }).then(() => {
+              window.location.href = "/VendorView";
+            });
+
+          } catch (error) {
+            if (error) {
+              console.error("errrr", error)
+
+              Swal.fire({
+                icon: 'warning',
+                title: error,
+                timer: 2000,
+                timerProgressBar: true,
+                showConfirmButton: false
+              })
+            }
+            }
+        }
+  })
+  },
+  async exportToPdf () {
+    const PdfFilename= this.entityUEN+"_"+this.formNo
+    const options = {
+      margin: 1,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    }
+    const element = document.getElementById('pdf-content')
+    const pdfBlob = await html2pdf().set(options).from(element).output('blob')
+    const formData = new FormData()
+    formData.append('file', pdfBlob)
+    formData.append('title', PdfFilename)
+
+    try {
+      const response = await axios.post(`${BASE_URL}/api/pdf/save`, formData)
+      console.log('PDF file stored in database:', response.data)
+    } catch (error) {
+      console.error('Error storing PDF file in database:', error.message)
+    }
+    try{
+      await axios.get(`${BASE_URL}/api/pdf/retrieve`, {
+        params: {
+          fileName: PdfFilename
+        }
+      })
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    }catch(error){
+      console.log("nani")
+    }
+    Swal.fire({
+      icon: 'success',
+      title: "PDF have been downloaded to your PC Downloads folder",
+      timer: 5000,
+      timerProgressBar: true,
+      showConfirmButton: false
+    })
+  }
+}
 }
     </script>
     

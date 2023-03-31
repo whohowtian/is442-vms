@@ -103,13 +103,13 @@ export default {
             axios.get(`${BASE_URL}/api/formtemplate`)
             .then(response => {
                 var allForm = response.data.data;
-                console.log(allForm);
+                console.log("Forms-->",allForm);
                 //data cleaning
                 for (const form of allForm){
                     var id = form.id
                     var formName = form.formName
                     var formNo = form.formNo
-                    var lastEdited=form.formEffDate
+                    var lastEdited=form.lastEdited
                     this.allFormData.push({ id: id, formName: formName, formNo: formNo, editedby:"", lastEdited: lastEdited})
                 }
             //   console.log(this.allFormData)
@@ -202,6 +202,10 @@ export default {
         isSelected(item) {
             return this.selectedRows.findIndex(selectedRow => selectedRow.id === item.id) !== -1;
         },
+        readyToPrintPdf(formNo,companyName){
+            localStorage.setItem('formNo', [formNo, companyName])
+            window.location.href = "VendorForm";
+        },
     },
     computed: {
         allRowsSelected() { //table styling function
@@ -292,7 +296,7 @@ export default {
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="#">Edit</a></li>
                             <li><a class="dropdown-item" href="#">Email</a></li>
-                            <li v-if="item.status=='APPROVED'"><a class="dropdown-item" href="#">PDF</a></li>
+                            <li v-if="item.status=='APPROVED'"><a class="dropdown-item"  @click="readyToPrintPdf(item.id,item.task)">PDF</a></li>
                             <li><a class="dropdown-item" @click="deleteWorkflow(item.id, item.vendorID)">Delete</a></li>
                         </ul>
                     </div>
