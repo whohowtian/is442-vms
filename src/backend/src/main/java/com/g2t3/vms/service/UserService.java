@@ -35,6 +35,10 @@ public class UserService {
         }
 
         // save new vendor
+        vendor = vendor.toBuilder()
+            .userType(UserType.VENDOR)
+            .password(null)
+            .build();
         Vendor newUser = userRepo.save(vendor);
         return newUser;
         
@@ -49,6 +53,10 @@ public class UserService {
         }
 
         // save new admin
+        admin = admin.toBuilder()
+            .userType(UserType.ADMIN)
+            .password(null)
+            .build();
         Admin newUser = userRepo.save(admin);
         return newUser;
         
@@ -63,6 +71,10 @@ public class UserService {
         }
 
         // save new approver
+        approver = approver.toBuilder()
+            .userType(UserType.APPROVER)
+            .password(null)
+            .build();
         Approver newUser = userRepo.save(approver);
         return newUser;
         

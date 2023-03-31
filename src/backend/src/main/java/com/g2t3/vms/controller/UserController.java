@@ -56,7 +56,7 @@ public class UserController {
 
         try {
             Vendor user = userService.createVendor(vendorRequest);
-            emailService.sendAccountConfirmationEmail(user);
+            // emailService.sendAccountConfirmationEmail(user);
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
         } catch (ResourceAlreadyExistException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
@@ -75,7 +75,7 @@ public class UserController {
 
         try {
             Admin user = userService.createAdmin(adminRequest);
-            emailService.sendAccountConfirmationEmail(user);
+            // emailService.sendAccountConfirmationEmail(user);
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
         } catch (ResourceAlreadyExistException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
@@ -94,7 +94,7 @@ public class UserController {
 
         try {
             Approver user = userService.createApprover(approverRequest);
-            emailService.sendAccountConfirmationEmail(user);
+            // emailService.sendAccountConfirmationEmail(user);
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
         } catch (ResourceAlreadyExistException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
