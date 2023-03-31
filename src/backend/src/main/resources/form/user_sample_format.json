@@ -11,47 +11,54 @@
             "RETAIL SALE OF AQUARIUM FISHES",
             "RETAIL SALE OF PET BIRDS AND ANIMALS"
         ],
-        "isGSTRegistered": true
+        "isGSTRegistered": true,
+        "isEnabled": true
     },
     {
         "name": "Chua Kai Wei",
         "email": "kaiwei.chua.2020@scis.smu.edu.sg",
-        "password": "imkaiwei",
+        "password": "",
         "number": "+6589891313",
-        "userType": "ADMIN"
+        "userType": "ADMIN",
+        "isEnabled": false
     },
     {
         "name": "Chan Yu Han",
         "email": "yuhan.chan.2020@scis.smu.edu.sg",
-        "password": "imyuhan",
+        "password": "",
         "number": "+6589891313",
-        "userType": "ADMIN"
+        "userType": "ADMIN",
+        "isEnabled": false
     },
     {
         "name": "Neo Fang Ting",
         "email": "ftneo.2020@scis.smu.edu.sg",
-        "password": "imfangting",
+        "password": "",
         "number": "+6589891313",
-        "userType": "ADMIN"
+        "userType": "ADMIN",
+        "isEnabled": false
     },
     {
         "name": "Justin Lee Wei Yang",
         "email": "justin.lee.2020@scis.smu.edu.sg",
-        "password": "imjustin",
-        "number": "+6589891313"
+        "password": "",
+        "number": "+6589891313",
+        "isEnabled": false
     },
     {
         "name": "Hu Hao Tian",
         "email": "haotian.hu.2021@scis.smu.edu.sg",
-        "password": "imhaotian",
+        "password": "",
         "number": "+6589891313",
-        "userType": "ADMIN"
+        "userType": "ADMIN",
+        "isEnabled": true
     },
     {
         "name": "Swavek Wlodkowski",
         "email": "veronicatengyy@gmail.com",
         "password": "improf",
         "number": "+4930901820",
-        "userType": "APPROVER"
+        "userType": "APPROVER",
+        "isEnabled": true
     }
 ]

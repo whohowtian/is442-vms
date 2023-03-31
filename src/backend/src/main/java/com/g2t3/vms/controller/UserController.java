@@ -1,7 +1,6 @@
 package com.g2t3.vms.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -23,6 +22,8 @@ import com.g2t3.vms.exception.ResourceAlreadyExistException;
 import com.g2t3.vms.exception.ResourceNotFoundException;
 import com.g2t3.vms.model.Admin;
 import com.g2t3.vms.model.Approver;
+import com.g2t3.vms.model.InputUserLogin;
+import com.g2t3.vms.model.InputUserUpdate;
 import com.g2t3.vms.model.User;
 import com.g2t3.vms.model.Vendor;
 import com.g2t3.vms.response.ResponseHandler;
@@ -45,7 +46,6 @@ public class UserController {
     @Autowired
     private EmailService emailService;
 
-    // CHANGE TO A SINGLE API ENDPOINT FOR CREATE
     
     @Operation(summary = "Creates a vendor account", responses = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
@@ -181,19 +181,21 @@ public class UserController {
         @ApiResponse(responseCode = "404", description = "User does not exist.", content = @Content)
     })
     @PutMapping("")
-    public <T> ResponseEntity<?> update(@RequestBody HashMap<String, T> user) {
+    public ResponseEntity<?> update(@RequestBody InputUserUpdate user) {
         
         try {
-            UserType prevType = (userService.getUserById((String) user.get("userId"))).getUserType();
-            T type = user.get("userType");
-            if (type.equals("ADMIN")) {
+            UserType prevType = (userService.getUserById(user.getUserId())).getUserType();
+            UserType type = user.getUserType();
+
+            if (type.equals(UserType.ADMIN)) {
                 userService.updateAdmin(prevType, user);
-            } else if (type.equals("APPROVER")) {
+            } else if (type.equals(UserType.APPROVER)) {
                 userService.updateApprover(prevType, user);
-            } else if (type.equals("VENDOR")) {
+            } else if (type.equals(UserType.VENDOR)) {
                 userService.updateVendor(prevType, user);
             }
-            return ResponseHandler.generateResponse("Updated User with email of " + " successfully.", HttpStatus.OK, null);
+            
+            return ResponseHandler.generateResponse("Updated User with email of " + user.getEmail() + " successfully.", HttpStatus.OK, null);
         } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         } catch (DataIntegrityViolationException e){
@@ -203,20 +205,24 @@ public class UserController {
         }
     }
 
-    // @PutMapping("/setpassword")
-    // public ResponseEntity<?> setPassword(@RequestBody User user) {
+    @Operation(summary = "Update user password", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+        @ApiResponse(responseCode = "404", description = "User does not exist.", content = @Content)
+    })
+    @PutMapping("/activate-account")
+    public ResponseEntity<?> setPassword(@RequestBody InputUserLogin user) {
 
-    //     try {
-    //         User newUser = userService.setPassword(user);            
-    //         return ResponseHandler.generateResponse("Updated password for user with email of " + user + " successfully.", HttpStatus.OK, newUser);
-    //     } catch (ResourceNotFoundException e) {
-    //         return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
-    //     } catch (DataIntegrityViolationException e){
-    //         return ResponseHandler.generateResponse("Bad Request: " + e.getMessage(), HttpStatus.BAD_REQUEST, null);
-    //     } catch (Exception e) {
-    //         return ResponseHandler.generateResponse("Internal Server Error: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
-    //     }
-    // }
+        try {
+            User newUser = userService.activateAccount(user);            
+            return ResponseHandler.generateResponse("Updated password for user with email of " + user.getEmail() + " successfully.", HttpStatus.OK, newUser);
+        } catch (ResourceNotFoundException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+        } catch (DataIntegrityViolationException e){
+            return ResponseHandler.generateResponse("Bad Request: " + e.getMessage(), HttpStatus.BAD_REQUEST, null);
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("Internal Server Error: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
+        }
+    }
 
     @Operation(summary = "Delete user by email", responses = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),

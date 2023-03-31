@@ -1,26 +1,33 @@
 package com.g2t3.vms.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.bson.types.ObjectId;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
 
 @Document("Question")
-@Getter
-@Setter
+@Data @EqualsAndHashCode(callSuper=false)
+@NoArgsConstructor
 public class Question {
     // @Id
     // private String id;
     private String qnTitle;
     private String inputType;
-    private ArrayList inputOptions;
+    private ArrayList<HashMap<String, String>> inputOptions;
     private String answer;
+    private boolean isRequired;
 
-    public Question(String qnTitle, String inputType, ArrayList inputOptions) {
+    public Question(String qnTitle, String inputType, ArrayList<HashMap<String, String>> inputOptions, boolean isRequired) {
+        this(qnTitle, inputType, inputOptions);
+        this.isRequired = isRequired;
+    }
+
+    public Question(String qnTitle, String inputType, ArrayList<HashMap<String, String>> inputOptions) {
         this.qnTitle = qnTitle;
         this.inputType = inputType;
         this.inputOptions = inputOptions;

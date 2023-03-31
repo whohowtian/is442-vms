@@ -102,16 +102,15 @@ public class EmailService {
 
     public void sendAccountConfirmationEmail(User user) throws ResourceNotFoundException, MailException, MessagingException, Exception {
 
-        EmailTemplate template = getTemplateById("6422a5d8850b2474ac4e13f9");
+        EmailTemplate template = getTemplateById("6425bf076162e20f5ce1dba3");
         if (template == null) {
             throw new ResourceNotFoundException("Template does not exist.");
         }
 
         SimpleMailMessage message = new SimpleMailMessage();
-
         message.setFrom("is442g2t3@outlook.com");
         message.setTo(user.getEmail());
-        message.setText(template.getData());
+        message.setText(String.format(template.getData(), user.getName()));
         message.setSubject(template.getSubject());
 
         mailSender.send(message);

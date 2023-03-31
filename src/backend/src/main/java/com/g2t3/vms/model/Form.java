@@ -3,23 +3,22 @@ package com.g2t3.vms.model;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.bson.types.ObjectId;
 
 import com.g2t3.vms.enums.FormStatus;
 
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Document("Form")
-@Getter
-@Setter
+@Data @EqualsAndHashCode(callSuper=false)
+@NoArgsConstructor
 public class Form {
     @Id
     private String id;
-    private String assigned_vendor_uid;
+    private String assigned_vendor_email;
+
     private FormStatus status;
     private FormTemplate formContent;
 
@@ -27,14 +26,34 @@ public class Form {
     private String approver;
     private LocalDateTime approvalDateTime;
 
-    public Form (String assigned_vendor_uid, FormTemplate formContent) {
-        this.assigned_vendor_uid = assigned_vendor_uid;
+    private String archivedBy;
+    private boolean isArchived;
+
+    public Form (String assigned_vendor_email, FormTemplate formContent) {
+        this(formContent);
+        this.assigned_vendor_email = assigned_vendor_email;
+
+    }
+
+    public Form (FormTemplate formContent) {
         this.status = FormStatus.PENDING_VENDOR;
         this.formContent = formContent;
         this.approver = "";
         this.approvalDateTime = null;
+        this.archivedBy = null;
 
     }
+
+    // @PersistenceConstructor
+    // public Form (String assigned_vendor_email, FormTemplate formContent, String approver, LocalDateTime approvalDateTime, String archivedBy, boolean isArchived, FormStatus status) {
+    //     this.status = status;
+    //     this.formContent = formContent;
+    //     this.approver = approver;
+    //     this.approvalDateTime = approvalDateTime;
+    //     this.archivedBy = archivedBy;
+    //     this.isArchived = isArchived;
+    //     this.assigned_vendor_email = assigned_vendor_email;
+    // }
 
     // @Override
     // public String toString() {

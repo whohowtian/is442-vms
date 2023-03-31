@@ -7,7 +7,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.g2t3.vms.exception.ResourceNotFoundException;
-import com.g2t3.vms.exception.ResourceNotFoundException;
 import com.g2t3.vms.model.FormTemplate;
 import com.g2t3.vms.repository.FormTemplateRepo;
 
@@ -50,6 +49,8 @@ public class FormTemplateService {
             // prevFT.setArchived(formTemplate.isArchived());
             prevFT.setRevNo(prevFT.getRevNo() + 1);
             prevFT.setFormSections(formTemplate.getFormSections());
+
+            prevFT.setLastEdited("need-session");
 
             formTemplateRepo.save(prevFT); 
 
