@@ -118,21 +118,23 @@ public class FormService {
     }
 
     public void submitForm(Form form) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
-        editForm(form);
         String formID = form.getId();
-        Form currFormObjDB = formRepo.getFormByID(formID);
-        currFormObjDB.changeStatusSubmitted();
-
         if (currFormObjDB == null) {
             throw new ResourceNotFoundException("Form " + formID + "does not exist.");
         }
+        
+        editForm(form);
+
+        Form currFormObjDB = formRepo.getFormByID(formID);
+        currFormObjDB.changeStatusSubmitted();
+        formRepo.save(currFormObjDB);
+
     }
 
     public void changeStatus(Map<String, String> postQuery, String action) throws ResourceNotFoundException, Exception {
         String formID = postQuery.get("formID");
         Form currFormObjDB = formRepo.getFormByID(formID);
         currFormObjDB.updateStatusChangeDateTime();
-
 
         if (currFormObjDB == null) {
             throw new ResourceNotFoundException("Form " + formID + "does not exist.");
