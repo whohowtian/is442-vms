@@ -66,28 +66,31 @@ export default {
                 axios.get(`${BASE_URL}/api/user`)
                 .then(response => {
                     var allUser= response.data.data;
+                    console.log(allUser)
                     
                     //data cleaning
                     for (const workflow of allWorkflow){
                         console.log(workflow)
                         var id = workflow.id
                         var task = workflow.formContent.formName
-                        var vendorID= workflow.assigned_vendor_uid
-                        var VendorName= this.findVendorandCompanyName(vendorID,allUser)[0]
-                        var companyName = this.findVendorandCompanyName(vendorID,allUser)[1]
+                        var vendorEmail= workflow.assigned_vendor_email
+                        // var VendorName= this.findVendorandCompanyName(vendorEmail,allUser)[0]
+                        // var companyName = this.findVendorandCompanyName(vendorEmail,allUser)[1]
                         var formNo = workflow.formContent.formNo
                         var status=workflow.status
                         var stage= this.addStage(status)
                         var dateAssign = workflow.formContent.formEffDate
-                        this.allWorkflowData.push({ id:id,task: task, vendorID:vendorID,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+                        var archived = workflow.archived
+                        this.allWorkflowData.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:"",companyName:"",formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
 
                         //for active workflow
-                        if (status !='ARCHIVED'){
-                            this.ActiveWorkflow.push({ id:id,task: task, vendorID:vendorID,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+                        if (archived ==false){
+                            this.ActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:"",companyName:"",formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
                         }else{
                             // inactive workflow
-                            this.InActiveWorkflow.push({ id:id,task: task, vendorID:vendorID,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+                            this.InActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:"",companyName:"",formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
                         }
+                        console.log(this.ActiveWorkflow)
                     }
                     
                 })
@@ -100,6 +103,7 @@ export default {
             axios.get(`${BASE_URL}/api/formtemplate`)
             .then(response => {
                 var allForm = response.data.data;
+                console.log(allForm);
                 //data cleaning
                 for (const form of allForm){
                     var id = form.id
@@ -114,11 +118,12 @@ export default {
                 console.log(error);
             });
         },
-        findVendorandCompanyName(vendorID,allUser){
+        findVendorandCompanyName(vendorEmail,allUser){
             var companyName = '';
             var VendorName = '';
+            console.log(allUser)
             for (const user of allUser){
-                if (vendorID == user.userId){
+                if (vendorEmail == user.email){
                     VendorName= user.name
                     companyName = user.entityName
                     
