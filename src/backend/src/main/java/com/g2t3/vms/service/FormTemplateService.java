@@ -44,13 +44,13 @@ public class FormTemplateService {
             String formNo = formTemplate.getFormNo();
             FormTemplate prevFT = getFormTemplateByFTID(formNo); 
 
-            prevFT.setFormEffDate(formTemplate.getFormEffDate());
+            // prevFT.setFormEffDate(formTemplate.getFormEffDate());
             prevFT.setFormName(formTemplate.getFormName());
             // prevFT.setArchived(formTemplate.isArchived());
             prevFT.setRevNo(prevFT.getRevNo() + 1);
             prevFT.setFormSections(formTemplate.getFormSections());
 
-            prevFT.setLastEdited("need-session");
+            prevFT.setLastEdited(formTemplate.getLastEdited());
 
             formTemplateRepo.save(prevFT); 
 

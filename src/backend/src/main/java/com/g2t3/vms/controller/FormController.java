@@ -96,6 +96,20 @@ public class FormController {
         } 
     }
 
+    @PostMapping("/submit")
+    public ResponseEntity<?> submitForm(@RequestBody Form submittedForm) {
+        try {
+            service.submitForm(submittedForm); 
+            return ResponseHandler.generateResponse("Form edited successfully.", HttpStatus.OK, null);
+        } catch (ResourceNotFoundException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
+        } catch (DataIntegrityViolationException e){
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("Internal Server Error: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
+        } 
+    }
+
     @PostMapping("/changestatus/{action}")
     public ResponseEntity<?> changeStatus(@RequestBody Map<String, String> postQuery, @PathVariable String action) {
         try {
@@ -110,6 +124,22 @@ public class FormController {
             return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
         }
     }
+
+    @PostMapping("/archive")
+    public ResponseEntity<?> changeStatus(@RequestBody Map<String, String> postQuery) {
+        try {
+            service.archiveForm(postQuery);
+            return ResponseHandler.generateResponse("Form archived successfully.", HttpStatus.OK, null);
+        }
+        catch (ResourceNotFoundException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
+        }
+    }
+
 
     @GetMapping("/formstatus/{statusID}")
     @ResponseBody
