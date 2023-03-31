@@ -19,7 +19,7 @@ public class FormTemplate {
     // @Indexed(unique = true, background = true)
     private String formNo;
     private String formName;
-    private String formEffDate;
+    // private String formEffDate;
     private int revNo;
     // private boolean isArchived;
     private HashMap<String, FormSection> formSections;
