@@ -20,14 +20,17 @@ public class Form {
     private String assigned_vendor_email;
 
     private FormStatus status;
+    private LocalDateTime lastStatusChangeDate;
     private FormTemplate formContent;
 
-    // should this be in a seperate class?
     private String approver;
-    private LocalDateTime approvalDateTime;
 
+    // MAYBE USER OBJECT?
     private String archivedBy;
     private boolean isArchived;
+
+    private LocalDateTime formEffDate;
+    private LocalDateTime deadline;
 
     public Form (String assigned_vendor_email, FormTemplate formContent) {
         this(formContent);
@@ -39,9 +42,42 @@ public class Form {
         this.status = FormStatus.PENDING_VENDOR;
         this.formContent = formContent;
         this.approver = "";
-        this.approvalDateTime = null;
         this.archivedBy = null;
+        LocalDateTime dateTimeNow = LocalDateTime.now();
+        this.formEffDate = dateTimeNow;
+        this.deadline = dateTimeNow.plusDays(formContent.getDeadlineDays());
+        this.lastStatusChangeDate = dateTimeNow;
+    }
 
+    public void updateStatusChangeDateTime() {
+        LocalDateTime dateTimeNow = LocalDateTime.now();
+
+        this.lastStatusChangeDate = dateTimeNow;
+    }
+
+    public void archiveForm(String user) {
+        this.isArchived = true;
+        this.archivedBy = user;
+    }
+
+    public void changeStatusApproved() {
+        this.status = FormStatus.APPROVED;
+    }
+
+    public void changeStatusSubmitted() {
+        this.status = FormStatus.PENDING_REVIEW;
+    }
+
+    public void changeStatusAdminReviewed() {
+        this.status = FormStatus.PENDING_APPROVAL;
+    }
+
+    public void changeStatusAdminRejected() {
+        this.status = FormStatus.PENDING_REVIEW;
+    }
+
+    public void changeStatusApproverRejected() {
+        this.status = FormStatus.APPROVER_REJECTED;
     }
 
     // @PersistenceConstructor

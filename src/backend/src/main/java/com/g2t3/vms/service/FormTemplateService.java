@@ -44,13 +44,13 @@ public class FormTemplateService {
             String formNo = formTemplate.getFormNo();
             FormTemplate prevFT = getFormTemplateByFTID(formNo); 
 
-            prevFT.setFormEffDate(formTemplate.getFormEffDate());
+            // prevFT.setFormEffDate(formTemplate.getFormEffDate());
             prevFT.setFormName(formTemplate.getFormName());
             // prevFT.setArchived(formTemplate.isArchived());
             prevFT.setRevNo(prevFT.getRevNo() + 1);
             prevFT.setFormSections(formTemplate.getFormSections());
 
-            prevFT.setLastEdited("need-session");
+            prevFT.setLastEdited(formTemplate.getLastEdited());
 
             formTemplateRepo.save(prevFT); 
 
@@ -63,7 +63,7 @@ public class FormTemplateService {
         FormTemplate getForm = formTemplateRepo.getFormTemplateByNo(formNo);
 
         if (getForm != null) {
-            throw new NullPointerException("Form Template " + formNo + "already exist.");
+            throw new NullPointerException("Form Template " + formNo + " already exist.");
         }
         
         formTemplateRepo.save(formTemplate); 
