@@ -26,7 +26,7 @@ public class FormTemplate {
     private String lastEdited;
     private long deadlineDays;
 
-    public FormTemplate(String formNo, String formName, String lastEdited, HashMap<String, FormSection> formSections, int deadlineDays) {
+    public FormTemplate(String formNo, String formName, String lastEdited, HashMap<String, FormSection> formSections, long deadlineDays) {
         this.formNo = formNo;
         this.formName = formName;
         this.formSections = formSections;
