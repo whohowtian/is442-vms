@@ -119,13 +119,13 @@ public class FormService {
 
     public void submitForm(Form form) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
         String formID = form.getId();
+        Form currFormObjDB = formRepo.getFormByID(formID);
+
         if (currFormObjDB == null) {
             throw new ResourceNotFoundException("Form " + formID + "does not exist.");
         }
         
         editForm(form);
-
-        Form currFormObjDB = formRepo.getFormByID(formID);
         currFormObjDB.changeStatusSubmitted();
         formRepo.save(currFormObjDB);
 
