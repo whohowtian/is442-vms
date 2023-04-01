@@ -23,6 +23,8 @@ export default {
         return {
         selectedRows: [], //tick checkbox
         selectAll: false,
+        userId :'',
+        userEmail:'',
         allFormData:[],
         allUser:[],
         allVendor:[],
@@ -60,6 +62,9 @@ export default {
         }
     },
     created() {
+        const user = JSON.parse(sessionStorage.getItem('user'));
+        this.userId = user.userId
+        this.userEmail = user.userEmail
         this.getAllFormAvail() //trigger FormTemplate API
         this.getAllWorkflow() //trigger Form API
         this.getAllVendor("VENDOR")
@@ -199,7 +204,7 @@ export default {
                 if (result.isConfirmed) {
                     var url = `${BASE_URL}/api/form/archive`
                     axios.post(url, {
-                        formID:id,assigned_vendor_uid:vendorID
+                        formID:id,archivedBy:this.userId 
                     })
                     .then(response => {
                         Swal.fire(
