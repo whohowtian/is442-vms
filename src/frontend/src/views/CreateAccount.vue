@@ -31,7 +31,7 @@ export default {
             }
         },
         methods: {
-        async createAcc() {
+        createAcc() {
             console.log(this.email),
             console.log(this.name),
             console.log(this.number),

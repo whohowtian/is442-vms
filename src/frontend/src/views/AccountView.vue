@@ -39,7 +39,7 @@
         },
         methods: {
             async getAllAccount(){
-            axios.get(`${BASE_URL}/api/user`)
+            axios.get(`${BASE_URL}/api/user/all`)
                 .then(response => {
                 this.allAccount = response.data.data;
                 console.log(this.allAccount)
