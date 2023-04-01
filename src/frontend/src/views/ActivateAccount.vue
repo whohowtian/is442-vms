@@ -81,7 +81,7 @@ export default {
             <div><span style="color:red">* Required</span></div>
             	
 
-            <div class="input_container p-2">
+            
                  <div class="col-lg-6 col-md-6">
                     <ul class="criteriaList">
                         <li class="criteria" v-bind:class="{ is_valid: contains_eight_characters }">- 8 Characters</li>
@@ -91,6 +91,8 @@ export default {
                         <li class="criteria" v-bind:class="{ is_valid: password_match }">- Passwords Match</li>
                     </ul>
                  </div>
+
+                 <div class="row g-3 p-2">
                     <div class="col-lg-6 col-md-6">
                         <h4><label for="password" class="form-label">Password</label> <span style="color:red">*</span></h4>
                         <input id="password" type="password" @change="checkPassword" @input="checkPassword" v-model="password" autocomplete="off" placeholder="Password" required/>
@@ -101,11 +103,9 @@ export default {
                         <input id="password2" type="password" @change="checkPassword" @input="checkPassword" v-model="password2" autocomplete="off" placeholder="Confirm Password" required/>
                     </div>
                 </div>
-            
-
                 
             <div class="col">
-                <button v-if="this.valid_password" type="button" class="btn btn-outline-primary px-4 mt-5 float-end" id="createBtn"
+                <button v-if="this.valid_password" type="button" class="btn btn-outline-primary px-4 mt-3 float-end" id="createBtn"
             style="border-radius: 5px;" @click="setPassword()" >Set Password</button>
             
                 </div>
