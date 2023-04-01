@@ -89,7 +89,7 @@ public class PdfController {
     }
 
     // Healthcheck
-    @GetMapping("/")
+    @GetMapping("")
     @ResponseBody
     public ResponseEntity<?> healthCheck() {
         return ResponseHandler.generateResponse("PdfController connected", HttpStatus.OK, null);

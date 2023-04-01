@@ -106,7 +106,7 @@ public class EmailController {
 
 
         // Healthcheck
-        @GetMapping("/")
+        @GetMapping("")
         @ResponseBody
         public ResponseEntity<?> healthCheck() {
             return ResponseHandler.generateResponse("EmailController connected", HttpStatus.OK, null);
