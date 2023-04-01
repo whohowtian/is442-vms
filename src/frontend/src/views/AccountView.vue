@@ -41,8 +41,19 @@
             async getAllAccount(){
             axios.get(`${BASE_URL}/api/user/all`)
                 .then(response => {
-                    console.log(response)
-                // this.allAccount = response.data;
+                var allAccount = response.data.data
+
+                for (const account of allAccount){
+                    var name = account.name
+                    var email = account.email
+                    var companyName = account.entityName
+                    var userType = account.userType
+                    if (companyName == null){
+                        companyName = 'Quantum Leap Incorporation'
+                    }
+                    this.allAccount.push({ name: name, email:email,companyName:companyName,userType:userType})
+                }
+                // console.log(this.allAccount)
                 })
                 .catch(error => {
                 console.log(error);
@@ -132,7 +143,7 @@
                     <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
                     <td>{{ item.name }}</td>
                     <td>{{ item.email }}</td>
-                    <td>{{ item.vendorName }}</td>
+                    <td>{{ item.companyName }}</td>
                     <td>{{ item.userType }}</td>
                     <td >
                         <div  class="btn-group dropup">
