@@ -36,13 +36,11 @@ export default {
                 this.user = response.data.data
                 })
         },
-        createAcc() {alert('Created!');
-            window.location.href = '/AccountView';
-        },
         async editAcc(){
-            if (gstregistered == false) {
-                gstRegisteredNo = null;
+            if (this.user.gstregistered == false) {
+                this.user.gstRegisteredNo = null;
             }
+            localStorage.clear();
             axios.put(`${BASE_URL}/api/user/update`, {
                 userId: this.user.userId,
                 email: this.user.email,
@@ -58,6 +56,7 @@ export default {
                 enabled: this.user.enabled,
             })
             .then(response => {
+                console.log(response.data)
                     alert(response.data.message);
                     window.location.href = 'AccountView';
                     })
@@ -79,7 +78,7 @@ export default {
                 style="border-radius: 5px;" onclick="history.back()">Back</button>
             </div>
         </div>
-        <form class="row g-3 p-2" v-on:submit="editAcc()">
+        <form class="row g-3 p-2" v-on:submit.prevent="editAcc()">
             <div><h1>EDIT USER ACCOUNT</h1></div>
             <div><span style="color:red">* Required</span></div>
 
@@ -110,13 +109,12 @@ export default {
                 </select>
             </div>
 
-            <div class="col-lg-6 col-md-6">
+            <div class="col-lg-6 col-md-6" v-if="user.userType =='ADMIN' || user.userType =='APPROVER'">
                 <h4><label for="inputRole" class="form-label">Role <span style="color:red">*</span></label></h4>
                 <select id="inputRole" class="form-select" v-model="user.userType" required>
                     <option disabled selected value>Select Role</option>
                     <option value="ADMIN">Admin</option>
                     <option value="APPROVER">Approver</option>
-                    <option value ="VENDOR">Vendor</option>
                 </select>
             </div>
             
@@ -126,20 +124,10 @@ export default {
                 <textarea class="form-control"  rows = '1' v-model="user.entityName" required></textarea>
             </div>
 
-            <div class="col-lg-6 col-md-6" v-if="user.userType =='ADMIN' || user.userType =='APPROVER'">
-                <h4><label for="inputCompanyName" class="form-label">Company Name</label> </h4>
-                <textarea class="form-control"   rows = '1' v-model="user.entityUEN" disabled></textarea>
-            </div>
-
             <!-- Company UEN -->
             <div class="col-lg-6 col-md-6" v-if="user.userType =='VENDOR'">
                 <h4><label for="inputCompanyUEN" class="form-label">Company UEN <span style="color:red">*</span></label></h4>
                 <textarea  class="form-control" rows="1" v-model="user.entityUEN" required></textarea>
-            </div>
-
-            <div class="col-lg-6 col-md-6" v-if="user.userType =='ADMIN' || user.userType =='APPROVER'">
-                <h4><label for="inputCompanyUEN" class="form-label">Company UEN <span style="color:red">*</span></label></h4>
-                <textarea  class="form-control" rows="1" v-model="user.entityUEN" disabled></textarea>
             </div>
 
             <!-- Nature of business -->

@@ -70,7 +70,7 @@ export default {
                 style="border-radius: 5px;" onclick="history.back()">Back</button>
             </div>
         </div>
-        <form class="row g-3 p-2" v-on:submit="createAcc()">
+        <form class="row g-3 p-2" v-on:submit.prevent="createAcc()">
             <div><h1>CREATE USER ACCOUNT</h1></div>
             <div><span style="color:red">* Required</span></div>
 
