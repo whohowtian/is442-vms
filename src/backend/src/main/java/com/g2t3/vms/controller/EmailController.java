@@ -20,7 +20,6 @@ import com.g2t3.vms.exception.ResourceNotFoundException;
 import com.g2t3.vms.exception.ResourceNotValidException;
 import com.g2t3.vms.model.Email;
 import com.g2t3.vms.model.EmailTemplate;
-import com.g2t3.vms.model.User;
 import com.g2t3.vms.request.ReminderEmailRequest;
 import com.g2t3.vms.response.ResponseHandler;
 import com.g2t3.vms.service.EmailService;
@@ -84,6 +83,10 @@ public class EmailController {
         }
 
         // templates
+        @Operation(summary = "Retrieve all email templates", responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Email.class))),
+            @ApiResponse(responseCode = "404", description = "Email template does not exist.", content = @Content)
+        })
         @GetMapping("/template/all")
         @ResponseBody
         public ResponseEntity<?> getAllTemplates() {
@@ -98,6 +101,10 @@ public class EmailController {
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, users);
         }
 
+        @Operation(summary = "Retrieve email template by id", responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Email.class))),
+            @ApiResponse(responseCode = "404", description = "Email template does not exist.", content = @Content)
+        })
         @GetMapping("/template/{id}")
         @ResponseBody
         public ResponseEntity<?> getUserById(@PathVariable String id) {
@@ -112,6 +119,10 @@ public class EmailController {
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, template);
         }
 
+        @Operation(summary = "Retrieve email template by id", responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Email.class))),
+            @ApiResponse(responseCode = "400", description = "Email with the same name already exist.", content = @Content)
+        })
         @PostMapping("/template/create")
         public ResponseEntity<?> createTemplate(@RequestBody EmailTemplate template) {
 
