@@ -43,10 +43,7 @@ public class FormTemplateService {
 
             String formNo = formTemplate.getFormNo();
             FormTemplate prevFT = getFormTemplateByFTNo(formNo); 
-
-            // prevFT.setFormEffDate(formTemplate.getFormEffDate());
             prevFT.setFormName(formTemplate.getFormName());
-            // prevFT.setArchived(formTemplate.isArchived());
             prevFT.setRevNo(prevFT.getRevNo() + 1);
             prevFT.setFormSections(formTemplate.getFormSections());
 
@@ -58,7 +55,6 @@ public class FormTemplateService {
     }
 
     public void createFormTemplate(FormTemplate formTemplate) throws NullPointerException, DataIntegrityViolationException, Exception {
-        // TODO: convert previous formtemplate format into the newer format with HashMap
         String formNo = formTemplate.getFormNo();
         FormTemplate getForm = formTemplateRepo.getFormTemplateByNo(formNo);
 
@@ -72,9 +68,7 @@ public class FormTemplateService {
     }
 
     public void deleteFormTemplate(String FTID) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
-
         FormTemplate formTemplate = getFormTemplateByFTNo(FTID);
-
         formTemplateRepo.deleteFormTemplateByNo(FTID);
 
     }
