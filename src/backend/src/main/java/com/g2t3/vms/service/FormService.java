@@ -101,9 +101,9 @@ public class FormService {
             boolean forAdminOnly = currFormSectDB.isAdminUseOnly();
 
             // TODO: to allow admin to edit forAdminUseOnly sections; currently only allow editing for vendor questions
-            if (forAdminOnly) {
-                continue;
-            }
+            // if (forAdminOnly) {
+            //     continue;
+            // }
 
             HashMap<String, Question> currSectObj = sectionEntry.getValue().getQuestions();
 
