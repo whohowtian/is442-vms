@@ -81,7 +81,7 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
         @ApiResponse(responseCode = "404", description = "No users have been created.", content = @Content)
     })
-    @GetMapping("")
+    @GetMapping("/all")
     @ResponseBody
     public ResponseEntity<?> getAllUsers() {
         ArrayList <User> users = new ArrayList<>();
@@ -117,7 +117,7 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
         @ApiResponse(responseCode = "404", description = "User does not exist.", content = @Content)
     })
-    @GetMapping("/{userId}")
+    @GetMapping("/id/{userId}")
     @ResponseBody
     public ResponseEntity<?> getUserById(@PathVariable String userId) {
         User user = null;
@@ -135,7 +135,7 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
         @ApiResponse(responseCode = "404", description = "User does not exist.", content = @Content)
     })
-    @GetMapping("/email/{userEmail}")
+    @GetMapping("/{userEmail}")
     @ResponseBody
     public ResponseEntity<?> getUserByEmail(@PathVariable String userEmail) {
         User user = null;
@@ -153,7 +153,7 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
         @ApiResponse(responseCode = "404", description = "User does not exist.", content = @Content)
     })
-    @PutMapping("")
+    @PutMapping("/update")
     public ResponseEntity<?> update(@RequestBody UserUpdateRequest user) {
         
         try {

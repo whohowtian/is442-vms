@@ -36,8 +36,8 @@ public class FormTemplateController {
     // Healthcheck
     @GetMapping("/")
     @ResponseBody
-    public ResponeEntity<?> healthCheck() {
-        return ResponseHandler.generateResponse("FormTemplateController connected", HttpStatus.OK);
+    public ResponseEntity<?> healthCheck() {
+        return ResponseHandler.generateResponse("FormTemplateController connected", HttpStatus.OK, null);
     }
 
     // Returns all Forms
@@ -59,10 +59,10 @@ public class FormTemplateController {
     // Returns 404 not found if invalid formNo
     @GetMapping("/{FTNo}")
     @ResponseBody
-    public ResponseEntity<?> getFormTemplatesById(@PathVariable String FTNo) {
+    public ResponseEntity<?> getFormTemplatesByFTNo(@PathVariable String FTNo) {
         FormTemplate getForm;
         try {
-            getForm = service.getFormTemplateByFTID(FTNo);
+            getForm = service.getFormTemplateByFTNo(FTNo);
         } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         } catch (Exception e) {
