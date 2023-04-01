@@ -59,16 +59,10 @@ export default {
                     axios.post(url, {
                         email:this.userEmail,password:this.password2
                     }).then(response => {
-                        Swal.fire(
-                        'Reset!',
-                        'success'
-                        )
+                        window.location.href='/'
                     })
                 }
                 })
-
-                // alert('Password set!');
-                // window.location.href = '/AccountView';
             },
             checkPassword() {
                 this.password_length = this.password.length;
@@ -124,10 +118,12 @@ export default {
                     <li class="criteria" v-bind:class="{ is_valid: contains_special_character }">- Contains Special Character</li>
                     <li class="criteria" v-bind:class="{ is_valid: password_match }">- Passwords Match</li>
                 </ul>
-                    <div class="col-lg-6 col-md-6">
+                    <div class="col-lg-6 col-md-6 mb-4">
                         <h4><label for="password" class="form-label">Password</label> <span style="color:red">*</span></h4>
                         <input id="password" type="password" @input="checkPassword" v-model="password" autocomplete="off" placeholder="Password" />
                     </div>
+                    <div class="col-lg-6 col-md-6"></div>
+
 
                     <div class="col-lg-6 col-md-6">
                         <h4><label for="password" class="form-label">Confirm Password</label> <span style="color:red">*</span></h4>
