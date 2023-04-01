@@ -79,16 +79,16 @@ export default {
                         var formNo = workflow.formContent.formNo
                         var status=workflow.status
                         var stage= this.addStage(status)
-                        var dateAssign = workflow.formContent.formEffDate
+                        var formEffDate = new Date(workflow.formEffDate).toLocaleDateString('en-GB')                     
                         var archived = workflow.archived
-                        this.allWorkflowData.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+                        this.allWorkflowData.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, formEffDate:formEffDate})
 
                         //for active workflow
                         if (archived ==false){
-                            this.ActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+                            this.ActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, formEffDate:formEffDate})
                         }else{
                             // inactive workflow
-                            this.InActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+                            this.InActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, formEffDate:formEffDate})
                         }
                         console.log(this.ActiveWorkflow)
                     }
@@ -275,7 +275,7 @@ export default {
                     <th>Form No.</th>
                     <th>Stage</th>
                     <th>Status</th>
-                    <th>Date Assigned</th>
+                    <th>FormEffDate</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -288,7 +288,7 @@ export default {
                 <td>{{ item.formNo }}</td>
                 <td>{{ item.stage }}</td>
                 <td>{{ item.status }}</td>
-                <td>{{ item.dateAssign }}</td>
+                <td>{{ item.formEffDate }}</td>
                 <td >
                     <div  class="btn-group dropup">
                         <Button buttonStyle="none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
