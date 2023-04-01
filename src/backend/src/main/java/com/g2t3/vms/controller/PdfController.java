@@ -35,8 +35,8 @@ public class PdfController {
     responses = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PdfRequest.class))),
     })
-    @GetMapping("/retrieve")
-    public ResponseEntity<?> retrievePDFByFileName(@RequestParam String fileName) {
+    @GetMapping("/{fileName}")
+    public ResponseEntity<?> retrievePDFByFileName(@PathVariable String fileName) {
 
         try {
             pdfService.retrievePDFByFileName(fileName);
@@ -49,11 +49,11 @@ public class PdfController {
         return null;
     }
 
-    @Operation(summary = "Retrieve PDF by file name, Download PDF in Downloads folder", description="file name convention: <entityUEN>_<formName>",
+    @Operation(summary = "Retrieve PDF by file name, Download all PDFs in a ZIP file under Downloads folder", description="file name convention: <entityUEN>_<formName>",
     responses = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PdfRequest.class))),
     })
-    @GetMapping("/retrieve/{vendorUEN}")
+    @GetMapping("/vendor/{vendorUEN}")
     public ResponseEntity<?> retrievePDFByVendor(@PathVariable String vendorUEN) {
 
         try {
@@ -86,14 +86,5 @@ public class PdfController {
         return null;
 
     }
-
-    // @Operation(summary = "Stream PDF and look at it directly in Postman", responses = {
-    //     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PdfRequest.class))),
-    // })
-    // @GetMapping("/stream/{fileId}")
-    // public void streamPdf(@PathVariable String fileId, HttpServletResponse response) throws IllegalStateException, IOException {
-    //     PdfRequest pdf = pdfService.streamPDF(fileId);
-    //     FileCopyUtils.copy(pdf.getStream(), response.getOutputStream());
-    // }
 
 }
