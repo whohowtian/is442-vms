@@ -7,5 +7,7 @@ import lombok.EqualsAndHashCode;
 
 @Data @EqualsAndHashCode(callSuper=false)
 public class InputFormTemplate {
+
     private Map<String, Object> details;
+    
 }
