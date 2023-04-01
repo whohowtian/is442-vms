@@ -22,10 +22,15 @@ import com.g2t3.vms.repository.FormTemplateRepo;
 
 @Service
 public class FormService {
+
     @Autowired
     private FormRepo formRepo;
+
     @Autowired
     private FormTemplateRepo formTemplateRepo;
+
+    @Autowired
+    private UserService userService;
 
 
     // Get all created forms/workflows
@@ -148,10 +153,13 @@ public class FormService {
     } 
 
     public void archiveForm(Map<String, String> postQuery) throws ResourceNotFoundException, Exception {
+
+        // check
+        userService.getUserById(postQuery.get("archivedBy"));
+
         String formID = postQuery.get("formID");
         Form currFormObjDB = formRepo.getFormByID(formID);
         currFormObjDB.updateStatusChangeDateTime();
-
         currFormObjDB.archiveForm(postQuery.get("archivedBy"));
 
         formRepo.save(currFormObjDB);
