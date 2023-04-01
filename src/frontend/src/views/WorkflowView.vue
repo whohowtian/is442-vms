@@ -24,10 +24,13 @@ export default {
         selectedRows: [], //tick checkbox
         selectAll: false,
         allFormData:[],
+        allUser:[],
+        allVendor:[],
         allWorkflowData:[],
         ActiveWorkflow:[],
         InActiveWorkflow:[],
         SearchCompany:'',
+        assignForm:'',
         menuItems: [ //for top nav bar
             { label: 'HOME', route: '/AdminView'  },
             { label: 'ACCOUNT', route: '/AccountView'  },
@@ -57,6 +60,7 @@ export default {
     created() {
         this.getAllFormAvail() //trigger FormTemplate API
         this.getAllWorkflow() //trigger Form API
+        this.getAllVendor("VENDOR")
         },
     methods: {
         async getAllWorkflow(){
@@ -67,6 +71,7 @@ export default {
                 .then(response => {
                     var allUser= response.data.data;
                     // console.log(allUser)
+                    this.allUser=allUser
                     
                     //data cleaning
                     for (const workflow of allWorkflow){
@@ -90,7 +95,7 @@ export default {
                             // inactive workflow
                             this.InActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, formEffDate:formEffDate})
                         }
-                        console.log(this.ActiveWorkflow)
+                        
                     }
                     
                 })
@@ -103,7 +108,7 @@ export default {
             axios.get(`${BASE_URL}/api/formtemplate`)
             .then(response => {
                 var allForm = response.data.data;
-                console.log("Forms-->",allForm);
+                // console.log("Forms-->",allForm);
                 //data cleaning
                 for (const form of allForm){
                     var id = form.id
@@ -111,6 +116,23 @@ export default {
                     var formNo = form.formNo
                     var lastEdited=form.lastEdited
                     this.allFormData.push({ id: id, formName: formName, formNo: formNo, editedby:"", lastEdited: lastEdited})
+                }
+            //   console.log(this.allFormData)
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        },
+        async getAllVendor(usertype){
+            axios.get(`${BASE_URL}/api/user/type/`+usertype)
+            .then(response => {
+                var allSelectedUser = response.data.data;
+                // console.log(allSelectedUser)
+                //data cleaning
+                for (const vendor of allSelectedUser){
+                    var vendorEmail = vendor.email
+                    var vendorName = vendor.name
+                    this.allVendor.push({ vendorEmail: vendorEmail, vendorName: vendorName})
                 }
             //   console.log(this.allFormData)
             })
@@ -176,6 +198,10 @@ export default {
                     })
                 }
             })
+        },     
+        ViewEachForm(formNo){ //GET FormTemplate API
+            localStorage.setItem('formNo', formNo)
+            window.location.href = "VendorForm";
         },
         EditEachForm(formNo){ //GET FormTemplate API
             localStorage.setItem('formNo', formNo)
@@ -184,8 +210,57 @@ export default {
         TaskCompleted(){
             window.open('http://i.imgflip.com/31fael.jpg', '_blank');
         },
-        AddWorkflow() {alert('what is workflow');}, //dummy button function
+        AddWorkflow() {
+            var html = `<div class="align-left"><span style="color:red">* </span>Select a Form: <select id="form"><option value="" disabled selected>Select a form</option>`
+            
+            //retrieve a list of formNo, formName
+            for (var i=0; i<this.allFormData.length; i++){
+                var formNo = this.allFormData[i].formNo
+                var formName = this.allFormData[i].formName
+                html += `<option value="`+formNo+`">`+formName+`</option>`
+                
+            }
+            html += `</select><br><br>Assign to a Vendor: <select id="vendors" name="vendors"><option value="" disabled selected>Select a vendor`
+            
+            for (var i = 0; i < this.allVendor.length; i++){
+                var vendorEmail = this.allVendor[i].vendorEmail
+                var vendorName = this.allVendor[i].vendorName
+                html += `<option value="`+vendorEmail+`">`+vendorName+`</option>`
+            }
+            html += `</option></select><br><br> <i>Note: The workflow will be automatically assigned to the admin if no vendor has been assigned</i></div>`
+            
+            
+            Swal.fire({
+            title: 'Assign New Workflow',
+            html:html,
+            customClass: 'swal-wide',
+            showCancelButton: true,
+            confirmButtonText: 'Assign',
+            
+            }).then(function() {
+                const selectedform = Swal.getPopup().querySelector('#form').value
+                const selectedvendor = Swal.getPopup().querySelector('#vendors').value
+                console.log(selectedform,selectedvendor)
+                if(selectedform !==''){
+                    var url = `${BASE_URL}/api/form/create`
+                        axios.post(url, {
+                            formNo:selectedform,assigned_vendor_email:selectedvendor
+                        }).then(response => {
+                            Swal.fire('Assigned!','','success'
+                            ).then(function () {
+                                location.reload();
+                            })
+                        })
+                }else{
+                    Swal.fire('You need to select a form', '', 'info')
+                }
+                
+            })
 
+            // if (form) {
+            // Swal.fire(`You selected: ${form}`)
+            // }
+        }, 
         //table styling  function
         selectAllRows() {
             this.selectedRows = this.selectAll ? [...this.allFormData] : [];
@@ -295,8 +370,8 @@ export default {
                             ...
                         </Button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Edit</a></li>
-                            <li><a class="dropdown-item" href="#">Email</a></li>
+                            <li><a class="dropdown-item" @click="ViewEachForm(item.formNo)">View</a></li>
+                            <li v-if="item.stage=='Vendor'"><a class="dropdown-item" href="#">Email</a></li>
                             <li v-if="item.status=='APPROVED'"><a class="dropdown-item"  @click="readyToPrintPdf(item.id,item.task)">PDF</a></li>
                             <li><a class="dropdown-item" @click="deleteWorkflow(item.id, item.vendorID)">Delete</a></li>
                         </ul>
@@ -320,7 +395,7 @@ export default {
                     <th>Company Name</th>
                     <th>Form No.</th>
                     <th>Status</th>
-                    <th>Date Assigned</th>
+                    <th>FormEffDate</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -332,9 +407,13 @@ export default {
                 <td>{{ item.companyName }}</td>
                 <td>{{ item.formNo }}</td>
                 <td>{{ item.status }}</td>
-                <td>{{ item.dateAssign }}</td>
+                <td>{{ item.formEffDate }}</td>
                 <td >
-                    <div  class="btn-group dropup">
+                   
+                    <el-icon class="el-input__icon" @click="ViewEachForm(item.formNo)">
+                            <View />
+                        </el-icon>
+                    <!-- <div  class="btn-group dropup">
                         <Button buttonStyle="none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             ...
                         </Button>
@@ -342,7 +421,7 @@ export default {
                             <li><a class="dropdown-item" href="#">View</a></li>
                             <li><a class="dropdown-item" href="#">Activate</a></li>
                         </ul>
-                    </div>
+                    </div> -->
 
                 </td>
                 </tr>
@@ -412,3 +491,9 @@ export default {
         </table>
     </div>
 </template>
+
+<style>
+.swal-wide{
+    width:850px;
+}
+</style>
