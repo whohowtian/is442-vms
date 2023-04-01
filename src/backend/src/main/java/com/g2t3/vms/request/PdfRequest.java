@@ -1,4 +1,4 @@
-package com.g2t3.vms.model;
+package com.g2t3.vms.request;
 
 import java.io.InputStream;
 
@@ -9,12 +9,14 @@ import nonapi.io.github.classgraph.json.Id;
 
 @Data @EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
-public class InputPdf {
+public class PdfRequest {
 
     @Id
     private String fileId;
 
-    private String title;
+    private String formName;
+
+    private String vendorUEN;
 
     private InputStream stream;
     

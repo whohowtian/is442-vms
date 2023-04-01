@@ -99,6 +99,7 @@ public class FormController {
     @PostMapping("/submit")
     public ResponseEntity<?> submitForm(@RequestBody Form submittedForm) {
         try {
+            service.editForm(submittedForm);
             service.submitForm(submittedForm); 
             return ResponseHandler.generateResponse("Form edited successfully.", HttpStatus.OK, null);
         } catch (ResourceNotFoundException e) {

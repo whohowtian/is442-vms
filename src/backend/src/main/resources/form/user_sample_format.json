@@ -1,64 +1,114 @@
 [
     {
-        "name": "Veronica Teng",
-        "email": "yyteng.2019@scis.smu.edu.sg",
-        "password": "imveron",
-        "number": "+6589891313",
-        "userType": "VENDOR",
-        "entityUEN": "52865514X",
-        "entityName": "POLYART AQUARIUM",
-        "entityActivities": [
-            "RETAIL SALE OF AQUARIUM FISHES",
-            "RETAIL SALE OF PET BIRDS AND ANIMALS"
-        ],
-        "isGSTRegistered": true,
-        "isEnabled": true
-    },
-    {
-        "name": "Chua Kai Wei",
         "email": "kaiwei.chua.2020@scis.smu.edu.sg",
         "password": "",
+        "name": "Chua Kai Wei",
         "number": "+6589891313",
         "userType": "ADMIN",
-        "isEnabled": false
+        "enabled": false
     },
     {
-        "name": "Chan Yu Han",
         "email": "yuhan.chan.2020@scis.smu.edu.sg",
         "password": "",
+        "name": "Chan Yu Han",
         "number": "+6589891313",
         "userType": "ADMIN",
-        "isEnabled": false
+        "enabled": false
     },
     {
-        "name": "Neo Fang Ting",
         "email": "ftneo.2020@scis.smu.edu.sg",
         "password": "",
+        "name": "Neo Fang Ting",
         "number": "+6589891313",
         "userType": "ADMIN",
-        "isEnabled": false
+        "enabled": false
     },
     {
-        "name": "Justin Lee Wei Yang",
         "email": "justin.lee.2020@scis.smu.edu.sg",
         "password": "",
+        "name": "Justin Lee Wei Yang",
         "number": "+6589891313",
-        "isEnabled": false
+        "userType": null,
+        "enabled": false
     },
     {
-        "name": "Hu Hao Tian",
         "email": "haotian.hu.2021@scis.smu.edu.sg",
-        "password": "",
+        "password": null,
+        "name": "Hu Hao Tian",
         "number": "+6589891313",
         "userType": "ADMIN",
-        "isEnabled": true
+        "enabled": false
     },
     {
-        "name": "Swavek Wlodkowski",
         "email": "veronicatengyy@gmail.com",
-        "password": "improf",
-        "number": "+4930901820",
+        "password": null,
+        "name": "Swavek Wlodkowski",
+        "number": "+6589891313",
         "userType": "APPROVER",
-        "isEnabled": true
+        "enabled": false
+    },
+    {
+        "userId": "6426e220723aa30fac3dda44",
+        "email": "yyteng.2019@scis.smu.edu.sg",
+        "password": "",
+        "name": "Monica Tan",
+        "number": "+6562655355",
+        "userType": "VENDOR",
+        "entityUEN": "196200138N",
+        "entityName": "NIPPON PAINT",
+        "entityActivities": [
+            "MANUFACTURE OF PAINTS",
+            "SITE PREPARATION N.E.C"
+        ],
+        "gstRegisteredNo": "M200038118",
+        "gstregistered": true,
+        "enabled": false
+    },
+    {
+        "email": "veronspends@gmail.com",
+        "password": "",
+        "name": "Johnathan Lim",
+        "number": "+6598765432",
+        "userType": "VENDOR",
+        "entityUEN": "201410843R",
+        "entityName": "STUFF'D PTE. LTD.",
+        "entityActivities": [
+            "FAST FOOD OUTLETS",
+            "LEASING OF NON-FINANCIAL INTANGIBLE ASSETS (EG PATENTS, TRADEMARKS, BRAND NAMES ETC)"
+        ],
+        "gstRegisteredNo": null,
+        "gstregistered": false,
+        "enabled": false
+    },
+    {
+        "email": "veronicateng13@gmail.com",
+        "password": "",
+        "name": "Samantha Sim",
+        "number": "+6598765432",
+        "userType": "VENDOR",
+        "entityUEN": "201617998K",
+        "entityName": "WOK HEY PTE. LTD.",
+        "entityActivities": [
+            "FAST FOOD OUTLETS",
+            "LEASING OF NON-FINANCIAL INTANGIBLE ASSETS (EG PATENTS, TRADEMARKS, BRAND NAMES ETC)"
+        ],
+        "gstRegisteredNo": "201617998K",
+        "gstregistered": true,
+        "enabled": false
+    },
+    {
+        "email": "yyteng.2019@gmail.com",
+        "password": "",
+        "name": "Koo Kwang Mo",
+        "number": "+6598765432",
+        "userType": "VENDOR",
+        "entityUEN": "200416497W",
+        "entityName": "LG ELECTRONICS SINGAPORE PTE. LTD.",
+        "entityActivities": [
+            "RETAIL SALE OF HOUSEHOLD ELECTRICAL APPLIANCES AND EQUIPMENT (EG VACUUM CLEANERS, WASHING MACHINES, REFRIGERATORS)"
+        ],
+        "gstRegisteredNo": "200416497W",
+        "gstregistered": true,
+        "enabled": false
     }
 ]

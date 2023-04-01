@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.g2t3.vms.exception.ResourceAlreadyExistException;
-import com.g2t3.vms.model.InputPdf;
+import com.g2t3.vms.request.PdfRequest;
 import com.g2t3.vms.response.ResponseHandler;
 import com.g2t3.vms.service.PdfService;
 
@@ -23,7 +22,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.servlet.http.HttpServletResponse;
 
 
 @RestController
@@ -35,7 +33,7 @@ public class PdfController {
 
     @Operation(summary = "Retrieve PDF by file name, Download PDF in Downloads folder", description="file name convention: <entityUEN>_<formName>",
     responses = {
-        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InputPdf.class))),
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PdfRequest.class))),
     })
     @GetMapping("/retrieve")
     public ResponseEntity<?> retrievePDFByFileName(@RequestParam String fileName) {
@@ -51,19 +49,26 @@ public class PdfController {
         return null;
     }
 
-
-    @Operation(summary = "Stream PDF and look at it directly in Postman", responses = {
-        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InputPdf.class))),
+    @Operation(summary = "Retrieve PDF by file name, Download PDF in Downloads folder", description="file name convention: <entityUEN>_<formName>",
+    responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PdfRequest.class))),
     })
-    @GetMapping("/stream/{fileId}")
-    public void streamPdf(@PathVariable String fileId, HttpServletResponse response) throws IllegalStateException, IOException {
-        InputPdf pdf = pdfService.streamPDF(fileId);
-        FileCopyUtils.copy(pdf.getStream(), response.getOutputStream());
+    @GetMapping("/retrieve/{vendorUEN}")
+    public ResponseEntity<?> retrievePDFByVendor(@PathVariable String vendorUEN) {
+
+        try {
+            pdfService.retrievePDFByVendor(vendorUEN);
+            return ResponseHandler.generateResponse("Successful", HttpStatus.OK, null);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-
     @Operation(summary = "Save PDF (binary data) in database", responses = {
-        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InputPdf.class))),
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PdfRequest.class))),
     })
     @PostMapping("/save")
     public ResponseEntity<?> savePDF(@RequestParam("title") String title, @RequestParam("file") MultipartFile file) {
@@ -81,5 +86,14 @@ public class PdfController {
         return null;
 
     }
+
+    // @Operation(summary = "Stream PDF and look at it directly in Postman", responses = {
+    //     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PdfRequest.class))),
+    // })
+    // @GetMapping("/stream/{fileId}")
+    // public void streamPdf(@PathVariable String fileId, HttpServletResponse response) throws IllegalStateException, IOException {
+    //     PdfRequest pdf = pdfService.streamPDF(fileId);
+    //     FileCopyUtils.copy(pdf.getStream(), response.getOutputStream());
+    // }
 
 }

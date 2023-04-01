@@ -4,17 +4,18 @@ import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import com.g2t3.vms.enums.UserType;
 import com.g2t3.vms.exception.ResourceAlreadyExistException;
 import com.g2t3.vms.exception.ResourceNotFoundException;
 import com.g2t3.vms.model.Admin;
 import com.g2t3.vms.model.Approver;
-import com.g2t3.vms.model.InputUserLogin;
 import com.g2t3.vms.model.User;
-import com.g2t3.vms.model.InputUserUpdate;
 import com.g2t3.vms.model.Vendor;
 import com.g2t3.vms.repository.UserRepo;
+import com.g2t3.vms.request.UserLoginRequest;
+import com.g2t3.vms.request.UserUpdateRequest;
 
 @Service
 public class UserService {
@@ -22,7 +23,83 @@ public class UserService {
     @Autowired
     private UserRepo userRepo;
 
-    public Vendor createVendor(Vendor vendor) throws ResourceAlreadyExistException, Exception {
+    public Vendor createVendor(UserUpdateRequest request) throws ResourceAlreadyExistException, Exception {
+        
+        // errors
+        Vendor user = (Vendor) userRepo.findByEmail(request.getEmail());
+        if (user != null) {
+            throw new ResourceAlreadyExistException(String.format("User with this email (%s) already exist.", request.getEmail()));
+        }
+        Vendor user2 = (Vendor) userRepo.findByEntityUEN(request.getEntityUEN());
+        if (user2 != null) {
+            throw new ResourceAlreadyExistException(String.format("A user with this entity UEN (%s) already exist.", request.getEntityUEN()));
+        }
+
+        // save new vendor
+        Vendor vendor = new Vendor();
+        vendor = vendor.toBuilder()
+            .userType(UserType.VENDOR)
+            .password(null)
+            .email(request.getEmail())
+            .name(request.getName())
+            .number(request.getNumber())
+            .entityUEN(request.getEntityUEN())
+            .entityName(request.getEntityName())
+            .entityActivities(request.getEntityActivities())
+            .isGSTRegistered(request.isGSTRegistered())
+            .gstRegisteredNo(request.getGstRegisteredNo())
+            .build();
+        userRepo.save(vendor);
+        return vendor;
+        
+    }
+
+    public Admin createAdmin(UserUpdateRequest request) throws ResourceAlreadyExistException, Exception {
+
+        // errors
+        Admin user = (Admin) userRepo.findByEmail(request.getEmail());
+        if (user != null) {
+            throw new ResourceAlreadyExistException(String.format("User with this email (%s) already exist.", request.getEmail()));
+        }
+
+        // save new admin
+        Admin admin = new Admin();
+        admin = admin.toBuilder()
+            .userType(UserType.ADMIN)
+            .password(null)
+            .email(request.getEmail())
+            .name(request.getName())
+            .number(request.getNumber())
+            .build();
+        userRepo.save(admin);
+        System.out.println("admin check3");
+        return admin;
+        
+    }
+
+    public Approver createApprover(UserUpdateRequest request) throws ResourceAlreadyExistException, Exception {
+        
+        // errors
+        Approver user = (Approver) userRepo.findByEmail(request.getEmail());
+        if (user != null) {
+            throw new ResourceAlreadyExistException(String.format("User with this email (%s) already exist.", request.getEmail()));
+        }
+
+        // save new approver
+        Approver approver = new Approver();
+        approver = approver.toBuilder()
+            .userType(UserType.APPROVER)
+            .password(null)
+            .email(request.getEmail())
+            .name(request.getName())
+            .number(request.getNumber())
+            .build();
+        userRepo.save(approver);
+        return approver;
+        
+    }
+
+    public Vendor createVendor2(Vendor vendor) throws ResourceAlreadyExistException, Exception {
         
         // errors
         Vendor user = (Vendor) userRepo.findByEmail(vendor.getEmail());
@@ -35,12 +112,16 @@ public class UserService {
         }
 
         // save new vendor
+        vendor = vendor.toBuilder()
+            .userType(UserType.VENDOR)
+            .password(null)
+            .build();
         Vendor newUser = userRepo.save(vendor);
         return newUser;
         
     }
 
-    public Admin createAdmin(Admin admin) throws ResourceAlreadyExistException, Exception {
+    public Admin createAdmin2(Admin admin) throws MethodArgumentNotValidException, ResourceAlreadyExistException, Exception {
         
         // errors
         Admin user = (Admin) userRepo.findByEmail(admin.getEmail());
@@ -49,12 +130,16 @@ public class UserService {
         }
 
         // save new admin
+        admin = admin.toBuilder()
+            .userType(UserType.ADMIN)
+            .password(null)
+            .build();
         Admin newUser = userRepo.save(admin);
         return newUser;
         
     }
 
-    public Approver createApprover(Approver approver) throws ResourceAlreadyExistException, Exception {
+    public Approver createApprover2(Approver approver) throws ResourceAlreadyExistException, Exception {
         
         // errors
         Approver user = (Approver) userRepo.findByEmail(approver.getEmail());
@@ -63,6 +148,10 @@ public class UserService {
         }
 
         // save new approver
+        approver = approver.toBuilder()
+            .userType(UserType.APPROVER)
+            .password(null)
+            .build();
         Approver newUser = userRepo.save(approver);
         return newUser;
         
@@ -114,7 +203,7 @@ public class UserService {
         return users;
     }
 
-    public void updateAdmin(UserType prevType, InputUserUpdate user) throws ResourceNotFoundException, Exception {
+    public void updateAdmin(UserType prevType, UserUpdateRequest user) throws ResourceNotFoundException, Exception {
 
         // check
         getUserById(user.getUserId());
@@ -133,7 +222,7 @@ public class UserService {
 
     }
 
-    public void updateApprover(UserType prevType, InputUserUpdate user) throws ResourceNotFoundException, Exception {
+    public void updateApprover(UserType prevType, UserUpdateRequest user) throws ResourceNotFoundException, Exception {
 
         // check
         getUserById(user.getUserId());
@@ -151,7 +240,7 @@ public class UserService {
     
     }
 
-    public void updateVendor(UserType prevType, InputUserUpdate user) throws ResourceNotFoundException, Exception {
+    public void updateVendor(UserType prevType, UserUpdateRequest user) throws ResourceNotFoundException, Exception {
 
         // check
         getUserById(user.getUserId());
@@ -175,7 +264,7 @@ public class UserService {
 
     }
 
-    public User activateAccount(InputUserLogin user) throws ResourceNotFoundException, Exception {
+    public User activateAccount(UserLoginRequest user) throws ResourceNotFoundException, Exception {
 
         User prevDetails = getUserByEmail(user.getEmail());
 

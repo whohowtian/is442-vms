@@ -1,6 +1,7 @@
 package com.g2t3.vms.model;
 
 import org.springframework.data.annotation.PersistenceCreator;
+import org.springframework.validation.annotation.Validated;
 
 import com.g2t3.vms.enums.UserType;
 
@@ -12,6 +13,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 @Data @EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
+@Validated
 public class Admin extends User {
     
     @PersistenceCreator

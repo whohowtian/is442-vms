@@ -19,6 +19,7 @@ import com.g2t3.vms.exception.ResourceAlreadyExistException;
 import com.g2t3.vms.exception.ResourceNotFoundException;
 import com.g2t3.vms.model.Email;
 import com.g2t3.vms.model.EmailTemplate;
+import com.g2t3.vms.request.ReminderEmailRequest;
 import com.g2t3.vms.response.ResponseHandler;
 import com.g2t3.vms.service.EmailService;
 
@@ -36,6 +37,20 @@ public class EmailController {
         public ResponseEntity<?> sendEmail(@RequestBody Email email) {
             try{
                 service.sendEmail(email);
+                return ResponseHandler.generateResponse("Sent email successfully.", HttpStatus.OK, null);
+            } catch (MailException e){
+                return ResponseHandler.generateResponse("Error Occured: Mail Exception " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
+            } catch(MessagingException e){
+                return ResponseHandler.generateResponse("Error Occured: Messaging Exception " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
+            } catch(Exception e) {
+                return ResponseHandler.generateResponse("Error Occured: Exception " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
+            }
+        }
+
+        @PostMapping(value = "/reminder", consumes = "application/json", produces = "application/json")
+        public ResponseEntity<?> sendReminderEmail(@RequestBody ReminderEmailRequest email) {
+            try{
+                service.sendReminderEmail(email);
                 return ResponseHandler.generateResponse("Sent email successfully.", HttpStatus.OK, null);
             } catch (MailException e){
                 return ResponseHandler.generateResponse("Error Occured: Mail Exception " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
@@ -76,7 +91,7 @@ public class EmailController {
         }
 
         @PostMapping("/template")
-        public ResponseEntity<?> createAdmin(@RequestBody EmailTemplate template) {
+        public ResponseEntity<?> createTemplate(@RequestBody EmailTemplate template) {
 
             try {
                 service.createTemplate(template);
