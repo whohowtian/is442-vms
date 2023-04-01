@@ -99,7 +99,7 @@ export default {
 
                 
             <div class="col">
-                <button v-if="this.checkPassword == true" type="button" class="btn btn-outline-primary px-4 mt-5 float-end" id="createBtn"
+                <button v-if="this.valid_password == true" type="button" class="btn btn-outline-primary px-4 mt-5 float-end" id="createBtn"
             style="border-radius: 5px;" @click="setPassword()" >Set Password</button>
             
                 </div>
