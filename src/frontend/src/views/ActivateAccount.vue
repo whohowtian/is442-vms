@@ -2,7 +2,7 @@
 import NavBar from '../components/Navbar.vue'
 
 export default {
-        name: "PasswordView",
+        name: "ActivateAccount",
         components: {
             NavBar,
          },
@@ -32,6 +32,8 @@ export default {
                 window.location.href = '/AccountView';
             },
             checkPassword() {
+                this.valid_password = false;
+                
                 this.password_length = this.password.length;
                 const format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
                         
@@ -43,6 +45,8 @@ export default {
                         
                 if (this.password === this.password2 && this.password.length != 0 && this.password2.length != 0){
                     this.password_match = true;
+                } else{
+                    this.password_match = false;
                 }
                 this.contains_number = /\d/.test(this.password);
                 this.contains_uppercase = /[A-Z]/.test(this.password);
@@ -51,7 +55,7 @@ export default {
                 if (this.contains_eight_characters === true &&
                                 this.contains_special_character === true &&
                                 this.contains_uppercase === true &&
-                                this.contains_number === true) {
+                                this.contains_number === true && this.password_match === true) {
                                     this.valid_password = true;			
                 } else {
                     this.valid_password = false;
@@ -73,33 +77,35 @@ export default {
             </div>
         </div>
         <form class="row g-3 p-2">
-            <div><h1>SET USER PASSWORD</h1></div>
+            <div><h1>ACTIVATE NEW USER ACCOUNT</h1></div>
             <div><span style="color:red">* Required</span></div>
             	
 
-            <div class="input_container">
-                <ul class="criteriaList">
-                    <li class="criteria" v-bind:class="{ is_valid: contains_eight_characters }">- 8 Characters</li>
-                    <li class="criteria" v-bind:class="{ is_valid: contains_number }">- Contains Number</li>
-                    <li class="criteria" v-bind:class="{ is_valid: contains_uppercase }">- Contains Uppercase</li>
-                    <li class="criteria" v-bind:class="{ is_valid: contains_special_character }">- Contains Special Character</li>
-                    <li class="criteria" v-bind:class="{ is_valid: password_match }">- Passwords Match</li>
-                </ul>
+            <div class="input_container p-2">
+                 <div class="col-lg-6 col-md-6">
+                    <ul class="criteriaList">
+                        <li class="criteria" v-bind:class="{ is_valid: contains_eight_characters }">- 8 Characters</li>
+                        <li class="criteria" v-bind:class="{ is_valid: contains_number }">- Contains Number</li>
+                        <li class="criteria" v-bind:class="{ is_valid: contains_uppercase }">- Contains Uppercase</li>
+                        <li class="criteria" v-bind:class="{ is_valid: contains_special_character }">- Contains Special Character</li>
+                        <li class="criteria" v-bind:class="{ is_valid: password_match }">- Passwords Match</li>
+                    </ul>
+                 </div>
                     <div class="col-lg-6 col-md-6">
                         <h4><label for="password" class="form-label">Password</label> <span style="color:red">*</span></h4>
-                        <input id="password" type="password" @input="checkPassword" v-model="password" autocomplete="off" placeholder="Password" />
+                        <input id="password" type="password" @change="checkPassword" @input="checkPassword" v-model="password" autocomplete="off" placeholder="Password" required/>
                     </div>
 
                     <div class="col-lg-6 col-md-6">
                         <h4><label for="password" class="form-label">Confirm Password</label> <span style="color:red">*</span></h4>
-                        <input id="password2" type="password" @input="checkPassword" v-model="password2" autocomplete="off" placeholder="Confirm Password" />
+                        <input id="password2" type="password" @change="checkPassword" @input="checkPassword" v-model="password2" autocomplete="off" placeholder="Confirm Password" required/>
                     </div>
                 </div>
             
 
                 
             <div class="col">
-                <button v-if="this.valid_password == true" type="button" class="btn btn-outline-primary px-4 mt-5 float-end" id="createBtn"
+                <button v-if="this.valid_password" type="button" class="btn btn-outline-primary px-4 mt-5 float-end" id="createBtn"
             style="border-radius: 5px;" @click="setPassword()" >Set Password</button>
             
                 </div>

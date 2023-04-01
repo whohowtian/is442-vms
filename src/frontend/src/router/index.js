@@ -39,9 +39,9 @@ const router = createRouter({
       component: () => import('../views/CreateAccount.vue')
     },
     {
-      path: '/SetUserPassword',
-      name: 'SetUserPassword',
-      component: () => import('../views/SetUserPassword.vue')
+      path: '/ActivateAccount',
+      name: 'ActivateAccount',
+      component: () => import('../views/ActivateAccount.vue')
     },
     {
       path: '/FormBuilder',
