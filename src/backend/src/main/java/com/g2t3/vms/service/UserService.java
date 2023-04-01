@@ -23,7 +23,83 @@ public class UserService {
     @Autowired
     private UserRepo userRepo;
 
-    public Vendor createVendor(Vendor vendor) throws ResourceAlreadyExistException, Exception {
+    public Vendor createVendor(UserUpdateRequest request) throws ResourceAlreadyExistException, Exception {
+        
+        // errors
+        Vendor user = (Vendor) userRepo.findByEmail(request.getEmail());
+        if (user != null) {
+            throw new ResourceAlreadyExistException(String.format("User with this email (%s) already exist.", request.getEmail()));
+        }
+        Vendor user2 = (Vendor) userRepo.findByEntityUEN(request.getEntityUEN());
+        if (user2 != null) {
+            throw new ResourceAlreadyExistException(String.format("A user with this entity UEN (%s) already exist.", request.getEntityUEN()));
+        }
+
+        // save new vendor
+        Vendor vendor = new Vendor();
+        vendor = vendor.toBuilder()
+            .userType(UserType.VENDOR)
+            .password(null)
+            .email(request.getEmail())
+            .name(request.getName())
+            .number(request.getNumber())
+            .entityUEN(request.getEntityUEN())
+            .entityName(request.getEntityName())
+            .entityActivities(request.getEntityActivities())
+            .isGSTRegistered(request.isGSTRegistered())
+            .gstRegisteredNo(request.getGstRegisteredNo())
+            .build();
+        userRepo.save(vendor);
+        return vendor;
+        
+    }
+
+    public Admin createAdmin(UserUpdateRequest request) throws ResourceAlreadyExistException, Exception {
+
+        // errors
+        Admin user = (Admin) userRepo.findByEmail(request.getEmail());
+        if (user != null) {
+            throw new ResourceAlreadyExistException(String.format("User with this email (%s) already exist.", request.getEmail()));
+        }
+
+        // save new admin
+        Admin admin = new Admin();
+        admin = admin.toBuilder()
+            .userType(UserType.ADMIN)
+            .password(null)
+            .email(request.getEmail())
+            .name(request.getName())
+            .number(request.getNumber())
+            .build();
+        userRepo.save(admin);
+        System.out.println("admin check3");
+        return admin;
+        
+    }
+
+    public Approver createApprover(UserUpdateRequest request) throws ResourceAlreadyExistException, Exception {
+        
+        // errors
+        Approver user = (Approver) userRepo.findByEmail(request.getEmail());
+        if (user != null) {
+            throw new ResourceAlreadyExistException(String.format("User with this email (%s) already exist.", request.getEmail()));
+        }
+
+        // save new approver
+        Approver approver = new Approver();
+        approver = approver.toBuilder()
+            .userType(UserType.APPROVER)
+            .password(null)
+            .email(request.getEmail())
+            .name(request.getName())
+            .number(request.getNumber())
+            .build();
+        userRepo.save(approver);
+        return approver;
+        
+    }
+
+    public Vendor createVendor2(Vendor vendor) throws ResourceAlreadyExistException, Exception {
         
         // errors
         Vendor user = (Vendor) userRepo.findByEmail(vendor.getEmail());
@@ -45,7 +121,7 @@ public class UserService {
         
     }
 
-    public Admin createAdmin(Admin admin) throws MethodArgumentNotValidException, ResourceAlreadyExistException, Exception {
+    public Admin createAdmin2(Admin admin) throws MethodArgumentNotValidException, ResourceAlreadyExistException, Exception {
         
         // errors
         Admin user = (Admin) userRepo.findByEmail(admin.getEmail());
@@ -63,7 +139,7 @@ public class UserService {
         
     }
 
-    public Approver createApprover(Approver approver) throws ResourceAlreadyExistException, Exception {
+    public Approver createApprover2(Approver approver) throws ResourceAlreadyExistException, Exception {
         
         // errors
         Approver user = (Approver) userRepo.findByEmail(approver.getEmail());
