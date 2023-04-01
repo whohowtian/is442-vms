@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import com.g2t3.vms.enums.UserType;
 import com.g2t3.vms.exception.ResourceAlreadyExistException;
@@ -98,6 +99,64 @@ public class UserService {
         
     }
 
+    public Vendor createVendor2(Vendor vendor) throws ResourceAlreadyExistException, Exception {
+        
+        // errors
+        Vendor user = (Vendor) userRepo.findByEmail(vendor.getEmail());
+        if (user != null) {
+            throw new ResourceAlreadyExistException(String.format("User with this email (%s) already exist.", vendor.getEmail()));
+        }
+        Vendor user2 = (Vendor) userRepo.findByEntityUEN(vendor.getEntityUEN());
+        if (user2 != null) {
+            throw new ResourceAlreadyExistException(String.format("A user with this entity UEN (%s) already exist.", vendor.getEntityUEN()));
+        }
+
+        // save new vendor
+        vendor = vendor.toBuilder()
+            .userType(UserType.VENDOR)
+            .password(null)
+            .build();
+        Vendor newUser = userRepo.save(vendor);
+        return newUser;
+        
+    }
+
+    public Admin createAdmin2(Admin admin) throws MethodArgumentNotValidException, ResourceAlreadyExistException, Exception {
+        
+        // errors
+        Admin user = (Admin) userRepo.findByEmail(admin.getEmail());
+        if (user != null) {
+            throw new ResourceAlreadyExistException(String.format("User with this email (%s) already exist.", admin.getEmail()));
+        }
+
+        // save new admin
+        admin = admin.toBuilder()
+            .userType(UserType.ADMIN)
+            .password(null)
+            .build();
+        Admin newUser = userRepo.save(admin);
+        return newUser;
+        
+    }
+
+    public Approver createApprover2(Approver approver) throws ResourceAlreadyExistException, Exception {
+        
+        // errors
+        Approver user = (Approver) userRepo.findByEmail(approver.getEmail());
+        if (user != null) {
+            throw new ResourceAlreadyExistException(String.format("User with this email (%s) already exist.", approver.getEmail()));
+        }
+
+        // save new approver
+        approver = approver.toBuilder()
+            .userType(UserType.APPROVER)
+            .password(null)
+            .build();
+        Approver newUser = userRepo.save(approver);
+        return newUser;
+        
+    }
+
     public ArrayList<User> getAllUsers() throws ResourceNotFoundException, Exception {
         ArrayList<User> users = new ArrayList<>();
         for (User user : userRepo.findAll()) {
@@ -115,7 +174,7 @@ public class UserService {
         
         User user = userRepo.findbyId(UID);
         if (user == null) {
-            throw new ResourceNotFoundException(String.format("User with this id (%s) does not exist.", UID));
+            throw new ResourceNotFoundException("User " + UID + " does not exist.");
         }
         return user;
 
@@ -125,7 +184,7 @@ public class UserService {
         
         User user = userRepo.findByEmail(email);
         if (user == null) {
-            throw new ResourceNotFoundException(String.format("User with this email (%s) does not exist.", email));
+            throw new ResourceNotFoundException("User with " + email + " does not exist.");
         }
         return user;
         
@@ -138,7 +197,7 @@ public class UserService {
         }
 
         if (users.isEmpty()) {
-            throw new ResourceNotFoundException(String.format("No users of %s type have been created.", type));
+            throw new ResourceNotFoundException("No users of " + type + " type have been created.");
         }
         
         return users;

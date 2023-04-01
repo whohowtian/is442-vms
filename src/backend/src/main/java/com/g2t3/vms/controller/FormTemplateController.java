@@ -34,7 +34,7 @@ public class FormTemplateController {
     Logger logger = LogManager.getLogger(FormTemplateController.class);
 
     // Healthcheck
-    @GetMapping("")
+    @GetMapping("/")
     @ResponseBody
     public ResponseEntity<?> healthCheck() {
         return ResponseHandler.generateResponse("FormTemplateController connected", HttpStatus.OK, null);

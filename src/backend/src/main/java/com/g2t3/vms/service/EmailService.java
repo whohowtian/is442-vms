@@ -3,9 +3,7 @@ package com.g2t3.vms.service;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import com.g2t3.vms.exception.ResourceAlreadyExistException;
 import com.g2t3.vms.exception.ResourceNotFoundException;
-import com.g2t3.vms.exception.ResourceNotValidException;
 import com.g2t3.vms.model.Email;
 import com.g2t3.vms.model.EmailTemplate;
 import com.g2t3.vms.model.User;
@@ -35,9 +32,7 @@ public class EmailService {
     @Autowired
     private EmailTemplateRepo emailTemplateRepo;
 
-    @Value("${spring.mail.username}")
-    private String senderEmail;
-
+    // templates
     public void createTemplate(EmailTemplate template) throws ResourceAlreadyExistException, Exception {
 
         // errors
@@ -46,8 +41,8 @@ public class EmailService {
             throw new ResourceAlreadyExistException(String.format("An email template with this id (%s) already exist.", template.getId()));
         }
 
-        // save email template
-        emailTemplateRepo.save(template);
+         // save email template
+         emailTemplateRepo.save(template);
 
     }
 
@@ -73,59 +68,40 @@ public class EmailService {
         return template;
 
     }
+
     
-    // Send Email Template
-    private boolean isEmailValid(String emailTo) {
-        return EmailValidator.getInstance().isValid(emailTo);
+
+    // public void sendEmail(String toEmail, String body, String subject, String attachment) throws MailException, MessagingException {
+    public void sendEmail(Email email) throws MailException, MessagingException {
+        if (email.getAttachment() == "") {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            message.setFrom("is442g2t3@outlook.com");
+            message.setTo(email.getToEmail());
+            message.setText(email.getBody());
+            message.setSubject(email.getSubject());
+
+            mailSender.send(message);
+            System.out.println("Email sent successfully");
+        } else {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper mimeMessageHelper;
+
+            mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+            mimeMessageHelper.setFrom("is442g2t3@outlook.com");
+            mimeMessageHelper.setTo(email.getToEmail());
+            mimeMessageHelper.setText(email.getBody());
+            mimeMessageHelper.setSubject(email.getSubject());
+
+            FileSystemResource file = new FileSystemResource(new File(email.getAttachment()));
+            mimeMessageHelper.addAttachment(file.getFilename(), file);
+
+            mailSender.send(mimeMessage);
+            System.out.println("Email sent successfully");
+        }
     }
 
-    public void sendSimpleEmail(Email email) throws MailException, MessagingException, ResourceNotValidException, Exception {
-
-        // error
-        if (!isEmailValid(email.getToEmail())) {
-            throw new ResourceNotValidException(String.format("The sender email (%s) is invalid.", email.getToEmail()));
-        }
-
-        SimpleMailMessage message = new SimpleMailMessage();
-
-        message.setFrom(senderEmail);
-        message.setTo(email.getToEmail());
-        message.setText(email.getBody());
-        message.setSubject(email.getSubject());
-
-        mailSender.send(message);
-        
-    }
-
-    public void sendEmailWithAttachment(Email email) throws MailException, MessagingException, ResourceNotValidException, Exception {
-
-        // error
-        if (!isEmailValid(email.getToEmail())) {
-            throw new ResourceNotValidException(String.format("The sender email (%s) is invalid.", email.getToEmail()));
-        }
-     
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper mimeMessageHelper;
-
-        mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-        mimeMessageHelper.setFrom(senderEmail);
-        mimeMessageHelper.setTo(email.getToEmail());
-        mimeMessageHelper.setText(email.getBody());
-        mimeMessageHelper.setSubject(email.getSubject());
-
-        FileSystemResource file = new FileSystemResource(new File(email.getAttachment()));
-        mimeMessageHelper.addAttachment(file.getFilename(), file);
-
-        mailSender.send(mimeMessage);
-        
-    }
-
-    public void sendAccountConfirmationEmail(User user) throws ResourceNotFoundException, MailException, MessagingException, ResourceNotValidException, Exception {
-
-        // error
-        if (!isEmailValid(user.getEmail())) {
-            throw new ResourceNotValidException(String.format("The sender email (%s) is invalid.", user.getEmail()));
-        }
+    public void sendAccountConfirmationEmail(User user) throws ResourceNotFoundException, MailException, MessagingException, Exception {
 
         EmailTemplate template = getTemplateById("6425bf076162e20f5ce1dba3");
         if (template == null) {
@@ -133,21 +109,17 @@ public class EmailService {
         }
 
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(senderEmail);
+        message.setFrom("is442g2t3@outlook.com");
         message.setTo(user.getEmail());
         message.setText(String.format(template.getData(), user.getName()));
         message.setSubject(template.getSubject());
 
         mailSender.send(message);
+        System.out.println("Account Confirmation Email sent successfully");
 
     }
 
-    public void sendReminderEmail(ReminderEmailRequest request) throws ResourceNotFoundException, MailException, MessagingException, ResourceNotValidException, Exception {
-
-        // error
-        if (!isEmailValid(request.getEmail())) {
-            throw new ResourceNotValidException(String.format("The sender email (%s) is invalid.", request.getEmail()));
-        }
+    public void sendReminderEmail(ReminderEmailRequest request) throws ResourceNotFoundException, MailException, MessagingException, Exception {
 
         EmailTemplate template = getTemplateById("6426facd0869fc2ea8b9aa97");
         if (template == null) {
@@ -155,12 +127,13 @@ public class EmailService {
         }
 
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(senderEmail);
+        message.setFrom("is442g2t3@outlook.com");
         message.setTo(request.getEmail());
         message.setText(String.format(template.getData(), request.getName(), request.getDeadline()));
         message.setSubject(String.format(template.getSubject(), request.getFormName()));
 
         mailSender.send(message);
+        System.out.println("Account Confirmation Email sent successfully");
 
     }
 }

@@ -233,12 +233,4 @@ public class UserController {
             return ResponseHandler.generateResponse("Internal Server Error: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
         }
     } 
-
-    // Healthcheck
-    @GetMapping("")
-    @ResponseBody
-    public ResponseEntity<?> healthCheck() {
-        return ResponseHandler.generateResponse("UserController connected.", HttpStatus.OK, null);
-    }
-
 }

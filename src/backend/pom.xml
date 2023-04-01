@@ -25,7 +25,7 @@
 		<jakarta.mail.version>2.0.1</jakarta.mail.version>
 		<openhtmltopdf-pdfbox.version>1.0.10</openhtmltopdf-pdfbox.version>
         <flying-saucer-pdf-openpdf.version>9.1.22</flying-saucer-pdf-openpdf.version>
-		<commons-validator.version>1.7</commons-validator.version>
+		<jackson-databind.version>2.14.2</jackson-databind.version>
 	</properties>
 
 	<dependencies>
@@ -82,20 +82,11 @@
 			<version>${springdoc-openapi-ui.version}</version>
     	</dependency>
 		<dependency>
-    		<groupId>commons-validator</groupId>
-    		<artifactId>commons-validator</artifactId>
-    		<version>${commons-validator.version}</version>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson-databind.version}</version>
 		</dependency>
 	</dependencies>
-
-	<profiles>
-		<profile>
-			<id>bin</id>
-			<build>
-				<directory>bin</directory>
-			</build>
-		</profile>
-	</profiles>
 
 	<build>
 		<plugins>

@@ -12,11 +12,11 @@
             <el-row>
               <h6>{{ element.formNo }}</h6>
             </el-row>
-            <el-row>
-              <h6>Due in {{ element.deadlineDays }} days</h6>
-            </el-row>
+            <!-- <el-row>
+              <h6>{{ element.revNo }}</h6>
+            </el-row> -->
             <el-row v-if="element.formName !=''">
-              <i>{{element.lastEdited}}</i>
+              <i>{{element.formEffDate}}</i>
             </el-row>           
           </div>
           </template>
@@ -74,14 +74,14 @@ export default {
             qnTitle: field.label,
             inputType: field.fieldType,
             inputOptions,
-            required: field.isRequired
+            isRequired: field.isRequired
           }
           questions[j + 1] = question
         }
         const section = {
           sectionName: formSection.sectionTitle,
           adminUseOnly: formSection.AdminUseOnly,
-          approvalViewOnly: formSection.ApproverUseOnly,
+          approvalUseOnly: formSection.ApproverUseOnly,
           doScoreCalculation: false,
           questions
         }
@@ -90,8 +90,7 @@ export default {
       const data = {
         formNo: this.formInfo[0].formNo,
         formName: this.formInfo[0].formName,
-        lastEdited: this.formInfo[0].lastEdited,
-        deadlineDays:this.formInfo[0].deadlineDays,
+        formEffDate: this.formInfo[0].formEffDate,
         formSections
       }
       // console.log(data)
@@ -112,29 +111,19 @@ export default {
                 const response = axios.post(`${BASE_URL}/api/formtemplate/create`, data);
                 console.log("SUCCESSFULLY POST")
                 console.log(response.data); // 
-              
-                Swal.fire({
-                  title: 'Success',
-                  text: 'Form saved successfully!',
-                  icon: 'success',
-                  timer: 2000,
-                  timerProgressBar: true,
-                  showConfirmButton: false
-                }).then(() => {
-                  window.location.href = "/WorkflowView";
-                });
-
               } catch (error) {
-                if (error) {
-                  console.error("ascas", error)
-
+                if(error){
+                  console.error("ascas",error)
+                  // alert('Error: ${error}. <br/> Please Try Again Later')
                   Swal.fire({
-                    icon: 'warning',
-                    title: error,
-                    timer: 2000,
-                    timerProgressBar: true,
-                    showConfirmButton: false
-                  })
+                          icon: 'warning',
+                          title: error,
+                          timer: 2000,
+                          timerProgressBar: true,
+                          showConfirmButton: false
+                      })
+                }else{
+                  window.location.href = "/WorkflowView";
                 }
                 }
             }

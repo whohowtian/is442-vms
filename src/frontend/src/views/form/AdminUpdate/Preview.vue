@@ -12,11 +12,9 @@
               <el-row>
                 <h6>{{ element.formNo }}</h6>
               </el-row>
-              <el-row>
-                <h6>Due in {{ element.deadlineDays }} days</h6>
-              </el-row>
+
               <el-row v-if="element.formName !=''">
-                <i>{{element.lastEdited}}</i>
+                <i>{{element.formEffDate}}</i>
               </el-row>           
             </div>
             </template>
@@ -28,8 +26,8 @@
                 <el-col v-for="field in eachFormObj.fields" v-bind="field" class="form__group">
                   <component :is="field.fieldType" 
                   :currentField="field" 
-                  :required= "field.required"
-                  class="form__field">
+                  :disabled="true"
+                  :required= true class="form__field">
                   </component>
                 </el-col>
               </div>          
@@ -67,8 +65,7 @@
             {
             formNo:allData['formNo'],
             formName:allData['formName'],
-            lastEdited:allData['lastEdited'],
-            deadlineDays:allData['deadlineDays'],
+            formEffDate:allData['formEffDate'],
           }]
           store._state.data.editableFormInfo = this.editableFormInfo
         })
@@ -104,7 +101,7 @@
           const section = {
             sectionName: formSection.sectionTitle,
             adminUseOnly: formSection.AdminUseOnly,
-            approvalViewOnly: formSection.ApproverUseOnly,
+            approvalUseOnly: formSection.ApproverUseOnly,
             doScoreCalculation: false,
             questions
           }
@@ -113,55 +110,17 @@
         const data = {
           formNo: this.editableFormInfo[0].formNo,
           formName: this.editableFormInfo[0].formName,
-          lastEdited: this.editableFormInfo[0].lastEdited,
-          deadlineDays:this.editableFormInfo[0].deadlineDays,
+          formEffDate: this.editableFormInfo[0].formEffDate,
           formSections
         }
         console.log(data)
-
-        Swal.fire({
-            title: 'Save the Edited Form?',
-            text: "Please check information before saving!",
-            icon: "warning",
-            showCancelButton: true,
-            cancelButtonColor: '#c7c6c5',
-            confirmButtonColor: '#6A79F3',
-            confirmButtonText: 'Yes, save it!',
-            cancelButtonText: 'No, Cancel',
-            width: 'auto',
-        }).then((result) => {
-            if (result.isConfirmed) {
-              try {
-                const response = axios.post(`${BASE_URL}/api/formtemplate/edit`, data);
-                console.log("SUCCESSFULLY POST")
-                console.log(response.data); // 
-              
-                Swal.fire({
-                  title: 'Success',
-                  text: 'Saved edited form successfully!',
-                  icon: 'success',
-                  timer: 2000,
-                  timerProgressBar: true,
-                  showConfirmButton: false
-                }).then(() => {
-                  window.location.href = "/WorkflowView";
-                });
-
-              } catch (error) {
-                if (error) {
-                  console.error("ascas", error)
-
-                  Swal.fire({
-                    icon: 'warning',
-                    title: error,
-                    timer: 2000,
-                    timerProgressBar: true,
-                    showConfirmButton: false
-                  })
-                }
-                }
-            }
-      })
+          try {
+          const response = await axios.post(`${BASE_URL}/api/formtemplate/edit`, data);
+          console.log("SUCCESSFULLY POST")
+          console.log(response.data); // 
+        } catch (error) {
+          console.error(error);
+        }
         },
     }
   

@@ -23,18 +23,11 @@ export default {
         return {
         selectedRows: [], //tick checkbox
         selectAll: false,
-        userId :'',
-        userEmail:'',
         allFormData:[],
-        allUser:[],
-        allVendor:[],
         allWorkflowData:[],
         ActiveWorkflow:[],
         InActiveWorkflow:[],
-        Todo:[],
-        Completed:[],
         SearchCompany:'',
-        assignForm:'',
         menuItems: [ //for top nav bar
             { label: 'HOME', route: '/AdminView'  },
             { label: 'ACCOUNT', route: '/AccountView'  },
@@ -51,6 +44,10 @@ export default {
 
         //fake data -- in future change to api endpoint
 
+        data3:fakeTaskData.todo, 
+        headers3:["Task","Company Name","Form No.","Date Assigned","Actions"],
+        fields3:["task","company","formNo","dateAssign","Actions"],
+
         data4:fakeTaskData.completed, 
         headers4:["Task","Company Name","Form No.","Date Assigned","Actions"],
         fields4:["task","company","formNo","dateAssign","Actions"],
@@ -58,32 +55,26 @@ export default {
         }
     },
     created() {
-        const user = JSON.parse(sessionStorage.getItem('user'));
-        this.userId = user.userId
-        this.userEmail = user.userEmail
         this.getAllFormAvail() //trigger FormTemplate API
         this.getAllWorkflow() //trigger Form API
-        this.getAllVendor("VENDOR") // for assigning workflow- vendor
         },
     methods: {
         async getAllWorkflow(){
-            axios.get(`${BASE_URL}/api/form/all`)
+            axios.get(`${BASE_URL}/api/form`)
             .then(response => {
                 var allWorkflow = response.data.data;
-                axios.get(`${BASE_URL}/api/user/all`)
+                axios.get(`${BASE_URL}/api/user`)
                 .then(response => {
                     var allUser= response.data.data;
-                    // console.log(allUser)
-                    this.allUser=allUser
                     
                     //data cleaning
                     for (const workflow of allWorkflow){
                         console.log(workflow)
                         var id = workflow.id
                         var task = workflow.formContent.formName
-                        var vendorEmail= workflow.assigned_vendor_email
-                        var VendorName= this.findVendorandCompanyName(vendorEmail,allUser)[0]
-                        var companyName = this.findVendorandCompanyName(vendorEmail,allUser)[1]
+                        var vendorID= workflow.assigned_vendor_uid
+                        var VendorName= this.findVendorandCompanyName(vendorID,allUser)[0]
+                        var companyName = this.findVendorandCompanyName(vendorID,allUser)[1]
                         var formNo = workflow.formContent.formNo
                         var status=workflow.status
                         var stage= this.addStage(status)[0]
@@ -111,9 +102,8 @@ export default {
                             
                         }else{
                             // inactive workflow
-                            this.InActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline})
+                            this.InActiveWorkflow.push({ id:id,task: task, vendorID:vendorID,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
                         }
-                        
                     }
                     
                 })
@@ -123,16 +113,15 @@ export default {
             });
         },
         async getAllFormAvail(){
-            axios.get(`${BASE_URL}/api/formtemplate/all`)
+            axios.get(`${BASE_URL}/api/formtemplate`)
             .then(response => {
                 var allForm = response.data.data;
-                // console.log("Forms-->",allForm);
                 //data cleaning
                 for (const form of allForm){
                     var id = form.id
                     var formName = form.formName
                     var formNo = form.formNo
-                    var lastEdited=form.lastEdited
+                    var lastEdited=form.formEffDate
                     this.allFormData.push({ id: id, formName: formName, formNo: formNo, editedby:"", lastEdited: lastEdited})
                 }
             //   console.log(this.allFormData)
@@ -141,60 +130,34 @@ export default {
                 console.log(error);
             });
         },
-        async getAllVendor(usertype){
-            axios.get(`${BASE_URL}/api/user/type/`+usertype)
-            .then(response => {
-                var allSelectedUser = response.data.data;
-                // console.log(allSelectedUser)
-                //data cleaning
-                for (const vendor of allSelectedUser){
-                    var vendorEmail = vendor.email
-                    var vendorName = vendor.entityName
-                    this.allVendor.push({ vendorEmail: vendorEmail, vendorName: vendorName})
-                }
-            //   console.log(this.allFormData)
-            })
-            .catch(error => {
-                console.log(error);
-            });
-        },
-        findVendorandCompanyName(vendorEmail,allUser){
+        findVendorandCompanyName(vendorID,allUser){
             var companyName = '';
             var VendorName = '';
-            
             for (const user of allUser){
-                if (vendorEmail == user.email){
+                if (vendorID == user.userId){
                     VendorName= user.name
                     companyName = user.entityName
                     
                 }
             }
-            
             return [VendorName,companyName];
         },
-        addStage(status){ //add stage, Mstatus according to the status
+        addStage(status){ //add stage according to the status
             var stage = '';
-            var Mstatus = '';
             if (status == "PENDING_VENDOR"){
                 stage = 'Vendor'
-                Mstatus = 'Pending'
-            }else if (status == "PENDING_ADMIN"){
+            }else if (status == "PENDING_REVIEW"){
                 stage = 'Admin'
-                Mstatus = 'Pending'
             }else if(status == "PENDING_APPROVAL"){
                 stage = 'Approver'
-                Mstatus = 'Pending'
             }else if(status == "APPROVED"){
                 stage = 'Completed'
-                Mstatus = 'Approved'
             }else if(status =='ADMIN_REJECTED'){
                 stage = 'Vendor'
-                Mstatus = 'Admin Rejected'
             }else if (status == "APPROVER_REJECTED"){
                 stage = 'Vendor'
-                Mstatus = 'Approver Rejected'
             }
-            return [stage, Mstatus]
+            return stage
         },
         deleteWorkflow(id,vendorID){
             
@@ -208,9 +171,9 @@ export default {
             confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    var url = `${BASE_URL}/api/form/archive`
+                    var url = `${BASE_URL}/api/form/changestatus/archive`
                     axios.post(url, {
-                        formID:id,archivedBy:this.userId 
+                        formID:id,assigned_vendor_uid:vendorID
                     })
                     .then(response => {
                         Swal.fire(
@@ -223,10 +186,6 @@ export default {
                     })
                 }
             })
-        },     
-        ViewEachForm(formNo){ //GET FormTemplate API
-            localStorage.setItem('formNo', formNo)
-            window.location.href = "VendorForm";
         },
         EditEachForm(formNo){ //GET FormTemplate API
             localStorage.setItem('formNo', formNo)
@@ -301,10 +260,6 @@ export default {
         isSelected(item) {
             return this.selectedRows.findIndex(selectedRow => selectedRow.id === item.id) !== -1;
         },
-        readyToPrintPdf(formNo,companyName){
-            localStorage.setItem('formNo', [formNo, companyName])
-            window.location.href = "VendorForm";
-        },
     },
     computed: {
         allRowsSelected() { //table styling function
@@ -368,12 +323,12 @@ export default {
                 <tr>
                     <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
                     <th>Task</th>
+                    <th>Vendor</th>
                     <th>Company Name</th>
+                    <th>Form No.</th>
                     <th>Stage</th>
                     <th>Status</th>
-                    <th>Vendor Assigned Date</th>
-                    <th>Deadline</th>
-                    <th>Approved By</th>
+                    <th>Date Assigned</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -381,21 +336,21 @@ export default {
                 <tr v-for="item in ActiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
                 <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
                 <td>{{ item.task }}</td>
+                <td>{{ item.VendorName }}</td>
                 <td>{{ item.companyName }}</td>
+                <td>{{ item.formNo }}</td>
                 <td>{{ item.stage }}</td>
                 <td>{{ item.status }}</td>
-                <td>{{ item.formEffDate }}</td>
-                <td>{{ item.deadline }}</td>
-                <td>{{  }}</td>
+                <td>{{ item.dateAssign }}</td>
                 <td >
                     <div  class="btn-group dropup">
                         <Button buttonStyle="none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             ...
                         </Button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" @click="ViewEachForm(item.formNo)">View</a></li>
-                            <li v-if="item.stage=='Vendor'"><a class="dropdown-item" href="#">Email</a></li>
-                            <li v-if="item.status=='APPROVED'"><a class="dropdown-item"  @click="readyToPrintPdf(item.id,item.task)">PDF</a></li>
+                            <li><a class="dropdown-item" href="#">Edit</a></li>
+                            <li><a class="dropdown-item" href="#">Email</a></li>
+                            <li v-if="item.status=='APPROVED'"><a class="dropdown-item" href="#">PDF</a></li>
                             <li><a class="dropdown-item" @click="deleteWorkflow(item.id, item.vendorID)">Delete</a></li>
                         </ul>
                     </div>
@@ -414,10 +369,11 @@ export default {
                 <tr>
                     <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
                     <th>Task</th>
+                    <th>Vendor</th>
                     <th>Company Name</th>
-                    <th>Last Stage</th>
-                    <th>Last Status</th>
-                    <th>FormEffDate</th>
+                    <th>Form No.</th>
+                    <th>Status</th>
+                    <th>Date Assigned</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -425,14 +381,22 @@ export default {
                 <tr v-for="item in InActiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
                 <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
                 <td>{{ item.task }}</td>
+                <td>{{ item.VendorName }}</td>
                 <td>{{ item.companyName }}</td>
-                <td>{{ item.stage }}</td>
+                <td>{{ item.formNo }}</td>
                 <td>{{ item.status }}</td>
-                <td>{{ item.formEffDate }}</td>
+                <td>{{ item.dateAssign }}</td>
                 <td >
-                    <el-icon class="el-input__icon" @click="ViewEachForm(item.formNo)">
-                            <View />
-                        </el-icon>
+                    <div  class="btn-group dropup">
+                        <Button buttonStyle="none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            ...
+                        </Button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">View</a></li>
+                            <li><a class="dropdown-item" href="#">Activate</a></li>
+                        </ul>
+                    </div>
+
                 </td>
                 </tr>
             </tbody>
@@ -448,7 +412,7 @@ export default {
         <!-- sub nav bar [ToDo / Completed] -->
         <el-tabs v-model="secNavOption"  type="border-card" >
             <el-tab-pane label="To Do" name="ToDoTable" >
-                <template #label>To Do({{ this.Todo.length }})</template>
+                <template #label>To Do({{ data3.length }})</template>
             </el-tab-pane>
             <el-tab-pane label="Completed" name="CompletedtaskTable"  @tab-click="secNavOption = 'CompletedtaskTable'">
                 <template #label>Completed({{ this.Completed.length }})</template>
@@ -461,36 +425,7 @@ export default {
             
         <!-- 2.1) To-do Table content -->
         <div v-if="firstNavOption === 'taskTable' && secNavOption !== 'CompletedtaskTable'">
-            <!-- <Table :data="data3" :headers="headers3" :fields="fields3" icon-class="pen-square" @action-click="TaskToDoAction" /> 
-            -->
-            <table class="my-table">
-            <thead>
-                <tr>
-                    <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
-                    <th>Task</th>
-                    <th>Company Name</th>
-                    <th>Stage</th>
-                    <th>Status</th>
-                    <th>FormEffDate</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="item in Todo" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
-                <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
-                <td>{{ item.task }}</td>
-                <td>{{ item.companyName }}</td>
-                <td>{{ item.stage }}</td>
-                <td>{{ item.status }}</td>
-                <td>{{ item.formEffDate }}</td>
-                <td >
-                    <el-icon class="el-input__icon" @click="ViewEachForm(item.formNo)">
-                            <Edit />
-                        </el-icon>
-                </td>
-                </tr>
-            </tbody>
-            </table>
+            <Table :data="data3" :headers="headers3" :fields="fields3" icon-class="pen-square" @action-click="TaskToDoAction" />
         </div>
 
         <!-- 2.2) Completed Table content -->
@@ -558,9 +493,3 @@ export default {
         </table>
     </div>
 </template>
-
-<style>
-.swal-wide{
-    width:850px;
-}
-</style>
