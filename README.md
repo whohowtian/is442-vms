@@ -58,7 +58,7 @@ npm run dev
 - Download approved forms as PDFs: Download a single form, download multiple forms from the same vendor as a ZIP file
 - Send email reminder: Send an email reminder manually to any vendor when form submission deadline is near
 
-###Approver
+### Approver
 - Approve and Reject Workflow: Approve workflow and save form in database automatically, reject workflow and include reason for rejection
 - Download approved forms as PDFs:  Download a single form, download multiple forms from the same vendor as a ZIP file
 
