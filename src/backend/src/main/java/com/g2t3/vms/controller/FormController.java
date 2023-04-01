@@ -24,8 +24,6 @@ import com.g2t3.vms.response.ResponseHandler;
 import com.g2t3.vms.service.FormService;
 
 
-// TODO: capture last edit for edit/create 
-
 @CrossOrigin(origins= {"*"}, maxAge = 4800, allowCredentials = "false" )
 @RestController
 @RequestMapping(path="/api/form", produces="application/json")
@@ -36,8 +34,15 @@ public class FormController {
     // Returns all Forms
     Logger logger = LogManager.getLogger(FormTemplateController.class);
 
+    // Healthcheck
+    @GetMapping("/")
+    @ResponseBody
+    public ResponseEntity<?> healthCheck() {
+        return ResponseHandler.generateResponse("FormController connected", HttpStatus.OK, null);
+    }
+
     // Returns all Forms
-    @GetMapping("")
+    @GetMapping("/all")
     @ResponseBody
     public ResponseEntity<?> getAllForm() {
         ArrayList <Form> forms = new ArrayList<>();
@@ -51,7 +56,7 @@ public class FormController {
         return ResponseHandler.generateResponse("Successful", HttpStatus.OK, forms);
     }
 
-    @GetMapping("/{FID}")
+    @GetMapping("{FID}")
     @ResponseBody
     public ResponseEntity<?> getFormById(@PathVariable String FID) {
         Form getForm;
