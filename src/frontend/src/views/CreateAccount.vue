@@ -32,15 +32,6 @@ export default {
         },
         methods: {
         createAcc() {
-            console.log(this.email),
-            console.log(this.name),
-            console.log(this.number),
-            console.log(this.usertype),
-            console.log(this.companyName),
-            console.log(this.companyUEN),
-            console.log(this.business),
-            console.log(this.registered),
-            console.log(this.gstNum)
             axios.post(`${BASE_URL}/api/user/create`, {
                 email: this.email,
                 name: this.name,
@@ -53,13 +44,11 @@ export default {
                 gstRegisteredNo: this.gstNum,
             })
             .then(response => {
-                    console.log(response.data);
                     alert(response.data.message);
                     window.location.href = 'AccountView';
                     })
                     .catch(error => {
-                    console.log(error);
-                    alert(error).data;
+                    alert(error.data.message);
                     });
             },
         },
@@ -167,10 +156,7 @@ export default {
                 style="border-radius: 5px;">
             </div>
 
-            <div>
-                <button @click="test()">test</button>
-            </div>
-            </form>
+        </form>
     </div>
 </template>
 

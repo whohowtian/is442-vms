@@ -60,6 +60,10 @@
                     console.log(error);
                     });
             },
+            async EditAccount(item){
+                localStorage.setItem('old_data', JSON.stringify(item))
+                window.location.href = "/EditAccount"
+            },
         //table styling  function
         selectAllRows() {
             this.selectedRows = this.selectAll ? [...this.allAccount] : [];
@@ -136,7 +140,7 @@
                             <el-icon><More /></el-icon>
                         </Button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/EditAccount">Edit</a></li>
+                            <li><a class="dropdown-item" @click="EditAccount(item)">Edit</a></li>
                             <li><a class="dropdown-item" @click="DeleteAccount(item.userId)">Delete</a></li>
                         </ul>
                         </div>
