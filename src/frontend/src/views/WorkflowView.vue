@@ -51,10 +51,6 @@ export default {
 
         //fake data -- in future change to api endpoint
 
-        data4:fakeTaskData.completed, 
-        headers4:["Task","Company Name","Form No.","Date Assigned","Actions"],
-        fields4:["task","company","formNo","dateAssign","Actions"],
-    search: ""
         }
     },
     created() {
@@ -94,7 +90,6 @@ export default {
                         var reviewedBy = workflow.reviewedBy
                         var archivedBy = workflow.archivedBy
                         var approvedBy = workflow.approver
-                        console.log(approvedBy)
 
 
                         this.allWorkflowData.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline,reviewedBy:reviewedBy,archivedBy:archivedBy,approvedBy:approvedBy})
@@ -288,6 +283,41 @@ export default {
             })
 
         }, 
+        sendRemainder(VendorName, vendorEmail,formNo,deadline){
+            console.log("testing",VendorName, vendorEmail,formNo,deadline)
+            var date_list = deadline.split('/')
+            var day = date_list[0]
+            var month = date_list[1]
+            var year = date_list[2]
+            var deadline_format = year+"-"+month+'-'+day
+            console.log(deadline_format)
+            Swal.fire({
+            title: 'Do you want to send a reminder email to the vendor?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, sent it!'
+            }).then((result) => {
+                var url = `${BASE_URL}/api/email/sendReminderEmail`
+                    axios.post(url, {
+                        name:VendorName,email:vendorEmail,formName:formNo,deadline:deadline_format
+                    }).then(response => {
+                        if (result.isConfirmed) {
+                    Swal.fire(
+                    'Sent!',
+                    'The reminder email has been sent.',
+                    'success'
+                    )
+                }
+
+                    })
+
+                
+            })
+
+
+        },
         //table styling  function
         selectAllRows() {
             this.selectedRows = this.selectAll ? [...this.allFormData] : [];
@@ -400,8 +430,8 @@ export default {
                         </Button>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" @click="ViewEachForm(item.id)">View</a></li>
-                            <li v-if="item.stage=='Vendor'"><a class="dropdown-item" href="#">Email</a></li>
-                            <li v-if="item.status=='APPROVED'"><a class="dropdown-item"  @click="readyToPrintPdf(item.id,item.task)">PDF</a></li>
+                            <li v-if="item.stage=='Vendor'"><a class="dropdown-item" @click="sendRemainder(item.VendorName, item.vendorEmail,item.formNo,item.deadline)">Email</a></li>
+                            <li v-if="item.status=='Approved'"><a class="dropdown-item"  @click="readyToPrintPdf(item.id,item.task)">PDF</a></li>
                             <li><a class="dropdown-item" @click="deleteWorkflow(item.id, item.vendorID)">Delete</a></li>
                         </ul>
                     </div>
