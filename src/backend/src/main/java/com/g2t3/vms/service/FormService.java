@@ -71,7 +71,7 @@ public class FormService {
             throw new ResourceNotFoundException("Form Template " + formNo + "does not exist.");
         }
 
-        boolean startFromAdmin = Boolean.parseBoolean(newFormInfo.get("startFromAdmin"));
+        boolean startFromAdmin = assigned_vendor_email == null ? true : false;
 
         Form newForm;
 
