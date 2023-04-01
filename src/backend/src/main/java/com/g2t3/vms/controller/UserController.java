@@ -49,9 +49,9 @@ public class UserController {
     @Autowired
     private EmailService emailService;
 
-    @Operation(summary = "Creates an account", description="userType, password and enabled attributes are not required as input parameters. ", responses = {
+    @Operation(summary = "Creates an account", description="password and enabled attributes are not required as input parameters. ", responses = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserUpdateRequest.class))),
-        @ApiResponse(responseCode = "400", description = "A user with the inputted entityUEN or email already exist.", content = @Content),
+        @ApiResponse(responseCode = "400", description = "A user with the inputted entity UEN or email already exist.", content = @Content),
     })
     @PostMapping("/create")
     public ResponseEntity<?> create(@Valid @RequestBody UserUpdateRequest request) {
@@ -62,7 +62,6 @@ public class UserController {
             if (request.getUserType().equals(UserType.VENDOR)) {
                 user = userService.createVendor(request);
             } else if (request.getUserType().equals(UserType.ADMIN)) {
-                System.out.println("create check2");
                 user = userService.createAdmin(request);
             } else if (request.getUserType().equals(UserType.APPROVER)) {
                 user = userService.createApprover(request);
@@ -77,69 +76,12 @@ public class UserController {
         }
 
     }
-    
-    // @Operation(summary = "Creates a vendor account", description="userType, password and enabled attributes are not required as input parameters. ", responses = {
-    //     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
-    //     @ApiResponse(responseCode = "400", description = "A user with the inputted entityUEN or email already exist.", content = @Content),
-    // })
-    // @PostMapping("/vendor")
-    // public ResponseEntity<?> createVendor(@Valid @RequestBody Vendor vendorRequest) {
-
-    //     try {
-    //         Vendor user = userService.createVendor2(vendorRequest);
-    //         // emailService.sendAccountConfirmationEmail(user);
-    //         return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
-    //     } catch (ResourceAlreadyExistException e) {
-    //         return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
-    //     } catch (Exception e) {
-    //         return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
-    //     }
-
-    // }
-
-    // @Operation(summary = "Creates an admin account", description="Requires name, email and number attributes as input parameters.", responses = {
-    //     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
-    //     @ApiResponse(responseCode = "400", description = "A user with the inputted email already exist.", content = @Content),
-    // })
-    // @PostMapping("/admin")
-    // public ResponseEntity<?> createAdmin(@Valid @RequestBody Admin adminRequest) {
-
-    //     try {
-    //         Admin user = userService.createAdmin2(adminRequest);
-    //         emailService.sendAccountConfirmationEmail(user);
-    //         return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
-    //     } catch (ResourceAlreadyExistException e) {
-    //         return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
-    //     } catch (Exception e) {
-    //         return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
-    //     }
-
-    // }
-
-    // @Operation(summary = "Creates an approver account", description="Requires name, email and number attributes as input parameters.", responses = {
-    //     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
-    //     @ApiResponse(responseCode = "400", description = "A user with the inputted email already exist.", content = @Content),
-    // })
-    // @PostMapping("/approver")
-    // public ResponseEntity<?> createAdmin(@Valid @RequestBody Approver approverRequest) {
-
-    //     try {
-    //         Approver user = userService.createApprover2(approverRequest);
-    //         // emailService.sendAccountConfirmationEmail(user);
-    //         return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
-    //     } catch (ResourceAlreadyExistException e) {
-    //         return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
-    //     } catch (Exception e) {
-    //         return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
-    //     }
-
-    // }
 
     @Operation(summary = "Get all user details", responses = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
         @ApiResponse(responseCode = "404", description = "No users have been created.", content = @Content)
     })
-    @GetMapping("")
+    @GetMapping("/all")
     @ResponseBody
     public ResponseEntity<?> getAllUsers() {
         ArrayList <User> users = new ArrayList<>();
@@ -175,7 +117,7 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
         @ApiResponse(responseCode = "404", description = "User does not exist.", content = @Content)
     })
-    @GetMapping("/{userId}")
+    @GetMapping("/id/{userId}")
     @ResponseBody
     public ResponseEntity<?> getUserById(@PathVariable String userId) {
         User user = null;
@@ -193,7 +135,7 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
         @ApiResponse(responseCode = "404", description = "User does not exist.", content = @Content)
     })
-    @GetMapping("/email/{userEmail}")
+    @GetMapping("/{userEmail}")
     @ResponseBody
     public ResponseEntity<?> getUserByEmail(@PathVariable String userEmail) {
         User user = null;
@@ -211,7 +153,7 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
         @ApiResponse(responseCode = "404", description = "User does not exist.", content = @Content)
     })
-    @PutMapping("")
+    @PutMapping("/update")
     public ResponseEntity<?> update(@RequestBody UserUpdateRequest user) {
         
         try {

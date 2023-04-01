@@ -66,20 +66,21 @@ public class FormService {
             throw new ResourceNotFoundException("Form Template " + formNo + "does not exist.");
         }
 
-        System.out.println(getFormTempt.toString());
+        // System.out.println(getFormTempt.toString());
 
-        if (assigned_vendor_email == null) {
-            Form newForm = new Form(getFormTempt);
-            formRepo.save(newForm); 
+        boolean startFromAdmin = Boolean.parseBoolean(newFormInfo.get("startFromAdmin"));
+
+        Form newForm;
+
+        if (startFromAdmin) {
+            newForm = new Form(getFormTempt, startFromAdmin);
         } else {
-            Form newForm = new Form(assigned_vendor_email, getFormTempt);
-            formRepo.save(newForm); 
-
-
+            newForm = new Form(assigned_vendor_email, getFormTempt, startFromAdmin);
         }
+
+        formRepo.save(newForm); 
+
         
-
-
         // TODO: Check vendor UID exists?
 
     }
@@ -124,7 +125,7 @@ public class FormService {
         if (currFormObjDB == null) {
             throw new ResourceNotFoundException("Form " + formID + "does not exist.");
         }
-        
+
         currFormObjDB.changeStatusSubmitted();
         formRepo.save(currFormObjDB);
 
@@ -143,7 +144,7 @@ public class FormService {
         switch(action) {
             case "approve":
                 currFormObjDB.changeStatusApproved();
-                currFormObjDB.setApprover(postQuery.get("user"));
+                currFormObjDB.setApprover(postQuery.get("approver"));
                 // TODO: add approver name and datatime into Form
                 break;
             // case "submit":
@@ -152,11 +153,10 @@ public class FormService {
             case "adminreviewed":
                 currFormObjDB.changeStatusAdminReviewed();
                 break;
-            case "archive":
-                // currFormObjDB.setStatus(FormStatus.ARCHIVED);
-                currFormObjDB.setArchived(true);
-                currFormObjDB.setArchivedBy(postQuery.get("user"));
-                break;
+            // case "archive":
+            //     currFormObjDB.setStatus(FormStatus.ARCHIVED);
+            //     currFormObjDB.setArchived(true);
+            //     currFormObjDB.setArchivedBy(postQuery.get("user"));
             case "adminreject":
                 currFormObjDB.changeStatusAdminRejected();
                 break;
@@ -174,7 +174,7 @@ public class FormService {
         Form currFormObjDB = formRepo.getFormByID(formID);
         currFormObjDB.updateStatusChangeDateTime();
 
-        currFormObjDB.archiveForm(postQuery.get("user"));
+        currFormObjDB.archiveForm(postQuery.get("archivedby"));
 
         formRepo.save(currFormObjDB);
 

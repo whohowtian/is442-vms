@@ -33,8 +33,15 @@ public class FormTemplateController {
 
     Logger logger = LogManager.getLogger(FormTemplateController.class);
 
+    // Healthcheck
+    @GetMapping("/")
+    @ResponseBody
+    public ResponseEntity<?> healthCheck() {
+        return ResponseHandler.generateResponse("FormTemplateController connected", HttpStatus.OK, null);
+    }
+
     // Returns all Forms
-    @GetMapping("")
+    @GetMapping("/all")
     @ResponseBody
     public ResponseEntity<?> getAllFormTemplates() {
         ArrayList <FormTemplate> formTemplates = new ArrayList<>();
@@ -50,12 +57,12 @@ public class FormTemplateController {
 
     // Returns form by FormNo
     // Returns 404 not found if invalid formNo
-    @GetMapping("/{FITD}")
+    @GetMapping("/{FTNo}")
     @ResponseBody
-    public ResponseEntity<?> getFormTemplatesById(@PathVariable String FITD) {
+    public ResponseEntity<?> getFormTemplatesByFTNo(@PathVariable String FTNo) {
         FormTemplate getForm;
         try {
-            getForm = service.getFormTemplateByFTID(FITD);
+            getForm = service.getFormTemplateByFTNo(FTNo);
         } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         } catch (Exception e) {
@@ -100,12 +107,12 @@ public class FormTemplateController {
         } 
     }
 
-    @DeleteMapping("/{FTID}")
+    @DeleteMapping("/{FTNo}")
     @ResponseBody
-    public ResponseEntity<?> deleteFormTemplate(@PathVariable String FTID) {
+    public ResponseEntity<?> deleteFormTemplate(@PathVariable String FTNo) {
         try {
-            service.deleteFormTemplate(FTID); 
-            return ResponseHandler.generateResponse("Deleted " + FTID + " successfully.", HttpStatus.OK, null);
+            service.deleteFormTemplate(FTNo); 
+            return ResponseHandler.generateResponse("Deleted " + FTNo + " successfully.", HttpStatus.OK, null);
         } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         } catch (DataIntegrityViolationException e){

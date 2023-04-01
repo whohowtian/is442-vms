@@ -30,7 +30,7 @@ public class FormTemplateService {
         return formTemplates;
     }
 
-    public FormTemplate getFormTemplateByFTID(String formTemplateNo) throws ResourceNotFoundException, Exception {
+    public FormTemplate getFormTemplateByFTNo(String formTemplateNo) throws ResourceNotFoundException, Exception {
         
         FormTemplate getForm = formTemplateRepo.getFormTemplateByNo(formTemplateNo);
         if (getForm == null) {
@@ -42,7 +42,7 @@ public class FormTemplateService {
     public void updateFormTemplate(FormTemplate formTemplate) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
 
             String formNo = formTemplate.getFormNo();
-            FormTemplate prevFT = getFormTemplateByFTID(formNo); 
+            FormTemplate prevFT = getFormTemplateByFTNo(formNo); 
 
             // prevFT.setFormEffDate(formTemplate.getFormEffDate());
             prevFT.setFormName(formTemplate.getFormName());
@@ -73,7 +73,7 @@ public class FormTemplateService {
 
     public void deleteFormTemplate(String FTID) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
 
-        FormTemplate formTemplate = getFormTemplateByFTID(FTID);
+        FormTemplate formTemplate = getFormTemplateByFTNo(FTID);
 
         formTemplateRepo.deleteFormTemplateByNo(FTID);
 

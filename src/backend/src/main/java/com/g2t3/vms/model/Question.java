@@ -14,12 +14,15 @@ import lombok.NoArgsConstructor;
 @Data @EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
 public class Question {
-    // @Id
-    // private String id;
+
     private String qnTitle;
+
     private String inputType;
+
     private ArrayList<HashMap<String, String>> inputOptions;
+
     private String answer;
+
     private boolean isRequired;
 
     public Question(String qnTitle, String inputType, ArrayList<HashMap<String, String>> inputOptions, boolean isRequired) {
@@ -32,13 +35,6 @@ public class Question {
         this.inputType = inputType;
         this.inputOptions = inputOptions;
         this.answer = "";
-        // this.id = new ObjectId().toString();
     }
-
-    // @Override
-    // public String toString() {
-    //     return String.format("{ \"qnTitle\"='%s', \"inputType\"='%s', \"inputOptions\"='%s', \"answer\"='%s' }", qnTitle, inputType, inputOptions, answer);
-    //     // return String.format("{ id='%s', qnTitle='%s', inputType='%s'}", id, qnTitle, inputType);
-    // }
 
 }
