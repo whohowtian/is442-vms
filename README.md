@@ -63,7 +63,7 @@ npm run dev
 - Download approved forms as PDFs:  Download a single form, download multiple forms from the same vendor as a ZIP file
 
 
-## Frameowrk & Libraries
+## Framework & Libraries
 ### Backend
 - MongoDB
 - Java with Spring Boot
