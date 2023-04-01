@@ -174,7 +174,7 @@ public class FormService {
         Form currFormObjDB = formRepo.getFormByID(formID);
         currFormObjDB.updateStatusChangeDateTime();
 
-        currFormObjDB.archiveForm(postQuery.get("archivedby"));
+        currFormObjDB.archiveForm(postQuery.get("archivedBy"));
 
         formRepo.save(currFormObjDB);
 
