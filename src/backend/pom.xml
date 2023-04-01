@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.g2t3.vms</groupId>
 	<artifactId>vms</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>vms</name>
 	<description>Vendor Management System for Quantum Leap Incorporation</description>
 
@@ -26,6 +26,23 @@
 		<openhtmltopdf-pdfbox.version>1.0.10</openhtmltopdf-pdfbox.version>
         <flying-saucer-pdf-openpdf.version>9.1.22</flying-saucer-pdf-openpdf.version>
 		<commons-validator.version>1.7</commons-validator.version>
+		<spring-context-support.version>6.0.6</spring-context-support.version>
+		<mongodb-driver-sync.version>4.8.2</mongodb-driver-sync.version>
+		<spring-data-mongodb.version>4.0.3</spring-data-mongodb.version>
+		<spring-data-commons.version>3.0.3</spring-data-commons.version>
+		<spring-boot.version>3.0.4</spring-boot.version>
+		<spring-web.version>6.0.6</spring-web.version>
+		<spring-boot-autoconfigure.version>3.0.4</spring-boot-autoconfigure.version>
+		<spring-beans.version>6.0.6</spring-beans.version>
+		<spring-boot-test.version>3.0.4</spring-boot-test.version>
+		<bson.version>4.8.2</bson.version>
+		<mongodb-driver-core.version>4.8.2</mongodb-driver-core.version>
+		<swagger-annotations-jakarta.version>2.2.7</swagger-annotations-jakarta.version>
+		<spring-tx.version>6.0.6</spring-tx.version>
+		<classgraph.version>4.8.149</classgraph.version>
+		<jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
+		<spring-core.version>6.0.6</spring-core.version>
+
 	</properties>
 
 	<dependencies>
@@ -85,6 +102,92 @@
     		<groupId>commons-validator</groupId>
     		<artifactId>commons-validator</artifactId>
     		<version>${commons-validator.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${spring-context-support.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver-sync</artifactId>
+			<!-- <version>${mongodb-driver-sync}</version> -->
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-mongodb</artifactId>
+			<!-- <version>${spring-data-mongodb}</version> -->
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-commons</artifactId>
+			<!-- <version>${spring-data-commons}</version> -->
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot</artifactId>
+			<!-- <version>${spring-boot}</version> -->
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<!-- <version>${spring-web}</version> -->
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+			<!-- <version>${spring-boot-autoconfigure}</version> -->
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<!-- <version>${spring-beans}</version> -->
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-test</artifactId>
+			<!-- <version>${spring-boot-test}</version> -->
+		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>bson</artifactId>
+			<!-- <version>${bson}</version> -->
+		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver-core</artifactId>
+			<!-- <version>${mongodb-driver-core}</version> -->
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-annotations-jakarta</artifactId>
+			<version>2.2.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<!-- <version>${spring-tx}</version> -->
+		</dependency>
+		<dependency>
+			<groupId>io.github.classgraph</groupId>
+			<artifactId>classgraph</artifactId>
+			<version>4.8.149</version>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+			<!-- <version>${jakarta.validation-api}</version> -->
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>6.0.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<!-- <version>${spring-core}</version> -->
+			
 		</dependency>
 	</dependencies>
 

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import com.g2t3.vms.exception.ResourceAlreadyExistException;
 import com.g2t3.vms.exception.ResourceNotFoundException;
 import com.g2t3.vms.model.FormTemplate;
 import com.g2t3.vms.repository.FormTemplateRepo;
@@ -54,12 +55,12 @@ public class FormTemplateService {
             
     }
 
-    public void createFormTemplate(FormTemplate formTemplate) throws NullPointerException, DataIntegrityViolationException, Exception {
+    public void createFormTemplate(FormTemplate formTemplate) throws ResourceAlreadyExistException, DataIntegrityViolationException, Exception {
         String formNo = formTemplate.getFormNo();
         FormTemplate getForm = formTemplateRepo.getFormTemplateByNo(formNo);
 
         if (getForm != null) {
-            throw new NullPointerException("Form Template " + formNo + " already exist.");
+            throw new ResourceAlreadyExistException("Form Template " + formNo + " already exist.");
         }
         
         formTemplateRepo.save(formTemplate); 

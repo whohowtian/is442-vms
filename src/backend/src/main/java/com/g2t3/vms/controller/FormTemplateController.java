@@ -18,10 +18,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.g2t3.vms.exception.ResourceAlreadyExistException;
 import com.g2t3.vms.exception.ResourceNotFoundException;
 import com.g2t3.vms.model.FormTemplate;
 import com.g2t3.vms.response.ResponseHandler;
 import com.g2t3.vms.service.FormTemplateService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @CrossOrigin
 @RestController
@@ -33,14 +39,11 @@ public class FormTemplateController {
 
     Logger logger = LogManager.getLogger(FormTemplateController.class);
 
-    // Healthcheck
-    @GetMapping("")
-    @ResponseBody
-    public ResponseEntity<?> healthCheck() {
-        return ResponseHandler.generateResponse("FormTemplateController connected", HttpStatus.OK, null);
-    }
-
     // Returns all Forms
+    @Operation(summary = "Get all form templates", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FormTemplate.class))),
+        @ApiResponse(responseCode = "404", description = "No form templates have been created.", content = @Content)
+    })
     @GetMapping("/all")
     @ResponseBody
     public ResponseEntity<?> getAllFormTemplates() {
@@ -57,12 +60,16 @@ public class FormTemplateController {
 
     // Returns form by FormNo
     // Returns 404 not found if invalid formNo
-    @GetMapping("/{FTNo}")
+    @Operation(summary = "Get form by form name", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FormTemplate.class))),
+        @ApiResponse(responseCode = "404", description = "Form with inputted form name does not exist.", content = @Content)
+    })
+    @GetMapping("/{FTName}")
     @ResponseBody
-    public ResponseEntity<?> getFormTemplatesByFTNo(@PathVariable String FTNo) {
+    public ResponseEntity<?> getFormTemplatesByFTNo(@PathVariable String FTName) {
         FormTemplate getForm;
         try {
-            getForm = service.getFormTemplateByFTNo(FTNo);
+            getForm = service.getFormTemplateByFTNo(FTName);
         } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         } catch (Exception e) {
@@ -75,6 +82,10 @@ public class FormTemplateController {
 
     // Edit existing form by FormNo
     // Returns form json obj if success, otherwise 400 or 500
+    @Operation(summary = "Edit form template", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FormTemplate.class))),
+        @ApiResponse(responseCode = "404", description = "Form with inputted id does not exist.", content = @Content)
+    })
     @PostMapping("/edit")
     public ResponseEntity<?> updateFormTemplate(@RequestBody FormTemplate formTemplate) {
         String formNo = formTemplate.getFormNo();
@@ -92,13 +103,17 @@ public class FormTemplateController {
     
     // Creates new Form
     // Returns 400 bad request if validation fails
+    @Operation(summary = "Create form template", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FormTemplate.class))),
+        @ApiResponse(responseCode = "404", description = "Form template already exist.", content = @Content)
+    })
     @PostMapping("/create")
     public ResponseEntity<?> createFormTemplate(@RequestBody FormTemplate formTemplate) {
         String formNo = formTemplate.getFormNo();
         try {
             service.createFormTemplate(formTemplate); 
             return ResponseHandler.generateResponse("Created " + formNo + " successfully.", HttpStatus.OK, null);
-        } catch (NullPointerException e) {
+        } catch (ResourceAlreadyExistException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
         } catch (DataIntegrityViolationException e){
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
@@ -107,12 +122,16 @@ public class FormTemplateController {
         } 
     }
 
-    @DeleteMapping("/{FTNo}")
+    @Operation(summary = "Delete form template by form template name", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FormTemplate.class))),
+        @ApiResponse(responseCode = "404", description = "User does not exist.", content = @Content)
+    })
+    @DeleteMapping("/{FTName}")
     @ResponseBody
-    public ResponseEntity<?> deleteFormTemplate(@PathVariable String FTNo) {
+    public ResponseEntity<?> deleteFormTemplate(@PathVariable String FTName) {
         try {
-            service.deleteFormTemplate(FTNo); 
-            return ResponseHandler.generateResponse("Deleted " + FTNo + " successfully.", HttpStatus.OK, null);
+            service.deleteFormTemplate(FTName); 
+            return ResponseHandler.generateResponse("Deleted " + FTName + " successfully.", HttpStatus.OK, null);
         } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         } catch (DataIntegrityViolationException e){
@@ -121,4 +140,12 @@ public class FormTemplateController {
             return ResponseHandler.generateResponse("Internal Server Error: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
         }
     }
+
+    @Operation(summary = "Heathcheck")
+    @GetMapping("")
+    @ResponseBody
+    public ResponseEntity<?> healthCheck() {
+        return ResponseHandler.generateResponse("FormTemplateController connected", HttpStatus.OK, null);
+    }
+
 }

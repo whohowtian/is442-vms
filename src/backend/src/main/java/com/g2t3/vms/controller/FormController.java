@@ -3,8 +3,6 @@ package com.g2t3.vms.controller;
 import java.util.ArrayList;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -23,25 +21,25 @@ import com.g2t3.vms.model.Form;
 import com.g2t3.vms.response.ResponseHandler;
 import com.g2t3.vms.service.FormService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
 
 @CrossOrigin(origins= {"*"}, maxAge = 4800, allowCredentials = "false" )
 @RestController
 @RequestMapping(path="/api/form", produces="application/json")
 public class FormController {
+
     @Autowired
     private FormService service;
 
     // Returns all Forms
-    Logger logger = LogManager.getLogger(FormTemplateController.class);
-
-    // Healthcheck
-    @GetMapping("")
-    @ResponseBody
-    public ResponseEntity<?> healthCheck() {
-        return ResponseHandler.generateResponse("FormController connected", HttpStatus.OK, null);
-    }
-
-    // Returns all Forms
+    @Operation(summary = "Get all forms", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Form.class))),
+        @ApiResponse(responseCode = "404", description = "No forms have been created.", content = @Content)
+    })
     @GetMapping("/all")
     @ResponseBody
     public ResponseEntity<?> getAllForm() {
@@ -56,6 +54,10 @@ public class FormController {
         return ResponseHandler.generateResponse("Successful", HttpStatus.OK, forms);
     }
 
+    @Operation(summary = "Get form by id", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Form.class))),
+        @ApiResponse(responseCode = "404", description = "Form with inputted id does not exist.", content = @Content)
+    })
     @GetMapping("{FID}")
     @ResponseBody
     public ResponseEntity<?> getFormById(@PathVariable String FID) {
@@ -73,6 +75,10 @@ public class FormController {
     }
 
 
+    @Operation(summary = "Create form", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Form.class))),
+        @ApiResponse(responseCode = "404", description = "The inputted form template does not exist.", content = @Content)
+    })
     @PostMapping("/create")
     public ResponseEntity<?> createForm(@RequestBody Map<String, String> newFormInfo) {
         try {
@@ -87,6 +93,10 @@ public class FormController {
         } 
     }
 
+    @Operation(summary = "Edit form", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Form.class))),
+        @ApiResponse(responseCode = "404", description = "Form with inputted id does not exist.", content = @Content)
+    })
     @PostMapping("/edit")
     public ResponseEntity<?> editForm(@RequestBody Form editedForm) {
         try {
@@ -116,23 +126,13 @@ public class FormController {
         } 
     }
 
-    // @PostMapping("/changestatus/{action}")
-    // public ResponseEntity<?> changeStatus(@RequestBody Map<String, String> postQuery, @PathVariable String action) {
-    //     try {
-    //         service.changeStatus(postQuery, action);
-    //         return ResponseHandler.generateResponse("Form Status changed successfully.", HttpStatus.OK, null);
-    //     }
-    //     catch (ResourceNotFoundException e) {
-    //         return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
-    //     }
-    //     catch (Exception e) {
-    //         e.printStackTrace();
-    //         return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
-    //     }
-    // }
-
+    @Operation(summary = "Archive form", description="Form Id and Admin Id are required as input parameters. Form will be archived and the admin who archived it will be saved.",
+    responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json")),
+        @ApiResponse(responseCode = "404", description = "User or Form does not exist.", content = @Content)
+    })
     @PostMapping("/archive")
-    public ResponseEntity<?> changeStatus(@RequestBody Map<String, String> postQuery) {
+    public ResponseEntity<?> archiveForm(@RequestBody Map<String, String> postQuery) {
         try {
             service.archiveForm(postQuery);
             return ResponseHandler.generateResponse("Form archived successfully.", HttpStatus.OK, null);
@@ -141,11 +141,9 @@ public class FormController {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
         catch (Exception e) {
-            e.printStackTrace();
             return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
         }
     }
-
 
     @GetMapping("/formstatus/{statusID}")
     @ResponseBody
@@ -177,5 +175,12 @@ public class FormController {
         }
         return ResponseHandler.generateResponse("Successful", HttpStatus.OK, formsArr);
         
+    }
+
+    @Operation(summary = "Healthcheck")
+    @GetMapping("")
+    @ResponseBody
+    public ResponseEntity<?> healthCheck() {
+        return ResponseHandler.generateResponse("FormController connected", HttpStatus.OK, null);
     }
 }

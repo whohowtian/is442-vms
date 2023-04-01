@@ -21,10 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.g2t3.vms.enums.UserType;
 import com.g2t3.vms.exception.ResourceAlreadyExistException;
 import com.g2t3.vms.exception.ResourceNotFoundException;
-import com.g2t3.vms.model.Admin;
-import com.g2t3.vms.model.Approver;
 import com.g2t3.vms.model.User;
-import com.g2t3.vms.model.Vendor;
 import com.g2t3.vms.request.UserLoginRequest;
 import com.g2t3.vms.request.UserUpdateRequest;
 import com.g2t3.vms.response.ResponseHandler;
@@ -49,6 +46,34 @@ public class UserController {
     @Autowired
     private EmailService emailService;
 
+    @Operation(summary = "Creates an account (for testing)", description="password and enabled attributes are not required as input parameters. ", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserUpdateRequest.class))),
+        @ApiResponse(responseCode = "400", description = "A user with the inputted entity UEN or email already exist.", content = @Content),
+    })
+    @PostMapping("/create-test")
+    public ResponseEntity<?> createTesting(@Valid @RequestBody UserUpdateRequest request) {
+
+        try {
+
+            User user = null;
+            if (request.getUserType().equals(UserType.VENDOR)) {
+                user = userService.createVendor(request);
+            } else if (request.getUserType().equals(UserType.ADMIN)) {
+                user = userService.createAdmin(request);
+            } else if (request.getUserType().equals(UserType.APPROVER)) {
+                user = userService.createApprover(request);
+            }
+
+            return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
+        } catch (ResourceAlreadyExistException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
+        }
+
+    }
+
+
     @Operation(summary = "Creates an account", description="password and enabled attributes are not required as input parameters. ", responses = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserUpdateRequest.class))),
         @ApiResponse(responseCode = "400", description = "A user with the inputted entity UEN or email already exist.", content = @Content),
@@ -66,7 +91,7 @@ public class UserController {
             } else if (request.getUserType().equals(UserType.APPROVER)) {
                 user = userService.createApprover(request);
             }
-            // emailService.sendAccountConfirmationEmail(user);
+            emailService.sendAccountConfirmationEmail(user);
 
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
         } catch (ResourceAlreadyExistException e) {
@@ -135,12 +160,12 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
         @ApiResponse(responseCode = "404", description = "User does not exist.", content = @Content)
     })
-    @GetMapping("/{userEmail}")
+    @GetMapping("/{email}")
     @ResponseBody
-    public ResponseEntity<?> getUserByEmail(@PathVariable String userEmail) {
+    public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
         User user = null;
         try {
-            user = userService.getUserByEmail(userEmail);
+            user = userService.getUserByEmail(email);
         } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         } catch (Exception e) {
@@ -182,7 +207,7 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
         @ApiResponse(responseCode = "404", description = "User does not exist.", content = @Content)
     })
-    @PutMapping("/activate-account")
+    @PostMapping("/activate-account")
     public ResponseEntity<?> setPassword(@RequestBody UserLoginRequest user) {
 
         try {
@@ -234,7 +259,7 @@ public class UserController {
         }
     } 
 
-    // Healthcheck
+    @Operation(summary = "Heathcheck")
     @GetMapping("")
     @ResponseBody
     public ResponseEntity<?> healthCheck() {

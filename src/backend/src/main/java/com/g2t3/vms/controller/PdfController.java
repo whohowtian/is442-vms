@@ -87,7 +87,9 @@ public class PdfController {
 
     }
 
-    // Healthcheck
+    @Operation(summary = "Heathcheck", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PdfRequest.class))),
+    })
     @GetMapping("")
     @ResponseBody
     public ResponseEntity<?> healthCheck() {
