@@ -66,7 +66,7 @@ export default {
                 axios.get(`${BASE_URL}/api/user`)
                 .then(response => {
                     var allUser= response.data.data;
-                    console.log(allUser)
+                    // console.log(allUser)
                     
                     //data cleaning
                     for (const workflow of allWorkflow){
@@ -74,21 +74,21 @@ export default {
                         var id = workflow.id
                         var task = workflow.formContent.formName
                         var vendorEmail= workflow.assigned_vendor_email
-                        // var VendorName= this.findVendorandCompanyName(vendorEmail,allUser)[0]
-                        // var companyName = this.findVendorandCompanyName(vendorEmail,allUser)[1]
+                        var VendorName= this.findVendorandCompanyName(vendorEmail,allUser)[0]
+                        var companyName = this.findVendorandCompanyName(vendorEmail,allUser)[1]
                         var formNo = workflow.formContent.formNo
                         var status=workflow.status
                         var stage= this.addStage(status)
                         var dateAssign = workflow.formContent.formEffDate
                         var archived = workflow.archived
-                        this.allWorkflowData.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:"",companyName:"",formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+                        this.allWorkflowData.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
 
                         //for active workflow
                         if (archived ==false){
-                            this.ActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:"",companyName:"",formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+                            this.ActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
                         }else{
                             // inactive workflow
-                            this.InActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:"",companyName:"",formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+                            this.InActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
                         }
                         console.log(this.ActiveWorkflow)
                     }
@@ -121,7 +121,7 @@ export default {
         findVendorandCompanyName(vendorEmail,allUser){
             var companyName = '';
             var VendorName = '';
-            console.log(allUser)
+            
             for (const user of allUser){
                 if (vendorEmail == user.email){
                     VendorName= user.name
@@ -129,6 +129,7 @@ export default {
                     
                 }
             }
+            
             return [VendorName,companyName];
         },
         addStage(status){ //add stage according to the status
