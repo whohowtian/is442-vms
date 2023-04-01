@@ -40,15 +40,31 @@ export default {
             window.location.href = '/AccountView';
         },
         async editAcc(){
-            axios.put(`${BASE_URL}/api/user/`+ userId)
+            if (gstregistered == false) {
+                gstRegisteredNo = null;
+            }
+            axios.put(`${BASE_URL}/api/user/update`, {
+                userId: this.user.userId,
+                email: this.user.email,
+                name: this.user.name,
+                number: this.user.number,
+                userType: this.user.userType,
+                entityUEN: this.user.entityUEN,
+                entityName: this.user.entityName,
+                entityActivities: this.user.entityActivities,
+                gstregistered: this.user.gstregistered,
+                gstRegisteredNo: this.user.gstRegisteredNo,
+                password: this.user.password,
+                enabled: this.user.enabled,
+            })
             .then(response => {
-                this.allAccount = response.data.data;
-                console.log(this.allAccount)
-                })
-                .catch(error => {
-                console.log(error);
-                });
-        }
+                    alert(response.data.message);
+                    window.location.href = 'AccountView';
+                    })
+                    .catch(error => {
+                    alert(error.data.message);
+                    });
+            },
     }
     }
 </script>
@@ -86,6 +102,14 @@ export default {
             </div>
 
             <!-- Role -->
+            <div class="col-lg-6 col-md-6" v-if="user.userType =='VENDOR'">
+                <h4><label for="inputRole" class="form-label">Role <span style="color:red">*</span></label></h4>
+                <select id="inputRole" class="form-select" v-model="user.userType" required>
+                    <option disabled selected value>Select Role</option>
+                    <option value ="VENDOR">Vendor</option>
+                </select>
+            </div>
+
             <div class="col-lg-6 col-md-6">
                 <h4><label for="inputRole" class="form-label">Role <span style="color:red">*</span></label></h4>
                 <select id="inputRole" class="form-select" v-model="user.userType" required>
