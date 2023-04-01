@@ -238,6 +238,7 @@ public class UserController {
     @GetMapping("")
     @ResponseBody
     public ResponseEntity<?> healthCheck() {
-        return ResponseHandler.generateResponse("UserController connected", HttpStatus.OK, null);
+        return ResponseHandler.generateResponse("UserController connected.", HttpStatus.OK, null);
     }
+
 }

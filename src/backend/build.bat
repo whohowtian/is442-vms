@@ -1,0 +1,1 @@
+mvnw compile -P bin

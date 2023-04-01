@@ -66,8 +66,6 @@ public class FormService {
             throw new ResourceNotFoundException("Form Template " + formNo + "does not exist.");
         }
 
-        // System.out.println(getFormTempt.toString());
-
         boolean startFromAdmin = Boolean.parseBoolean(newFormInfo.get("startFromAdmin"));
 
         Form newForm;
@@ -79,10 +77,6 @@ public class FormService {
         }
 
         formRepo.save(newForm); 
-
-        
-        // TODO: Check vendor UID exists?
-
     }
 
     public void editForm(Form form) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
@@ -101,9 +95,9 @@ public class FormService {
             boolean forAdminOnly = currFormSectDB.isAdminUseOnly();
 
             // TODO: to allow admin to edit forAdminUseOnly sections; currently only allow editing for vendor questions
-            if (forAdminOnly) {
-                continue;
-            }
+            // if (forAdminOnly) {
+            //     continue;
+            // }
 
             HashMap<String, Question> currSectObj = sectionEntry.getValue().getQuestions();
 
@@ -117,19 +111,6 @@ public class FormService {
 
         formRepo.save(currFormObjDB);
     }
-
-    // public void submitForm(Form form) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
-    //     String formID = form.getId();
-    //     Form currFormObjDB = formRepo.getFormByID(formID);
-
-    //     if (currFormObjDB == null) {
-    //         throw new ResourceNotFoundException("Form " + formID + "does not exist.");
-    //     }
-
-    //     currFormObjDB.changeStatusSubmitted();
-    //     formRepo.save(currFormObjDB);
-
-    // }
 
     public void changeStatus(Form form, String action) throws ResourceNotFoundException, Exception {
         String formID = form.getId();
