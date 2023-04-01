@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.g2t3.vms</groupId>
 	<artifactId>vms</artifactId>
-	<version>1.0.0.</version>
+	<version>1.0.0</version>
 	<name>vms</name>
 	<description>Vendor Management System for Quantum Leap Incorporation</description>
 

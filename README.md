@@ -5,12 +5,11 @@
 Please ensure the following is downloaded before running the application.
 - Install [NodeJS v18.0](https://nodejs.org/en/) or later
 - Install [JDK 17](https://www.oracle.com/java/technologies/downloads/) or later
-- Install [MongoDB Compass](https://www.mongodb.com/products/compass)
 - Install [Java Extension Pack](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack) on Visual Studio Code
 
 ## Steps
 ### Connect to database
-Open MongoDB Compass and input the following under the URI field. Click Connect.
+Open src/backend/main/resources/applicationproperties and enter the  connecting string of your MongoDB database. Otherwise, you may use the following database for testing purposes.
 ```
 mongodb+srv://vmsStringbootUsr:XE3HfPeVUMPIqoor@cluster0.ldxjqem.mongodb.net/test?authMechanism=SCRAM-SHA-1
 ```
