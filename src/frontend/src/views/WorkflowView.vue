@@ -51,10 +51,6 @@ export default {
 
         //fake data -- in future change to api endpoint
 
-        // data3:fakeTaskData.todo, 
-        // headers3:["Task","Company Name","Form No.","Date Assigned","Actions"],
-        // fields3:["task","company","formNo","dateAssign","Actions"],
-
         data4:fakeTaskData.completed, 
         headers4:["Task","Company Name","Form No.","Date Assigned","Actions"],
         fields4:["task","company","formNo","dateAssign","Actions"],
@@ -67,8 +63,7 @@ export default {
         this.userEmail = user.userEmail
         this.getAllFormAvail() //trigger FormTemplate API
         this.getAllWorkflow() //trigger Form API
-        this.getAllVendor("VENDOR")
-        // this.getformStatus("PENDING_ADMIN")
+        this.getAllVendor("VENDOR") // for assigning workflow- vendor
         },
     methods: {
         async getAllWorkflow(){
@@ -91,22 +86,23 @@ export default {
                         var companyName = this.findVendorandCompanyName(vendorEmail,allUser)[1]
                         var formNo = workflow.formContent.formNo
                         var status=workflow.status
-                        var stage= this.addStage(status)
+                        var stage= this.addStage(status)[0]
+                        var Mstatus= this.addStage(status)[1]
                         var formEffDate = new Date(workflow.formEffDate).toLocaleDateString('en-GB')   
                         var deadline = new Date(workflow.deadline).toLocaleDateString('en-GB')   
                         var archived = workflow.archived
-                        this.allWorkflowData.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, formEffDate:formEffDate,deadline:deadline})
+                        this.allWorkflowData.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline})
 
                         //for active workflow
                         if (archived ==false){
-                            this.ActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, formEffDate:formEffDate,deadline:deadline})
+                            this.ActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline})
 
                             if(status== 'PENDING_ADMIN'){
-                                this.Todo.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, formEffDate:formEffDate})
+                                this.Todo.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate})
                             }
                         }else{
                             // inactive workflow
-                            this.InActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, formEffDate:formEffDate,deadline:deadline})
+                            this.InActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline})
                         }
                         
                     }
@@ -153,17 +149,6 @@ export default {
                 console.log(error);
             });
         },
-        // async getformStatus(status){
-        //     axios.get(`${BASE_URL}/api/form/formstatus/`+status)
-        //     .then(response => {
-        //         var getformstatus = response.data.data;
-
-        //         console.log(getformstatus)
-        //     })
-        //     .catch(error => {
-        //         console.log(error);
-        //     });
-        // },
         findVendorandCompanyName(vendorEmail,allUser){
             var companyName = '';
             var VendorName = '';
@@ -178,22 +163,29 @@ export default {
             
             return [VendorName,companyName];
         },
-        addStage(status){ //add stage according to the status
+        addStage(status){ //add stage, Mstatus according to the status
             var stage = '';
+            var Mstatus = '';
             if (status == "PENDING_VENDOR"){
                 stage = 'Vendor'
+                Mstatus = 'Pending'
             }else if (status == "PENDING_ADMIN"){
                 stage = 'Admin'
+                Mstatus = 'Pending'
             }else if(status == "PENDING_APPROVAL"){
                 stage = 'Approver'
+                Mstatus = 'Pending'
             }else if(status == "APPROVED"){
                 stage = 'Completed'
+                Mstatus = 'Approved'
             }else if(status =='ADMIN_REJECTED'){
                 stage = 'Vendor'
+                Mstatus = 'Admin Rejected'
             }else if (status == "APPROVER_REJECTED"){
                 stage = 'Vendor'
+                Mstatus = 'Approver Rejected'
             }
-            return stage
+            return [stage, Mstatus]
         },
         deleteWorkflow(id,vendorID){
             
@@ -270,6 +262,7 @@ export default {
                         axios.post(url, {
                             formNo:selectedform,assigned_vendor_email:selectedvendor
                         }).then(response => {
+                            
                             Swal.fire('Assigned!','','success'
                             ).then(function () {
                                 location.reload();
@@ -372,7 +365,7 @@ export default {
                     <th>Company Name</th>
                     <th>Stage</th>
                     <th>Status</th>
-                    <th>FormEffDate</th>
+                    <th>Vendor Assigned Date</th>
                     <th>Deadline</th>
                     <th>Approved By</th>
                     <th>Actions</th>
@@ -416,6 +409,7 @@ export default {
                     <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
                     <th>Task</th>
                     <th>Company Name</th>
+                    <th>Last Stage</th>
                     <th>Last Status</th>
                     <th>FormEffDate</th>
                     <th>Actions</th>
@@ -426,6 +420,7 @@ export default {
                 <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
                 <td>{{ item.task }}</td>
                 <td>{{ item.companyName }}</td>
+                <td>{{ item.stage }}</td>
                 <td>{{ item.status }}</td>
                 <td>{{ item.formEffDate }}</td>
                 <td >
