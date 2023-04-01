@@ -3,8 +3,6 @@ package com.g2t3.vms.controller;
 import java.util.ArrayList;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -36,8 +34,6 @@ public class FormController {
 
     @Autowired
     private FormService service;
-
-    Logger logger = LogManager.getLogger(FormTemplateController.class);
 
     // Returns all Forms
     @Operation(summary = "Get all forms", responses = {
