@@ -63,7 +63,6 @@ public class UserController {
             } else if (request.getUserType().equals(UserType.APPROVER)) {
                 user = userService.createApprover(request);
             }
-            emailService.sendAccountConfirmationEmail(user);
 
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
         } catch (ResourceAlreadyExistException e) {
