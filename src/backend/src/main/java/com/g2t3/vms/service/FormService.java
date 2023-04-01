@@ -157,7 +157,6 @@ public class FormService {
             //     currFormObjDB.setStatus(FormStatus.ARCHIVED);
             //     currFormObjDB.setArchived(true);
             //     currFormObjDB.setArchivedBy(postQuery.get("user"));
-                break;
             case "adminreject":
                 currFormObjDB.changeStatusAdminRejected();
                 break;
