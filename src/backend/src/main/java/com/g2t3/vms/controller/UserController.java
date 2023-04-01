@@ -46,6 +46,35 @@ public class UserController {
     @Autowired
     private EmailService emailService;
 
+    @Operation(summary = "Creates an account (for testing)", description="password and enabled attributes are not required as input parameters. ", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserUpdateRequest.class))),
+        @ApiResponse(responseCode = "400", description = "A user with the inputted entity UEN or email already exist.", content = @Content),
+    })
+    @PostMapping("/create-test")
+    public ResponseEntity<?> createTesting(@Valid @RequestBody UserUpdateRequest request) {
+
+        try {
+
+            User user = null;
+            if (request.getUserType().equals(UserType.VENDOR)) {
+                user = userService.createVendor(request);
+            } else if (request.getUserType().equals(UserType.ADMIN)) {
+                user = userService.createAdmin(request);
+            } else if (request.getUserType().equals(UserType.APPROVER)) {
+                user = userService.createApprover(request);
+            }
+            emailService.sendAccountConfirmationEmail(user);
+
+            return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
+        } catch (ResourceAlreadyExistException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
+        }
+
+    }
+
+
     @Operation(summary = "Creates an account", description="password and enabled attributes are not required as input parameters. ", responses = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserUpdateRequest.class))),
         @ApiResponse(responseCode = "400", description = "A user with the inputted entity UEN or email already exist.", content = @Content),

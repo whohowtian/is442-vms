@@ -64,12 +64,12 @@ public class FormTemplateController {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FormTemplate.class))),
         @ApiResponse(responseCode = "404", description = "Form with inputted form name does not exist.", content = @Content)
     })
-    @GetMapping("/{FTNo}")
+    @GetMapping("/{FTName}")
     @ResponseBody
-    public ResponseEntity<?> getFormTemplatesByFTNo(@PathVariable String FTNo) {
+    public ResponseEntity<?> getFormTemplatesByFTNo(@PathVariable String FTName) {
         FormTemplate getForm;
         try {
-            getForm = service.getFormTemplateByFTNo(FTNo);
+            getForm = service.getFormTemplateByFTNo(FTName);
         } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         } catch (Exception e) {
@@ -122,16 +122,16 @@ public class FormTemplateController {
         } 
     }
 
-    @Operation(summary = "Delete form template by form template no", responses = {
+    @Operation(summary = "Delete form template by form template name", responses = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FormTemplate.class))),
         @ApiResponse(responseCode = "404", description = "User does not exist.", content = @Content)
     })
-    @DeleteMapping("/{FTNo}")
+    @DeleteMapping("/{FTName}")
     @ResponseBody
-    public ResponseEntity<?> deleteFormTemplate(@PathVariable String FTNo) {
+    public ResponseEntity<?> deleteFormTemplate(@PathVariable String FTName) {
         try {
-            service.deleteFormTemplate(FTNo); 
-            return ResponseHandler.generateResponse("Deleted " + FTNo + " successfully.", HttpStatus.OK, null);
+            service.deleteFormTemplate(FTName); 
+            return ResponseHandler.generateResponse("Deleted " + FTName + " successfully.", HttpStatus.OK, null);
         } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         } catch (DataIntegrityViolationException e){
