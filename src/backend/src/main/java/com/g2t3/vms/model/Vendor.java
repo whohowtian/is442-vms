@@ -3,6 +3,7 @@ package com.g2t3.vms.model;
 import java.util.ArrayList;
 
 import org.springframework.data.annotation.PersistenceCreator;
+import org.springframework.validation.annotation.Validated;
 
 import com.g2t3.vms.enums.UserType;
 
@@ -14,6 +15,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true) 
 @Data @EqualsAndHashCode(callSuper=false) 
 @NoArgsConstructor
+@Validated
 public class Vendor extends User {
     
     private String entityUEN;
