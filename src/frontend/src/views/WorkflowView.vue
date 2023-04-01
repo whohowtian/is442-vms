@@ -68,7 +68,7 @@ export default {
         this.getAllFormAvail() //trigger FormTemplate API
         this.getAllWorkflow() //trigger Form API
         this.getAllVendor("VENDOR")
-        // this.getformStatus()
+        // this.getformStatus("PENDING_ADMIN")
         },
     methods: {
         async getAllWorkflow(){
@@ -100,6 +100,10 @@ export default {
                         //for active workflow
                         if (archived ==false){
                             this.ActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, formEffDate:formEffDate,deadline:deadline})
+
+                            if(status== 'PENDING_ADMIN'){
+                                this.Todo.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, formEffDate:formEffDate})
+                            }
                         }else{
                             // inactive workflow
                             this.InActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, formEffDate:formEffDate,deadline:deadline})
@@ -149,16 +153,17 @@ export default {
                 console.log(error);
             });
         },
-        async getformStatus(status){
-            axios.get(`${BASE_URL}/api/form/formstatus/`+status)
-            .then(response => {
-                var getformstatus = response.data.data;
-                console.log(getformstatus)
-            })
-            .catch(error => {
-                console.log(error);
-            });
-        },
+        // async getformStatus(status){
+        //     axios.get(`${BASE_URL}/api/form/formstatus/`+status)
+        //     .then(response => {
+        //         var getformstatus = response.data.data;
+
+        //         console.log(getformstatus)
+        //     })
+        //     .catch(error => {
+        //         console.log(error);
+        //     });
+        // },
         findVendorandCompanyName(vendorEmail,allUser){
             var companyName = '';
             var VendorName = '';
@@ -364,13 +369,12 @@ export default {
                 <tr>
                     <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
                     <th>Task</th>
-                    <th>Vendor</th>
                     <th>Company Name</th>
-                    <th>Form No.</th>
                     <th>Stage</th>
                     <th>Status</th>
                     <th>FormEffDate</th>
                     <th>Deadline</th>
+                    <th>Approved By</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -378,13 +382,12 @@ export default {
                 <tr v-for="item in ActiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
                 <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
                 <td>{{ item.task }}</td>
-                <td>{{ item.VendorName }}</td>
                 <td>{{ item.companyName }}</td>
-                <td>{{ item.formNo }}</td>
                 <td>{{ item.stage }}</td>
                 <td>{{ item.status }}</td>
                 <td>{{ item.formEffDate }}</td>
                 <td>{{ item.deadline }}</td>
+                <td>{{  }}</td>
                 <td >
                     <div  class="btn-group dropup">
                         <Button buttonStyle="none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -412,10 +415,8 @@ export default {
                 <tr>
                     <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
                     <th>Task</th>
-                    <th>Vendor</th>
                     <th>Company Name</th>
-                    <th>Form No.</th>
-                    <th>Status</th>
+                    <th>Last Status</th>
                     <th>FormEffDate</th>
                     <th>Actions</th>
                 </tr>
@@ -424,9 +425,7 @@ export default {
                 <tr v-for="item in InActiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
                 <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
                 <td>{{ item.task }}</td>
-                <td>{{ item.VendorName }}</td>
                 <td>{{ item.companyName }}</td>
-                <td>{{ item.formNo }}</td>
                 <td>{{ item.status }}</td>
                 <td>{{ item.formEffDate }}</td>
                 <td >
@@ -448,7 +447,7 @@ export default {
         <!-- sub nav bar [ToDo / Completed] -->
         <el-tabs v-model="secNavOption"  type="border-card" >
             <el-tab-pane label="To Do" name="ToDoTable" >
-                <template #label>To Do({{ data3.length }})</template>
+                <template #label>To Do({{ this.Todo.length }})</template>
             </el-tab-pane>
             <el-tab-pane label="Completed" name="CompletedtaskTable"  @tab-click="secNavOption = 'CompletedtaskTable'">
                 <template #label>Completed({{ data4.length }})</template>
@@ -469,18 +468,18 @@ export default {
                     <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
                     <th>Task</th>
                     <th>Company Name</th>
-                    <th>Form No.</th>
+                    <th>Stage</th>
                     <th>Status</th>
                     <th>FormEffDate</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="item in InActiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
+                <tr v-for="item in Todo" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
                 <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
                 <td>{{ item.task }}</td>
                 <td>{{ item.companyName }}</td>
-                <td>{{ item.formNo }}</td>
+                <td>{{ item.stage }}</td>
                 <td>{{ item.status }}</td>
                 <td>{{ item.formEffDate }}</td>
                 <td >
