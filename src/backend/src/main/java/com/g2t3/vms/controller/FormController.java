@@ -177,7 +177,7 @@ public class FormController {
         
     }
 
-    @Operation(summary = "Heathcheck")
+    @Operation(summary = "Healthcheck")
     @GetMapping("")
     @ResponseBody
     public ResponseEntity<?> healthCheck() {

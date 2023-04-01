@@ -71,14 +71,14 @@ public class FormService {
             throw new ResourceNotFoundException("Form Template " + formNo + "does not exist.");
         }
 
-        boolean startFromAdmin = assigned_vendor_email == null ? true : false;
+        boolean startFromAdmin = (assigned_vendor_email == null) ? true : false;
 
         Form newForm;
 
         if (startFromAdmin) {
             newForm = new Form(getFormTempt, startFromAdmin);
         } else {
-            newForm = new Form(assigned_vendor_email, getFormTempt, startFromAdmin);
+            newForm = new Form(assigned_vendor_email, getFormTempt);
         }
 
         formRepo.save(newForm); 

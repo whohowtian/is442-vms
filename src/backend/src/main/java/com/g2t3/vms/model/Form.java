@@ -33,16 +33,20 @@ public class Form {
     private LocalDateTime formEffDate;
     private LocalDateTime deadline;
 
-    public Form (String assigned_vendor_email, FormTemplate formContent, boolean startFromAdmin) {
+    public Form (String assigned_vendor_email, FormTemplate formContent) {
         this(formContent);
-        doStartFromAdmin(startFromAdmin);
+        this.status = FormStatus.PENDING_VENDOR;
         this.assigned_vendor_email = assigned_vendor_email;
 
     }
 
     public Form (FormTemplate formContent, boolean startFromAdmin) {
         this(formContent);
-        doStartFromAdmin(startFromAdmin);
+        if (startFromAdmin) {
+            this.status = FormStatus.PENDING_ADMIN;
+        } else {
+            this.status = FormStatus.PENDING_VENDOR;
+        }
     }
 
     public Form (FormTemplate formContent) {
@@ -87,12 +91,12 @@ public class Form {
         this.status = FormStatus.APPROVER_REJECTED;
     }
 
-    private void doStartFromAdmin(boolean startFromAdmin) {
-        if (startFromAdmin) {
-            this.status = FormStatus.PENDING_ADMIN;
+    // private void doStartFromAdmin(boolean startFromAdmin) {
+    //     if (startFromAdmin) {
+    //         this.status = FormStatus.PENDING_ADMIN;
 
-        } else {
-            this.status = FormStatus.PENDING_VENDOR;
-        }
-    }
+    //     } else {
+    //         this.status = FormStatus.PENDING_VENDOR;
+    //     }
+    // }
 }
