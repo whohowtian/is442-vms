@@ -11,7 +11,9 @@ Please ensure the following is downloaded before running the application.
 ## Steps
 ### Connect to database
 Open MongoDB Compass and input the following under the URI field. Click Connect.
-	mongodb+srv://vmsStringbootUsr:XE3HfPeVUMPIqoor@cluster0.ldxjqem.mongodb.net/test?authMechanism=SCRAM-SHA-1
+```
+mongodb+srv://vmsStringbootUsr:XE3HfPeVUMPIqoor@cluster0.ldxjqem.mongodb.net/test?authMechanism=SCRAM-SHA-1
+```
 
 ### Run backend server and Vue application
 To run the entire application, do the following:
