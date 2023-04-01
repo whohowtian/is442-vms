@@ -49,17 +49,26 @@ public class UserController {
     @Autowired
     private EmailService emailService;
 
-    
-    @Operation(summary = "Creates a vendor account", description="userType, password and enabled attributes are not required as input parameters. ", responses = {
-        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+    @Operation(summary = "Creates an account", description="userType, password and enabled attributes are not required as input parameters. ", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserUpdateRequest.class))),
         @ApiResponse(responseCode = "400", description = "A user with the inputted entityUEN or email already exist.", content = @Content),
     })
-    @PostMapping("/vendor")
-    public ResponseEntity<?> createVendor(@Valid @RequestBody Vendor vendorRequest) {
+    @PostMapping("/create")
+    public ResponseEntity<?> create(@Valid @RequestBody UserUpdateRequest request) {
 
         try {
-            Vendor user = userService.createVendor(vendorRequest);
+
+            User user = null;
+            if (request.getUserType().equals(UserType.VENDOR)) {
+                user = userService.createVendor(request);
+            } else if (request.getUserType().equals(UserType.ADMIN)) {
+                System.out.println("create check2");
+                user = userService.createAdmin(request);
+            } else if (request.getUserType().equals(UserType.APPROVER)) {
+                user = userService.createApprover(request);
+            }
             // emailService.sendAccountConfirmationEmail(user);
+
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
         } catch (ResourceAlreadyExistException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
@@ -68,44 +77,63 @@ public class UserController {
         }
 
     }
+    
+    // @Operation(summary = "Creates a vendor account", description="userType, password and enabled attributes are not required as input parameters. ", responses = {
+    //     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+    //     @ApiResponse(responseCode = "400", description = "A user with the inputted entityUEN or email already exist.", content = @Content),
+    // })
+    // @PostMapping("/vendor")
+    // public ResponseEntity<?> createVendor(@Valid @RequestBody Vendor vendorRequest) {
 
-    @Operation(summary = "Creates an admin account", description="Requires name, email and number attributes as input parameters.", responses = {
-        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
-        @ApiResponse(responseCode = "400", description = "A user with the inputted email already exist.", content = @Content),
-    })
-    @PostMapping("/admin")
-    public ResponseEntity<?> createAdmin(@Valid @RequestBody Admin adminRequest) {
+    //     try {
+    //         Vendor user = userService.createVendor2(vendorRequest);
+    //         // emailService.sendAccountConfirmationEmail(user);
+    //         return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
+    //     } catch (ResourceAlreadyExistException e) {
+    //         return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
+    //     } catch (Exception e) {
+    //         return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
+    //     }
 
-        try {
-            Admin user = userService.createAdmin(adminRequest);
-            emailService.sendAccountConfirmationEmail(user);
-            return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
-        } catch (ResourceAlreadyExistException e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
-        } catch (Exception e) {
-            return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
-        }
+    // }
 
-    }
+    // @Operation(summary = "Creates an admin account", description="Requires name, email and number attributes as input parameters.", responses = {
+    //     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+    //     @ApiResponse(responseCode = "400", description = "A user with the inputted email already exist.", content = @Content),
+    // })
+    // @PostMapping("/admin")
+    // public ResponseEntity<?> createAdmin(@Valid @RequestBody Admin adminRequest) {
 
-    @Operation(summary = "Creates an approver account", description="Requires name, email and number attributes as input parameters.", responses = {
-        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
-        @ApiResponse(responseCode = "400", description = "A user with the inputted email already exist.", content = @Content),
-    })
-    @PostMapping("/approver")
-    public ResponseEntity<?> createAdmin(@Valid @RequestBody Approver approverRequest) {
+    //     try {
+    //         Admin user = userService.createAdmin2(adminRequest);
+    //         emailService.sendAccountConfirmationEmail(user);
+    //         return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
+    //     } catch (ResourceAlreadyExistException e) {
+    //         return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
+    //     } catch (Exception e) {
+    //         return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
+    //     }
 
-        try {
-            Approver user = userService.createApprover(approverRequest);
-            // emailService.sendAccountConfirmationEmail(user);
-            return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
-        } catch (ResourceAlreadyExistException e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
-        } catch (Exception e) {
-            return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
-        }
+    // }
 
-    }
+    // @Operation(summary = "Creates an approver account", description="Requires name, email and number attributes as input parameters.", responses = {
+    //     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+    //     @ApiResponse(responseCode = "400", description = "A user with the inputted email already exist.", content = @Content),
+    // })
+    // @PostMapping("/approver")
+    // public ResponseEntity<?> createAdmin(@Valid @RequestBody Approver approverRequest) {
+
+    //     try {
+    //         Approver user = userService.createApprover2(approverRequest);
+    //         // emailService.sendAccountConfirmationEmail(user);
+    //         return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
+    //     } catch (ResourceAlreadyExistException e) {
+    //         return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
+    //     } catch (Exception e) {
+    //         return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
+    //     }
+
+    // }
 
     @Operation(summary = "Get all user details", responses = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
