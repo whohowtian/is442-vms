@@ -66,20 +66,21 @@ public class FormService {
             throw new ResourceNotFoundException("Form Template " + formNo + "does not exist.");
         }
 
-        System.out.println(getFormTempt.toString());
+        // System.out.println(getFormTempt.toString());
 
-        if (assigned_vendor_email == null) {
-            Form newForm = new Form(getFormTempt);
-            formRepo.save(newForm); 
+        boolean startFromAdmin = Boolean.parseBoolean(newFormInfo.get("startFromAdmin"));
+
+        Form newForm;
+
+        if (startFromAdmin) {
+            newForm = new Form(getFormTempt, startFromAdmin);
         } else {
-            Form newForm = new Form(assigned_vendor_email, getFormTempt);
-            formRepo.save(newForm); 
-
-
+            newForm = new Form(assigned_vendor_email, getFormTempt, startFromAdmin);
         }
+
+        formRepo.save(newForm); 
+
         
-
-
         // TODO: Check vendor UID exists?
 
     }
@@ -124,7 +125,7 @@ public class FormService {
         if (currFormObjDB == null) {
             throw new ResourceNotFoundException("Form " + formID + "does not exist.");
         }
-        
+
         currFormObjDB.changeStatusSubmitted();
         formRepo.save(currFormObjDB);
 

@@ -32,14 +32,19 @@ public class Form {
     private LocalDateTime formEffDate;
     private LocalDateTime deadline;
 
-    public Form (String assigned_vendor_email, FormTemplate formContent) {
+    public Form (String assigned_vendor_email, FormTemplate formContent, boolean startFromAdmin) {
         this(formContent);
+        doStartFromAdmin(startFromAdmin);
         this.assigned_vendor_email = assigned_vendor_email;
 
     }
 
+    public Form (FormTemplate formContent, boolean startFromAdmin) {
+        this(formContent);
+        doStartFromAdmin(startFromAdmin);
+    }
+
     public Form (FormTemplate formContent) {
-        this.status = FormStatus.PENDING_VENDOR;
         this.formContent = formContent;
         this.approver = "";
         this.archivedBy = null;
@@ -65,7 +70,7 @@ public class Form {
     }
 
     public void changeStatusSubmitted() {
-        this.status = FormStatus.PENDING_REVIEW;
+        this.status = FormStatus.PENDING_ADMIN;
     }
 
     public void changeStatusAdminReviewed() {
@@ -73,11 +78,20 @@ public class Form {
     }
 
     public void changeStatusAdminRejected() {
-        this.status = FormStatus.PENDING_REVIEW;
+        this.status = FormStatus.PENDING_ADMIN;
     }
 
     public void changeStatusApproverRejected() {
         this.status = FormStatus.APPROVER_REJECTED;
+    }
+
+    private void doStartFromAdmin(boolean startFromAdmin) {
+        if (startFromAdmin) {
+            this.status = FormStatus.PENDING_ADMIN;
+
+        } else {
+            this.status = FormStatus.PENDING_VENDOR;
+        }
     }
 
     // @PersistenceConstructor
