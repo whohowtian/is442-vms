@@ -20,10 +20,15 @@ import com.g2t3.vms.exception.ResourceNotFoundException;
 import com.g2t3.vms.exception.ResourceNotValidException;
 import com.g2t3.vms.model.Email;
 import com.g2t3.vms.model.EmailTemplate;
+import com.g2t3.vms.model.User;
 import com.g2t3.vms.request.ReminderEmailRequest;
 import com.g2t3.vms.response.ResponseHandler;
 import com.g2t3.vms.service.EmailService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.mail.MessagingException;
 
 @CrossOrigin(origins= {"*"}, maxAge = 4800, allowCredentials = "false" )
@@ -34,6 +39,10 @@ public class EmailController {
         @Autowired
         private EmailService service;
 
+        @Operation(summary = "Send a generic email", responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Email.class))),
+            @ApiResponse(responseCode = "418", description = "Email is invalid.", content = @Content)
+        })
         @PostMapping(value = "/sendEmail", consumes = "application/json", produces = "application/json")
         public ResponseEntity<?> sendEmail(@RequestBody Email email) {
             try{
@@ -54,6 +63,10 @@ public class EmailController {
             }
         }
 
+        @Operation(summary = "Send a reminder email to vendor", responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Email.class))),
+            @ApiResponse(responseCode = "418", description = "Email is invalid.", content = @Content)
+        })
         @PostMapping(value = "/sendReminderEmail", consumes = "application/json", produces = "application/json")
         public ResponseEntity<?> sendReminderEmail(@RequestBody ReminderEmailRequest email) {
             try{
@@ -112,7 +125,6 @@ public class EmailController {
             }
 
         }
-
 
         // Healthcheck
         @GetMapping("")
