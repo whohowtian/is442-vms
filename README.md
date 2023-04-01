@@ -69,6 +69,3 @@ npm run dev
 - Java with Spring Boot
 ### Frontend
 - Vue
-
-
-## 3. User Workflow
