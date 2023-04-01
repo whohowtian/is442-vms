@@ -118,21 +118,21 @@ public class FormService {
         formRepo.save(currFormObjDB);
     }
 
-    public void submitForm(Form form) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
+    // public void submitForm(Form form) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
+    //     String formID = form.getId();
+    //     Form currFormObjDB = formRepo.getFormByID(formID);
+
+    //     if (currFormObjDB == null) {
+    //         throw new ResourceNotFoundException("Form " + formID + "does not exist.");
+    //     }
+
+    //     currFormObjDB.changeStatusSubmitted();
+    //     formRepo.save(currFormObjDB);
+
+    // }
+
+    public void changeStatus(Form form, String action) throws ResourceNotFoundException, Exception {
         String formID = form.getId();
-        Form currFormObjDB = formRepo.getFormByID(formID);
-
-        if (currFormObjDB == null) {
-            throw new ResourceNotFoundException("Form " + formID + "does not exist.");
-        }
-
-        currFormObjDB.changeStatusSubmitted();
-        formRepo.save(currFormObjDB);
-
-    }
-
-    public void changeStatus(Map<String, String> postQuery, String action) throws ResourceNotFoundException, Exception {
-        String formID = postQuery.get("formID");
         Form currFormObjDB = formRepo.getFormByID(formID);
         currFormObjDB.updateStatusChangeDateTime();
 
@@ -140,16 +140,13 @@ public class FormService {
             throw new ResourceNotFoundException("Form " + formID + "does not exist.");
         }
 
-        // TODO: restrict certain status change to admin/approvers
         switch(action) {
             case "approve":
                 currFormObjDB.changeStatusApproved();
-                currFormObjDB.setApprover(postQuery.get("approver"));
-                // TODO: add approver name and datatime into Form
                 break;
-            // case "submit":
-            //     currFormObjDB.setStatusSubmitted();
-            //     break;
+            case "submit":
+                currFormObjDB.changeStatusSubmitted();
+                break;
             case "adminreviewed":
                 currFormObjDB.changeStatusAdminReviewed();
                 break;
