@@ -89,17 +89,26 @@ export default {
                         var stage= this.addStage(status)[0]
                         var Mstatus= this.addStage(status)[1]
                         var formEffDate = new Date(workflow.formEffDate).toLocaleDateString('en-GB')   
-                        var deadline = new Date(workflow.deadline).toLocaleDateString('en-GB')   
+                        var deadline = new Date(workflow.deadline).toLocaleDateString('en-GB')  
+                        
                         var archived = workflow.archived
+                        var reviewedBy = workflow.reviewedBy
                         this.allWorkflowData.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline})
 
                         //for active workflow
                         if (archived ==false){
                             this.ActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline})
 
+                            //mytask- todo
                             if(status== 'PENDING_ADMIN'){
                                 this.Todo.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate})
                             }
+
+                            //mytask- completed - check reviewedBy field
+                            if (reviewedBy !== ''){
+                                this.Completed.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate})
+                            }
+                            
                         }else{
                             // inactive workflow
                             this.InActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline})
@@ -274,9 +283,6 @@ export default {
                 
             })
 
-            // if (form) {
-            // Swal.fire(`You selected: ${form}`)
-            // }
         }, 
         //table styling  function
         selectAllRows() {
@@ -445,7 +451,7 @@ export default {
                 <template #label>To Do({{ this.Todo.length }})</template>
             </el-tab-pane>
             <el-tab-pane label="Completed" name="CompletedtaskTable"  @tab-click="secNavOption = 'CompletedtaskTable'">
-                <template #label>Completed({{ data4.length }})</template>
+                <template #label>Completed({{ this.Completed.length }})</template>
             </el-tab-pane>
             <el-input placeholder="Search Company Name" style="width:fit-content" size="large">
                 <template #suffix>
@@ -489,7 +495,35 @@ export default {
 
         <!-- 2.2) Completed Table content -->
         <div v-if="secNavOption === 'CompletedtaskTable'">
-            <Table :data="data4" :headers="headers4" :fields="fields4" icon-class="eye" @action-click="TaskCompleted" />
+            <!-- <Table :data="data4" :headers="headers4" :fields="fields4" icon-class="eye" @action-click="TaskCompleted" /> -->
+            <table class="my-table">
+            <thead>
+                <tr>
+                    <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
+                    <th>Task</th>
+                    <th>Company Name</th>
+                    <th>Stage</th>
+                    <th>Status</th>
+                    <th>FormEffDate</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in Completed" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
+                <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
+                <td>{{ item.task }}</td>
+                <td>{{ item.companyName }}</td>
+                <td>{{ item.stage }}</td>
+                <td>{{ item.status }}</td>
+                <td>{{ item.formEffDate }}</td>
+                <td >
+                    <el-icon class="el-input__icon" @click="ViewEachForm(item.formNo)">
+                            <View />
+                        </el-icon>
+                </td>
+                </tr>
+            </tbody>
+            </table>
         </div>
     </el-tabs >
     </div>
