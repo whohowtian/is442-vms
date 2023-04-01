@@ -2,24 +2,22 @@ package com.g2t3.vms.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.bson.types.ObjectId;
 
-
-import com.g2t3.vms.exception.ResourceNotFoundException;
-import com.g2t3.vms.model.FormTemplate;
-import com.g2t3.vms.model.FormSection;
-import com.g2t3.vms.model.Question;
-import com.g2t3.vms.model.Form;
-import com.g2t3.vms.repository.FormTemplateRepo;
-import com.g2t3.vms.repository.FormRepo;
-import com.g2t3.vms.service.FormTemplateService;
 import com.g2t3.vms.enums.FormStatus;
+import com.g2t3.vms.exception.ResourceNotFoundException;
+import com.g2t3.vms.model.Form;
+import com.g2t3.vms.model.FormSection;
+import com.g2t3.vms.model.FormTemplate;
+import com.g2t3.vms.model.Question;
+import com.g2t3.vms.repository.FormRepo;
+import com.g2t3.vms.repository.FormTemplateRepo;
 
 
 @Service
@@ -57,24 +55,33 @@ public class FormService {
     // create new form/workflow
     public void createForm(Map<String, String> newFormInfo) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
 
-        String formNo = newFormInfo.get("formNo");
-        String assigned_vendor_uid = newFormInfo.get("assigned_vendor_uid");
+        String formNo = newFormInfo.get("formNo"); 
+        
+        String assigned_vendor_email = newFormInfo.get("assigned_vendor_email");
 
         System.out.println(newFormInfo.toString());
 
         FormTemplate getFormTempt = formTemplateRepo.getFormTemplateByNo(formNo);
-
-        System.out.println(getFormTempt.toString());
-
-        Form newForm = new Form(formNo, getFormTempt);
-
         if (getFormTempt == null) {
             throw new ResourceNotFoundException("Form Template " + formNo + "does not exist.");
         }
 
+        System.out.println(getFormTempt.toString());
+
+        if (assigned_vendor_email == null) {
+            Form newForm = new Form(getFormTempt);
+            formRepo.save(newForm); 
+        } else {
+            Form newForm = new Form(assigned_vendor_email, getFormTempt);
+            formRepo.save(newForm); 
+
+
+        }
+        
+
+
         // TODO: Check vendor UID exists?
 
-        formRepo.save(newForm); 
     }
 
     public void editForm(Form form) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
@@ -90,7 +97,7 @@ public class FormService {
         for (Map.Entry<String, FormSection> sectionEntry : newInput.entrySet()) {
             String currSectID = sectionEntry.getKey();
             FormSection currFormSectDB = currFormObjDB.getFormContent().getFormSections().get(currSectID);
-            boolean forAdminOnly = currFormSectDB.getAdminUseOnly();
+            boolean forAdminOnly = currFormSectDB.isAdminUseOnly();
 
             // TODO: to allow admin to edit forAdminUseOnly sections; currently only allow editing for vendor questions
             if (forAdminOnly) {
@@ -110,9 +117,23 @@ public class FormService {
         formRepo.save(currFormObjDB);
     }
 
+    public void submitForm(Form form) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
+        String formID = form.getId();
+        Form currFormObjDB = formRepo.getFormByID(formID);
+
+        if (currFormObjDB == null) {
+            throw new ResourceNotFoundException("Form " + formID + "does not exist.");
+        }
+        
+        currFormObjDB.changeStatusSubmitted();
+        formRepo.save(currFormObjDB);
+
+    }
+
     public void changeStatus(Map<String, String> postQuery, String action) throws ResourceNotFoundException, Exception {
         String formID = postQuery.get("formID");
         Form currFormObjDB = formRepo.getFormByID(formID);
+        currFormObjDB.updateStatusChangeDateTime();
 
         if (currFormObjDB == null) {
             throw new ResourceNotFoundException("Form " + formID + "does not exist.");
@@ -121,31 +142,66 @@ public class FormService {
         // TODO: restrict certain status change to admin/approvers
         switch(action) {
             case "approve":
-                currFormObjDB.setStatus(FormStatus.APPROVED);
+                currFormObjDB.changeStatusApproved();
+                currFormObjDB.setApprover(postQuery.get("user"));
                 // TODO: add approver name and datatime into Form
                 break;
-            case "submit":
-                currFormObjDB.setStatus(FormStatus.PENDING_REVIEW);
-                break;
+            // case "submit":
+            //     currFormObjDB.setStatusSubmitted();
+            //     break;
             case "adminreviewed":
-                currFormObjDB.setStatus(FormStatus.PENDING_APPROVAL);
+                currFormObjDB.changeStatusAdminReviewed();
                 break;
             case "archive":
-                currFormObjDB.setStatus(FormStatus.ARCHIVED);
+                // currFormObjDB.setStatus(FormStatus.ARCHIVED);
+                currFormObjDB.setArchived(true);
+                currFormObjDB.setArchivedBy(postQuery.get("user"));
                 break;
             case "adminreject":
-                currFormObjDB.setStatus(FormStatus.ADMIN_REJECTED);
+                currFormObjDB.changeStatusAdminRejected();
                 break;
             case "approverreject":
-                currFormObjDB.setStatus(FormStatus.APPROVER_REJECTED);
-                break;
-            case "created":
-                currFormObjDB.setStatus(FormStatus.PENDING_VENDOR);
+                currFormObjDB.changeStatusApproverRejected();
                 break;
         }
 
         formRepo.save(currFormObjDB);
 
     } 
+
+    public void archiveForm(Map<String, String> postQuery) throws ResourceNotFoundException, Exception {
+        String formID = postQuery.get("formID");
+        Form currFormObjDB = formRepo.getFormByID(formID);
+        currFormObjDB.updateStatusChangeDateTime();
+
+        currFormObjDB.archiveForm(postQuery.get("user"));
+
+        formRepo.save(currFormObjDB);
+
+    } 
+
+    public ArrayList<Form> getFormByStatus(String statusID) throws ResourceNotFoundException, Exception {
+        ArrayList<Form> forms = new ArrayList<>();
+
+        for (Form form : formRepo.getFormByStatus(statusID)) {
+            forms.add(form);
+        }
+
+        if (forms.isEmpty()) {
+            throw new ResourceNotFoundException("No forms/workflows have been created.");
+        }
+
+        return forms;
+    }
+
+    public ArrayList<Form> getFormByVendor(String vendorEmail) throws ResourceNotFoundException, Exception {
+        ArrayList<Form> forms = formRepo.getFormByVendor(vendorEmail);
+
+        if (forms.isEmpty()) {
+            throw new ResourceNotFoundException("No forms/workflows have been created.");
+        }
+
+        return forms;
+    }
 
 }

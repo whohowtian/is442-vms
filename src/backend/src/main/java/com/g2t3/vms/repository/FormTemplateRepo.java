@@ -1,12 +1,15 @@
 package com.g2t3.vms.repository;
 
-import com.g2t3.vms.model.*;
+import java.util.ArrayList;
 
 import org.springframework.data.mongodb.repository.DeleteQuery;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
-import java.util.*;
+import org.springframework.stereotype.Repository;
 
+import com.g2t3.vms.model.FormTemplate;
+
+@Repository
 public interface FormTemplateRepo extends MongoRepository<FormTemplate, String> {
     
     @Query("{}")

@@ -3,38 +3,93 @@ package com.g2t3.vms.model;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.bson.types.ObjectId;
 
 import com.g2t3.vms.enums.FormStatus;
 
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Document("Form")
-@Getter
-@Setter
+@Data @EqualsAndHashCode(callSuper=false)
+@NoArgsConstructor
 public class Form {
     @Id
     private String id;
-    private String assigned_vendor_uid;
+    private String assigned_vendor_email;
+
     private FormStatus status;
+    private LocalDateTime lastStatusChangeDate;
     private FormTemplate formContent;
 
-    // should this be in a seperate class?
     private String approver;
-    private LocalDateTime approvalDateTime;
 
-    public Form (String assigned_vendor_uid, FormTemplate formContent) {
-        this.assigned_vendor_uid = assigned_vendor_uid;
+    // MAYBE USER OBJECT?
+    private String archivedBy;
+    private boolean isArchived;
+
+    private LocalDateTime formEffDate;
+    private LocalDateTime deadline;
+
+    public Form (String assigned_vendor_email, FormTemplate formContent) {
+        this(formContent);
+        this.assigned_vendor_email = assigned_vendor_email;
+
+    }
+
+    public Form (FormTemplate formContent) {
         this.status = FormStatus.PENDING_VENDOR;
         this.formContent = formContent;
         this.approver = "";
-        this.approvalDateTime = null;
-
+        this.archivedBy = null;
+        LocalDateTime dateTimeNow = LocalDateTime.now();
+        this.formEffDate = dateTimeNow;
+        this.deadline = dateTimeNow.plusDays(formContent.getDeadlineDays());
+        this.lastStatusChangeDate = dateTimeNow;
     }
+
+    public void updateStatusChangeDateTime() {
+        LocalDateTime dateTimeNow = LocalDateTime.now();
+
+        this.lastStatusChangeDate = dateTimeNow;
+    }
+
+    public void archiveForm(String user) {
+        this.isArchived = true;
+        this.archivedBy = user;
+    }
+
+    public void changeStatusApproved() {
+        this.status = FormStatus.APPROVED;
+    }
+
+    public void changeStatusSubmitted() {
+        this.status = FormStatus.PENDING_REVIEW;
+    }
+
+    public void changeStatusAdminReviewed() {
+        this.status = FormStatus.PENDING_APPROVAL;
+    }
+
+    public void changeStatusAdminRejected() {
+        this.status = FormStatus.PENDING_REVIEW;
+    }
+
+    public void changeStatusApproverRejected() {
+        this.status = FormStatus.APPROVER_REJECTED;
+    }
+
+    // @PersistenceConstructor
+    // public Form (String assigned_vendor_email, FormTemplate formContent, String approver, LocalDateTime approvalDateTime, String archivedBy, boolean isArchived, FormStatus status) {
+    //     this.status = status;
+    //     this.formContent = formContent;
+    //     this.approver = approver;
+    //     this.approvalDateTime = approvalDateTime;
+    //     this.archivedBy = archivedBy;
+    //     this.isArchived = isArchived;
+    //     this.assigned_vendor_email = assigned_vendor_email;
+    // }
 
     // @Override
     // public String toString() {

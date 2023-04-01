@@ -1,13 +1,11 @@
 package com.g2t3.vms.model;
 
 import java.util.Map;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-@Getter
-@Setter
+@Data @EqualsAndHashCode(callSuper=false)
 public class InputFormTemplate {
     private Map<String, Object> details;
 }

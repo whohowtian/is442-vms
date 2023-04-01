@@ -17,6 +17,7 @@ import com.g2t3.vms.model.Email;
 import com.g2t3.vms.model.EmailTemplate;
 import com.g2t3.vms.model.User;
 import com.g2t3.vms.repository.EmailTemplateRepo;
+import com.g2t3.vms.request.ReminderEmailRequest;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -102,17 +103,34 @@ public class EmailService {
 
     public void sendAccountConfirmationEmail(User user) throws ResourceNotFoundException, MailException, MessagingException, Exception {
 
-        EmailTemplate template = getTemplateById("6422a5d8850b2474ac4e13f9");
+        EmailTemplate template = getTemplateById("6425bf076162e20f5ce1dba3");
         if (template == null) {
             throw new ResourceNotFoundException("Template does not exist.");
         }
 
         SimpleMailMessage message = new SimpleMailMessage();
-
         message.setFrom("is442g2t3@outlook.com");
         message.setTo(user.getEmail());
-        message.setText(template.getData());
+        message.setText(String.format(template.getData(), user.getName()));
         message.setSubject(template.getSubject());
+
+        mailSender.send(message);
+        System.out.println("Account Confirmation Email sent successfully");
+
+    }
+
+    public void sendReminderEmail(ReminderEmailRequest request) throws ResourceNotFoundException, MailException, MessagingException, Exception {
+
+        EmailTemplate template = getTemplateById("6426facd0869fc2ea8b9aa97");
+        if (template == null) {
+            throw new ResourceNotFoundException("Template does not exist.");
+        }
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("is442g2t3@outlook.com");
+        message.setTo(request.getEmail());
+        message.setText(String.format(template.getData(), request.getName(), request.getDeadline()));
+        message.setSubject(String.format(template.getSubject(), request.getFormName()));
 
         mailSender.send(message);
         System.out.println("Account Confirmation Email sent successfully");

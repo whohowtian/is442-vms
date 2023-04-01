@@ -1,10 +1,10 @@
 package com.g2t3.vms.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import com.g2t3.vms.enums.UserType;
 import com.g2t3.vms.exception.ResourceAlreadyExistException;
@@ -14,6 +14,8 @@ import com.g2t3.vms.model.Approver;
 import com.g2t3.vms.model.User;
 import com.g2t3.vms.model.Vendor;
 import com.g2t3.vms.repository.UserRepo;
+import com.g2t3.vms.request.UserLoginRequest;
+import com.g2t3.vms.request.UserUpdateRequest;
 
 @Service
 public class UserService {
@@ -34,12 +36,16 @@ public class UserService {
         }
 
         // save new vendor
+        vendor = vendor.toBuilder()
+            .userType(UserType.VENDOR)
+            .password(null)
+            .build();
         Vendor newUser = userRepo.save(vendor);
         return newUser;
         
     }
 
-    public Admin createAdmin(Admin admin) throws ResourceAlreadyExistException, Exception {
+    public Admin createAdmin(Admin admin) throws MethodArgumentNotValidException, ResourceAlreadyExistException, Exception {
         
         // errors
         Admin user = (Admin) userRepo.findByEmail(admin.getEmail());
@@ -48,6 +54,10 @@ public class UserService {
         }
 
         // save new admin
+        admin = admin.toBuilder()
+            .userType(UserType.ADMIN)
+            .password(null)
+            .build();
         Admin newUser = userRepo.save(admin);
         return newUser;
         
@@ -62,6 +72,10 @@ public class UserService {
         }
 
         // save new approver
+        approver = approver.toBuilder()
+            .userType(UserType.APPROVER)
+            .password(null)
+            .build();
         Approver newUser = userRepo.save(approver);
         return newUser;
         
@@ -113,113 +127,75 @@ public class UserService {
         return users;
     }
 
-    public <T> UserType getType(T type) {
-
-        UserType result = null;
-        switch((String) type) {
-            case "VENDOR":
-                result = UserType.VENDOR;
-                break;
-            case "ADMIN":
-                result = UserType.ADMIN;
-                break;
-            case "APPROVER":
-                result = UserType.APPROVER;
-                break;
-        }
-        return result;
-
-    }
-
-    public <T> User updateAdmin(UserType prevType, HashMap<String, T> user) throws ResourceNotFoundException, Exception {
+    public void updateAdmin(UserType prevType, UserUpdateRequest user) throws ResourceNotFoundException, Exception {
 
         // check
-        getUserById((String) user.get("userId"));
-        
-        UserType type = getType((String) user.get("userType"));
-        if (prevType != type) {
-            deleteUser((String) user.get("userId"));
-        }
-        
-        Admin newDetails = new Admin();
-        newDetails = newDetails.toBuilder()
-            .userId( (String) user.get("userId"))
-            .name( (String) user.get("name"))
-            .email( (String) user.get("email"))
-            .password( (String) user.get("password"))
-            .number( (String) user.get("number"))
-            .userType(type)
-            .isApprover(false)
-            .isAdmin(true)
-            .build();
-        System.out.println("check2");
+        getUserById(user.getUserId());
 
-        userRepo.save(newDetails);
-        return newDetails;
+        Admin admin  = new Admin();
+        admin = admin.toBuilder()
+            .userId(user.getUserId())
+            .name(user.getName())
+            .email(user.getEmail())
+            .password(user.getPassword())
+            .number(user.getNumber())
+            .userType(UserType.ADMIN)
+            .build();
+        userRepo.save(admin);
+        
 
     }
 
-    public <T> User updateApprover(UserType prevType, HashMap<String, T> user) throws ResourceNotFoundException, Exception {
+    public void updateApprover(UserType prevType, UserUpdateRequest user) throws ResourceNotFoundException, Exception {
 
         // check
-        getUserById((String) user.get("userId"));
+        getUserById(user.getUserId());
 
-        UserType type = getType((String) user.get("userType"));
-        if (prevType != type) {
-            deleteUser((String) user.get("userId"));
-        }
-
-        Approver newDetails = new Approver();
-        newDetails = newDetails.toBuilder()
-            .userId( (String) user.get("userId"))
-            .name( (String) user.get("name"))
-            .email( (String) user.get("email"))
-            .password( (String) user.get("password"))
-            .number( (String) user.get("number"))
-            .userType(type)
-            .isApprover(true)
-            .isAdmin(false)
+        Approver approver  = new Approver();
+        approver = approver.toBuilder()
+            .userId(user.getUserId())
+            .name(user.getName())
+            .email(user.getEmail())
+            .password(user.getPassword())
+            .number(user.getNumber())
+            .userType(UserType.APPROVER)
             .build();
-
-        userRepo.save(newDetails);
-        return newDetails;
-
+        userRepo.save(approver);
+    
     }
 
-    public <T> User updateVendor(UserType prevType, HashMap<String, T> user) throws ResourceNotFoundException, Exception {
+    public void updateVendor(UserType prevType, UserUpdateRequest user) throws ResourceNotFoundException, Exception {
 
         // check
-        getUserById((String) user.get("userId"));
-        
-        UserType type = getType((String) user.get("userType"));
-        if (prevType != type) {
-            deleteUser((String) user.get("userId"));
-        }
+        getUserById(user.getUserId());
 
-        Vendor newDetails = new Vendor();
-        newDetails = newDetails.toBuilder()
-            .userId( (String) user.get("userId"))
-            .name( (String) user.get("name"))
-            .email( (String) user.get("email"))
-            .password( (String) user.get("password"))
-            .number( (String) user.get("number"))
-            .userType(type)
-            .entityName((String) user.get("entityName"))
-            .entityActivities((ArrayList<String>) user.get("entityActivities"))
-            .isGSTRegistered((boolean) user.get("isGSTRegistered"))
+        Vendor vendor  = new Vendor();
+        vendor = vendor.toBuilder()
+            .userId(user.getUserId())
+            .name(user.getName())
+            .email(user.getEmail())
+            .password(user.getPassword())
+            .number(user.getNumber())
+            .userType(UserType.VENDOR)
+            .entityUEN(user.getEntityUEN())
+            .entityName(user.getEntityName())
+            .entityActivities(user.getEntityActivities())
+            .isGSTRegistered(user.isGSTRegistered())
+            .gstRegisteredNo(user.getGstRegisteredNo())
             .build();
-
-        userRepo.save(newDetails);
-        return newDetails;
+        userRepo.save(vendor);
+        
 
     }
 
-    public User setPassword(User user) throws ResourceNotFoundException, Exception {
+    public User activateAccount(UserLoginRequest user) throws ResourceNotFoundException, Exception {
 
         User prevDetails = getUserByEmail(user.getEmail());
-        prevDetails.setPassword(user.getPassword());
 
+        prevDetails.setPassword(user.getPassword());
+        prevDetails.setEnabled(true);
         userRepo.save(prevDetails);
+
         return prevDetails;
 
     }

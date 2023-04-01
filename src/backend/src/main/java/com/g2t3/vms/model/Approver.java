@@ -16,7 +16,7 @@ public class Approver extends User {
     
     @PersistenceCreator
     public Approver(String userId, String email, String password, String name, String number) {
-        super(userId, email, password, name, number, UserType.ADMIN, true, false);
+        super(userId, email, password, name, number, UserType.APPROVER);
     }
 
 }

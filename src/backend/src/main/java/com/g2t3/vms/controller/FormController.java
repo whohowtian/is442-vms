@@ -24,7 +24,7 @@ import com.g2t3.vms.response.ResponseHandler;
 import com.g2t3.vms.service.FormService;
 
 
-
+// TODO: capture last edit for edit/create 
 
 @CrossOrigin(origins= {"*"}, maxAge = 4800, allowCredentials = "false" )
 @RestController
@@ -72,7 +72,7 @@ public class FormController {
     public ResponseEntity<?> createForm(@RequestBody Map<String, String> newFormInfo) {
         try {
             service.createForm(newFormInfo); 
-            return ResponseHandler.generateResponse("Created form for " + newFormInfo.get("assigned_vendor_uid") + " successfully.", HttpStatus.OK, null);
+            return ResponseHandler.generateResponse("Created form for " + newFormInfo.get("assigned_vendor_email") + " successfully.", HttpStatus.OK, null);
         } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
         } catch (DataIntegrityViolationException e){
@@ -86,6 +86,21 @@ public class FormController {
     public ResponseEntity<?> editForm(@RequestBody Form editedForm) {
         try {
             service.editForm(editedForm); 
+            return ResponseHandler.generateResponse("Form edited successfully.", HttpStatus.OK, null);
+        } catch (ResourceNotFoundException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
+        } catch (DataIntegrityViolationException e){
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("Internal Server Error: " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
+        } 
+    }
+
+    @PostMapping("/submit")
+    public ResponseEntity<?> submitForm(@RequestBody Form submittedForm) {
+        try {
+            service.editForm(submittedForm);
+            service.submitForm(submittedForm); 
             return ResponseHandler.generateResponse("Form edited successfully.", HttpStatus.OK, null);
         } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
@@ -110,4 +125,55 @@ public class FormController {
             return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
         }
     }
+
+    @PostMapping("/archive")
+    public ResponseEntity<?> changeStatus(@RequestBody Map<String, String> postQuery) {
+        try {
+            service.archiveForm(postQuery);
+            return ResponseHandler.generateResponse("Form archived successfully.", HttpStatus.OK, null);
+        }
+        catch (ResourceNotFoundException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
+        }
+    }
+
+
+    @GetMapping("/formstatus/{statusID}")
+    @ResponseBody
+    public ResponseEntity<?> getFormByStatus(@PathVariable String statusID) {
+        ArrayList<Form> formsArr;
+        try {
+            formsArr = service.getFormByStatus(statusID);
+        } catch (ResourceNotFoundException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
+        }
+        return ResponseHandler.generateResponse("Successful", HttpStatus.OK, formsArr);
+        
+    }
+
+    @GetMapping("/vendor/{vendorID}")
+    @ResponseBody
+    public ResponseEntity<?> getFormByVendor(@PathVariable String vendorID) {
+        ArrayList<Form> formsArr;
+        try {
+            formsArr = service.getFormByVendor(vendorID);
+        } catch (ResourceNotFoundException e) {
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
+        }
+        return ResponseHandler.generateResponse("Successful", HttpStatus.OK, formsArr);
+        
+    }
+
+    // @GetMapping("/user/{UID}")
+    // public
 }

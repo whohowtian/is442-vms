@@ -1,21 +1,19 @@
-package com.g2t3.vms.model;
+package com.g2t3.vms.request;
 
 import java.util.ArrayList;
 
-import org.springframework.data.annotation.PersistenceCreator;
-
 import com.g2t3.vms.enums.UserType;
+import com.g2t3.vms.model.User;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
-@SuperBuilder(toBuilder = true) 
-@Data @EqualsAndHashCode(callSuper=false) 
+@Data @EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
-public class Vendor extends User {
-    
+public class UserUpdateRequest extends User {
+
     private String entityUEN;
 
     private String entityName;
@@ -26,18 +24,17 @@ public class Vendor extends User {
 
     private String gstRegisteredNo;
 
-    @PersistenceCreator
-    public Vendor(String userId, String email, String password, String name, String number,
-            String entityUEN, String entityName, ArrayList<String> entityActivities, boolean isGSTRegistered,
-            String gstRegisteredNo) {
-        super(userId, email, password, name, number, UserType.VENDOR);
+    public UserUpdateRequest(String userId, @NotEmpty String email, String password, @NotEmpty String name,
+            @NotEmpty String number, UserType userType, String entityUEN, String entityName,
+            ArrayList<String> entityActivities, boolean isGSTRegistered, String gstRegisteredNo) {
+        super(userId, email, password, name, number, userType);
         this.entityUEN = entityUEN;
         this.entityName = entityName;
         this.entityActivities = entityActivities;
         this.isGSTRegistered = isGSTRegistered;
         this.gstRegisteredNo = gstRegisteredNo;
     }
-    
+
     
 
 }
