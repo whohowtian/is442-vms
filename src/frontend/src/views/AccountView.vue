@@ -42,8 +42,10 @@
             axios.get(`${BASE_URL}/api/user/all`)
                 .then(response => {
                 var allAccount = response.data.data
+                // console.log("check-->", allAccount)
 
                 for (const account of allAccount){
+                    var userId = account.userId
                     var name = account.name
                     var email = account.email
                     var companyName = account.entityName
@@ -51,16 +53,15 @@
                     if (companyName == null){
                         companyName = 'Quantum Leap Incorporation'
                     }
-                    this.allAccount.push({ name: name, email:email,companyName:companyName,userType:userType})
+                    this.allAccount.push({ userId:userId, name: name, email:email,companyName:companyName,userType:userType})
                 }
-                // console.log(this.allAccount)
                 })
                 .catch(error => {
                 console.log(error);
                 });
             },
             async DeleteAccount(userId){
-                axios.delete(`${BASE_URL}/api/user/`+ userId)
+                axios.delete(`${BASE_URL}/api/user/id/`+ userId)
                 .then(response => {
                     console.log(response.data);
                     alert('Deleted!'); // do verification --> sweet alert
@@ -71,8 +72,9 @@
                     console.log(error);
                     });
             },
-            async EditAccount(item){
-                localStorage.setItem('old_data', JSON.stringify(item))
+            async EditAccount(userId){
+                console.log(userId);
+                localStorage.setItem('userId', userId)
                 window.location.href = "/EditAccount"
             },
         //table styling  function
@@ -151,7 +153,7 @@
                             <el-icon><More /></el-icon>
                         </Button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" @click="EditAccount(item)">Edit</a></li>
+                            <li><a class="dropdown-item" @click="EditAccount(item.userId)">Edit</a></li>
                             <li><a class="dropdown-item" @click="DeleteAccount(item.userId)">Delete</a></li>
                         </ul>
                         </div>
