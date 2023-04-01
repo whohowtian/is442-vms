@@ -125,7 +125,6 @@ public class FormService {
             throw new ResourceNotFoundException("Form " + formID + "does not exist.");
         }
         
-        editForm(form);
         currFormObjDB.changeStatusSubmitted();
         formRepo.save(currFormObjDB);
 
