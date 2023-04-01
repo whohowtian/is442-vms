@@ -95,24 +95,4 @@ public class Form {
             this.status = FormStatus.PENDING_VENDOR;
         }
     }
-
-    // @PersistenceConstructor
-    // public Form (String assigned_vendor_email, FormTemplate formContent, String approver, LocalDateTime approvalDateTime, String archivedBy, boolean isArchived, FormStatus status) {
-    //     this.status = status;
-    //     this.formContent = formContent;
-    //     this.approver = approver;
-    //     this.approvalDateTime = approvalDateTime;
-    //     this.archivedBy = archivedBy;
-    //     this.isArchived = isArchived;
-    //     this.assigned_vendor_email = assigned_vendor_email;
-    // }
-
-    // @Override
-    // public String toString() {
-    //     return String.format("{ \"assigned_vendor_uid\": '%s', \"status\": '%s', \"approver\": '%s', \"approvalDateTime\": '%s', \"formContent\": %s }", assigned_vendor_uid, status, approver, approvalDateTime, formContent.toString());
-    // }
-
-    // public String getID() {
-    //     return id;
-    // } 
 }
