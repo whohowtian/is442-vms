@@ -39,7 +39,13 @@
             localStorage.setItem('formNo', [formNo,formId])
             window.location.href = "VendorForm";
         },
-}
+        },
+        created() {
+        //user session
+        const user = JSON.parse(sessionStorage.getItem('user'));
+        console.log(user.userId); 
+        console.log(user.userEmail); 
+    }
     };
 </script>
 
