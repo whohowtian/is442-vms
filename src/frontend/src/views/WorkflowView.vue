@@ -29,6 +29,8 @@ export default {
         allWorkflowData:[],
         ActiveWorkflow:[],
         InActiveWorkflow:[],
+        Todo:[],
+        Completed:[],
         SearchCompany:'',
         assignForm:'',
         menuItems: [ //for top nav bar
@@ -47,9 +49,9 @@ export default {
 
         //fake data -- in future change to api endpoint
 
-        data3:fakeTaskData.todo, 
-        headers3:["Task","Company Name","Form No.","Date Assigned","Actions"],
-        fields3:["task","company","formNo","dateAssign","Actions"],
+        // data3:fakeTaskData.todo, 
+        // headers3:["Task","Company Name","Form No.","Date Assigned","Actions"],
+        // fields3:["task","company","formNo","dateAssign","Actions"],
 
         data4:fakeTaskData.completed, 
         headers4:["Task","Company Name","Form No.","Date Assigned","Actions"],
@@ -61,13 +63,14 @@ export default {
         this.getAllFormAvail() //trigger FormTemplate API
         this.getAllWorkflow() //trigger Form API
         this.getAllVendor("VENDOR")
+        // this.getformStatus()
         },
     methods: {
         async getAllWorkflow(){
-            axios.get(`${BASE_URL}/api/form`)
+            axios.get(`${BASE_URL}/api/form/all`)
             .then(response => {
                 var allWorkflow = response.data.data;
-                axios.get(`${BASE_URL}/api/user`)
+                axios.get(`${BASE_URL}/api/user/all`)
                 .then(response => {
                     var allUser= response.data.data;
                     // console.log(allUser)
@@ -106,7 +109,7 @@ export default {
             });
         },
         async getAllFormAvail(){
-            axios.get(`${BASE_URL}/api/formtemplate`)
+            axios.get(`${BASE_URL}/api/formtemplate/all`)
             .then(response => {
                 var allForm = response.data.data;
                 // console.log("Forms-->",allForm);
@@ -136,6 +139,16 @@ export default {
                     this.allVendor.push({ vendorEmail: vendorEmail, vendorName: vendorName})
                 }
             //   console.log(this.allFormData)
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        },
+        async getformStatus(status){
+            axios.get(`${BASE_URL}/api/form/formstatus/`+status)
+            .then(response => {
+                var getformstatus = response.data.data;
+                console.log(getformstatus)
             })
             .catch(error => {
                 console.log(error);
@@ -184,7 +197,7 @@ export default {
             confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    var url = `${BASE_URL}/api/form/changestatus/archive`
+                    var url = `${BASE_URL}/api/form/archive`
                     axios.post(url, {
                         formID:id,assigned_vendor_uid:vendorID
                     })
@@ -412,20 +425,9 @@ export default {
                 <td>{{ item.status }}</td>
                 <td>{{ item.formEffDate }}</td>
                 <td >
-                   
                     <el-icon class="el-input__icon" @click="ViewEachForm(item.formNo)">
                             <View />
                         </el-icon>
-                    <!-- <div  class="btn-group dropup">
-                        <Button buttonStyle="none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            ...
-                        </Button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">View</a></li>
-                            <li><a class="dropdown-item" href="#">Activate</a></li>
-                        </ul>
-                    </div> -->
-
                 </td>
                 </tr>
             </tbody>
@@ -454,7 +456,36 @@ export default {
             
         <!-- 2.1) To-do Table content -->
         <div v-if="firstNavOption === 'taskTable' && secNavOption !== 'CompletedtaskTable'">
-            <Table :data="data3" :headers="headers3" :fields="fields3" icon-class="pen-square" @action-click="TaskToDoAction" />
+            <!-- <Table :data="data3" :headers="headers3" :fields="fields3" icon-class="pen-square" @action-click="TaskToDoAction" /> 
+            -->
+            <table class="my-table">
+            <thead>
+                <tr>
+                    <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
+                    <th>Task</th>
+                    <th>Company Name</th>
+                    <th>Form No.</th>
+                    <th>Status</th>
+                    <th>FormEffDate</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in InActiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
+                <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
+                <td>{{ item.task }}</td>
+                <td>{{ item.companyName }}</td>
+                <td>{{ item.formNo }}</td>
+                <td>{{ item.status }}</td>
+                <td>{{ item.formEffDate }}</td>
+                <td >
+                    <el-icon class="el-input__icon" @click="ViewEachForm(item.formNo)">
+                            <Edit />
+                        </el-icon>
+                </td>
+                </tr>
+            </tbody>
+            </table>
         </div>
 
         <!-- 2.2) Completed Table content -->
