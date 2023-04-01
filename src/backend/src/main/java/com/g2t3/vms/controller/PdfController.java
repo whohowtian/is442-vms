@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,14 +43,14 @@ public class PdfController {
             pdfService.retrievePDFByFileName(fileName);
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, null);
         } catch (IllegalStateException e) {
-            e.printStackTrace();
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
         } catch (Exception e) {
-            e.printStackTrace();
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
         }
-        return null;
+
     }
 
-    @Operation(summary = "Retrieve PDF by file name, Download all PDFs in a ZIP file under Downloads folder", description="file name convention: <entityUEN>_<formName>",
+    @Operation(summary = "Retrieve PDF by vendor UEN, Download all PDFs in a ZIP file under Downloads folder",
     responses = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PdfRequest.class))),
     })
@@ -60,11 +61,11 @@ public class PdfController {
             pdfService.retrievePDFByVendor(vendorUEN);
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, null);
         } catch (IllegalStateException e) {
-            e.printStackTrace();
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
         } catch (Exception e) {
-            e.printStackTrace();
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
         }
-        return null;
+
     }
 
     @Operation(summary = "Save PDF (binary data) in database", responses = {
@@ -79,12 +80,18 @@ public class PdfController {
         } catch (ResourceAlreadyExistException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
         } catch (IOException e) {
-            e.printStackTrace();
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, null);
         } catch (Exception e) {
-            e.printStackTrace();
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
         }
-        return null;
 
+    }
+
+    // Healthcheck
+    @GetMapping("")
+    @ResponseBody
+    public ResponseEntity<?> healthCheck() {
+        return ResponseHandler.generateResponse("PdfController connected.", HttpStatus.OK, null);
     }
 
 }

@@ -66,8 +66,6 @@ public class FormService {
             throw new ResourceNotFoundException("Form Template " + formNo + "does not exist.");
         }
 
-        // System.out.println(getFormTempt.toString());
-
         boolean startFromAdmin = Boolean.parseBoolean(newFormInfo.get("startFromAdmin"));
 
         Form newForm;
@@ -79,10 +77,6 @@ public class FormService {
         }
 
         formRepo.save(newForm); 
-
-        
-        // TODO: Check vendor UID exists?
-
     }
 
     public void editForm(Form form) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
@@ -101,9 +95,9 @@ public class FormService {
             boolean forAdminOnly = currFormSectDB.isAdminUseOnly();
 
             // TODO: to allow admin to edit forAdminUseOnly sections; currently only allow editing for vendor questions
-            if (forAdminOnly) {
-                continue;
-            }
+            // if (forAdminOnly) {
+            //     continue;
+            // }
 
             HashMap<String, Question> currSectObj = sectionEntry.getValue().getQuestions();
 
@@ -118,21 +112,8 @@ public class FormService {
         formRepo.save(currFormObjDB);
     }
 
-    public void submitForm(Form form) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
+    public void changeStatus(Form form, String action) throws ResourceNotFoundException, Exception {
         String formID = form.getId();
-        Form currFormObjDB = formRepo.getFormByID(formID);
-
-        if (currFormObjDB == null) {
-            throw new ResourceNotFoundException("Form " + formID + "does not exist.");
-        }
-
-        currFormObjDB.changeStatusSubmitted();
-        formRepo.save(currFormObjDB);
-
-    }
-
-    public void changeStatus(Map<String, String> postQuery, String action) throws ResourceNotFoundException, Exception {
-        String formID = postQuery.get("formID");
         Form currFormObjDB = formRepo.getFormByID(formID);
         currFormObjDB.updateStatusChangeDateTime();
 
@@ -140,16 +121,13 @@ public class FormService {
             throw new ResourceNotFoundException("Form " + formID + "does not exist.");
         }
 
-        // TODO: restrict certain status change to admin/approvers
         switch(action) {
             case "approve":
                 currFormObjDB.changeStatusApproved();
-                currFormObjDB.setApprover(postQuery.get("approver"));
-                // TODO: add approver name and datatime into Form
                 break;
-            // case "submit":
-            //     currFormObjDB.setStatusSubmitted();
-            //     break;
+            case "submit":
+                currFormObjDB.changeStatusSubmitted();
+                break;
             case "adminreviewed":
                 currFormObjDB.changeStatusAdminReviewed();
                 break;
@@ -174,7 +152,7 @@ public class FormService {
         Form currFormObjDB = formRepo.getFormByID(formID);
         currFormObjDB.updateStatusChangeDateTime();
 
-        currFormObjDB.archiveForm(postQuery.get("archivedby"));
+        currFormObjDB.archiveForm(postQuery.get("archivedBy"));
 
         formRepo.save(currFormObjDB);
 
