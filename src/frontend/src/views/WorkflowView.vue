@@ -77,13 +77,29 @@ export default {
                         var companyName = this.findVendorandCompanyName(vendorID,allUser)[1]
                         var formNo = workflow.formContent.formNo
                         var status=workflow.status
-                        var stage= this.addStage(status)
-                        var dateAssign = workflow.formContent.formEffDate
-                        this.allWorkflowData.push({ id:id,task: task, vendorID:vendorID,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+                        var stage= this.addStage(status)[0]
+                        var Mstatus= this.addStage(status)[1]
+                        var formEffDate = new Date(workflow.formEffDate).toLocaleDateString('en-GB')   
+                        var deadline = new Date(workflow.deadline).toLocaleDateString('en-GB')  
+                        
+                        var archived = workflow.archived
+                        var reviewedBy = workflow.reviewedBy
+                        this.allWorkflowData.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline})
 
                         //for active workflow
-                        if (status !='ARCHIVED'){
-                            this.ActiveWorkflow.push({ id:id,task: task, vendorID:vendorID,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+                        if (archived ==false){
+                            this.ActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline})
+
+                            //mytask- todo
+                            if(status== 'PENDING_ADMIN'){
+                                this.Todo.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate})
+                            }
+
+                            //mytask- completed - check reviewedBy field
+                            if (reviewedBy !== ''){
+                                this.Completed.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate})
+                            }
+                            
                         }else{
                             // inactive workflow
                             this.InActiveWorkflow.push({ id:id,task: task, vendorID:vendorID,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
@@ -178,8 +194,55 @@ export default {
         TaskCompleted(){
             window.open('http://i.imgflip.com/31fael.jpg', '_blank');
         },
-        AddWorkflow() {alert('what is workflow');}, //dummy button function
+        AddWorkflow() {
+            var html = `<div class="align-left"><span style="color:red">* </span>Select a Form: <select id="form"><option value="" disabled selected>Select a form</option>`
+            
+            //retrieve a list of formNo, formName
+            for (var i=0; i<this.allFormData.length; i++){
+                var formNo = this.allFormData[i].formNo
+                var formName = this.allFormData[i].formName
+                html += `<option value="`+formNo+`">`+formName+`</option>`
+                
+            }
+            html += `</select><br><br>Assign to a Vendor: <select id="vendors" name="vendors"><option value="" disabled selected>Select a vendor`
+            
+            for (var i = 0; i < this.allVendor.length; i++){
+                var vendorEmail = this.allVendor[i].vendorEmail
+                var vendorName = this.allVendor[i].vendorName
+                html += `<option value="`+vendorEmail+`">`+vendorName+`</option>`
+            }
+            html += `</option></select><br><br> <i>Note: The workflow will be automatically assigned to the admin if no vendor has been assigned</i></div>`
+            
+            
+            Swal.fire({
+            title: 'Assign New Workflow',
+            html:html,
+            customClass: 'swal-wide',
+            showCancelButton: true,
+            confirmButtonText: 'Assign',
+            
+            }).then(function() {
+                const selectedform = Swal.getPopup().querySelector('#form').value
+                const selectedvendor = Swal.getPopup().querySelector('#vendors').value
+                console.log(selectedform,selectedvendor)
+                if(selectedform !==''){
+                    var url = `${BASE_URL}/api/form/create`
+                        axios.post(url, {
+                            formNo:selectedform,assigned_vendor_email:selectedvendor
+                        }).then(response => {
+                            
+                            Swal.fire('Assigned!','','success'
+                            ).then(function () {
+                                location.reload();
+                            })
+                        })
+                }else{
+                    Swal.fire('You need to select a form', '', 'info')
+                }
+                
+            })
 
+        }, 
         //table styling  function
         selectAllRows() {
             this.selectedRows = this.selectAll ? [...this.allFormData] : [];
@@ -352,7 +415,7 @@ export default {
                 <template #label>To Do({{ data3.length }})</template>
             </el-tab-pane>
             <el-tab-pane label="Completed" name="CompletedtaskTable"  @tab-click="secNavOption = 'CompletedtaskTable'">
-                <template #label>Completed({{ data4.length }})</template>
+                <template #label>Completed({{ this.Completed.length }})</template>
             </el-tab-pane>
             <el-input placeholder="Search Company Name" style="width:fit-content" size="large">
                 <template #suffix>
@@ -367,7 +430,35 @@ export default {
 
         <!-- 2.2) Completed Table content -->
         <div v-if="secNavOption === 'CompletedtaskTable'">
-            <Table :data="data4" :headers="headers4" :fields="fields4" icon-class="eye" @action-click="TaskCompleted" />
+            <!-- <Table :data="data4" :headers="headers4" :fields="fields4" icon-class="eye" @action-click="TaskCompleted" /> -->
+            <table class="my-table">
+            <thead>
+                <tr>
+                    <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
+                    <th>Task</th>
+                    <th>Company Name</th>
+                    <th>Stage</th>
+                    <th>Status</th>
+                    <th>FormEffDate</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in Completed" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
+                <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
+                <td>{{ item.task }}</td>
+                <td>{{ item.companyName }}</td>
+                <td>{{ item.stage }}</td>
+                <td>{{ item.status }}</td>
+                <td>{{ item.formEffDate }}</td>
+                <td >
+                    <el-icon class="el-input__icon" @click="ViewEachForm(item.formNo)">
+                            <View />
+                        </el-icon>
+                </td>
+                </tr>
+            </tbody>
+            </table>
         </div>
     </el-tabs >
     </div>
