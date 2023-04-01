@@ -63,7 +63,7 @@ public class UserController {
             } else if (request.getUserType().equals(UserType.APPROVER)) {
                 user = userService.createApprover(request);
             }
-            // emailService.sendAccountConfirmationEmail(user);
+            emailService.sendAccountConfirmationEmail(user);
 
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, user);
         } catch (ResourceAlreadyExistException e) {
@@ -132,12 +132,12 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
         @ApiResponse(responseCode = "404", description = "User does not exist.", content = @Content)
     })
-    @GetMapping("/{userEmail}")
+    @GetMapping("/{email}")
     @ResponseBody
-    public ResponseEntity<?> getUserByEmail(@PathVariable String userEmail) {
+    public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
         User user = null;
         try {
-            user = userService.getUserByEmail(userEmail);
+            user = userService.getUserByEmail(email);
         } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         } catch (Exception e) {
@@ -231,7 +231,7 @@ public class UserController {
         }
     } 
 
-    // Healthcheck
+    @Operation(summary = "Heathcheck")
     @GetMapping("")
     @ResponseBody
     public ResponseEntity<?> healthCheck() {

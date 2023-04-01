@@ -136,10 +136,6 @@ public class FormService {
             case "adminreviewed":
                 currFormObjDB.changeStatusAdminReviewed();
                 break;
-            // case "archive":
-            //     currFormObjDB.setStatus(FormStatus.ARCHIVED);
-            //     currFormObjDB.setArchived(true);
-            //     currFormObjDB.setArchivedBy(postQuery.get("user"));
             case "adminreject":
                 currFormObjDB.changeStatusAdminRejected();
                 break;

@@ -141,7 +141,7 @@ public class FormTemplateController {
         }
     }
 
-    // Healthcheck
+    @Operation(summary = "Heathcheck")
     @GetMapping("")
     @ResponseBody
     public ResponseEntity<?> healthCheck() {
