@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.g2t3.vms.exception.ResourceAlreadyExistException;
 import com.g2t3.vms.exception.ResourceNotFoundException;
+import com.g2t3.vms.exception.ResourceNotValidException;
 import com.g2t3.vms.model.Email;
 import com.g2t3.vms.model.EmailTemplate;
 import com.g2t3.vms.request.ReminderEmailRequest;
@@ -36,8 +37,14 @@ public class EmailController {
         @PostMapping(value = "/sendEmail", consumes = "application/json", produces = "application/json")
         public ResponseEntity<?> sendEmail(@RequestBody Email email) {
             try{
-                service.sendEmail(email);
+                if (email.getAttachment() == "") {
+                    service.sendSimpleEmail(email);
+                } else {
+                    service.sendEmailWithAttachment(email);
+                }
                 return ResponseHandler.generateResponse("Sent email successfully.", HttpStatus.OK, null);
+            } catch(ResourceNotValidException e) {
+                return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.I_AM_A_TEAPOT, null);
             } catch (MailException e){
                 return ResponseHandler.generateResponse("Error Occured: Mail Exception. " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
             } catch(MessagingException e){
@@ -52,6 +59,8 @@ public class EmailController {
             try{
                 service.sendReminderEmail(email);
                 return ResponseHandler.generateResponse("Sent email successfully.", HttpStatus.OK, null);
+            } catch(ResourceNotValidException e) {
+                return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.I_AM_A_TEAPOT, null);
             } catch (MailException e){
                 return ResponseHandler.generateResponse("Error Occured: Mail Exception. " + e.getMessage(), HttpStatus.MULTI_STATUS, null);
             } catch(MessagingException e){
