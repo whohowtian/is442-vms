@@ -261,7 +261,7 @@ export default {
             showCancelButton: true,
             confirmButtonText: 'Assign',
             
-            }).then(function() {
+            }).then((result) => {
                 const selectedform = Swal.getPopup().querySelector('#form').value
                 const selectedvendor = Swal.getPopup().querySelector('#vendors').value
                 console.log(selectedform,selectedvendor)
@@ -270,11 +270,14 @@ export default {
                         axios.post(url, {
                             formNo:selectedform,assigned_vendor_email:selectedvendor
                         }).then(response => {
+                            if (result.isConfirmed) {
+                                Swal.fire('Assigned!','','success'
+                                ).then(function () {
+                                    location.reload();
+                                })
+
+                            }
                             
-                            Swal.fire('Assigned!','','success'
-                            ).then(function () {
-                                location.reload();
-                            })
                         })
                 }else{
                     Swal.fire('You need to select a form', '', 'info')
