@@ -128,12 +128,14 @@ public class FormService {
 
         switch(action) {
             case "approve":
+                currFormObjDB.setApprover(form.getApprover());
                 currFormObjDB.changeStatusApproved();
                 break;
             case "submit":
                 currFormObjDB.changeStatusSubmitted();
                 break;
             case "adminreviewed":
+                currFormObjDB.setReviewedBy(form.getReviewedBy());
                 currFormObjDB.changeStatusAdminReviewed();
                 break;
             case "adminreject":
