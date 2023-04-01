@@ -24,6 +24,7 @@ public class Form {
     private FormTemplate formContent;
 
     private String approver;
+    private String reviewedBy;
 
     // MAYBE USER OBJECT?
     private String archivedBy;
@@ -47,6 +48,7 @@ public class Form {
     public Form (FormTemplate formContent) {
         this.formContent = formContent;
         this.approver = "";
+        this.reviewedBy = "";
         this.archivedBy = null;
         LocalDateTime dateTimeNow = LocalDateTime.now();
         this.formEffDate = dateTimeNow;
