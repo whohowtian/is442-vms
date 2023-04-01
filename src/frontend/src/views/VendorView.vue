@@ -16,6 +16,8 @@
                 { label: 'HOME', route: '/VendorView'  },
                 { label: 'LOGOUT', route: '/'  }
             ],
+            userId :'',
+            userEmail:'',
             activeOption:'taskTable', //default table displaying
 
             userName:fakeTaskData.todo[0].task, // to fetch from BE
@@ -43,8 +45,16 @@
         created() {
         //user session
         const user = JSON.parse(sessionStorage.getItem('user'));
-        console.log(user.userId); 
-        console.log(user.userEmail); 
+        if(user == null){
+            //hardcode pass data
+            this.userId = "6426e823533ce37c3e4ddae3"
+            this.userEmail = "yyteng.2019@gmail.com"
+        }else{
+            this.userId = user.userId
+            this.userEmail = user.userEmail
+        }
+        console.log("userId-->", this.userId); 
+        console.log("userEmail-->",this.userEmail); 
     }
     };
 </script>

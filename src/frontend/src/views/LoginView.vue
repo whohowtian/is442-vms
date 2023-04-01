@@ -59,7 +59,7 @@
           
           if (userData.password === this.password) {
             alert(`Login as ${userData.userType} successful!`);
-            sessionStorage.setItem('user', JSON.stringify({userId: userData.userId, userEmail: userData.email}));
+            sessionStorage.setItem('user', JSON.stringify({userId: userData.userId, userEmail: userData.email, name:userData.name}));
             if(userData.userType =="VENDOR"){
               this.$router.push('/VendorView');
             }
