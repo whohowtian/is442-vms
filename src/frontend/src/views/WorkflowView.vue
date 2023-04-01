@@ -84,16 +84,17 @@ export default {
                         var formNo = workflow.formContent.formNo
                         var status=workflow.status
                         var stage= this.addStage(status)
-                        var formEffDate = new Date(workflow.formEffDate).toLocaleDateString('en-GB')                     
+                        var formEffDate = new Date(workflow.formEffDate).toLocaleDateString('en-GB')   
+                        var deadline = new Date(workflow.deadline).toLocaleDateString('en-GB')   
                         var archived = workflow.archived
-                        this.allWorkflowData.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, formEffDate:formEffDate})
+                        this.allWorkflowData.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, formEffDate:formEffDate,deadline:deadline})
 
                         //for active workflow
                         if (archived ==false){
-                            this.ActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, formEffDate:formEffDate})
+                            this.ActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, formEffDate:formEffDate,deadline:deadline})
                         }else{
                             // inactive workflow
-                            this.InActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, formEffDate:formEffDate})
+                            this.InActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, formEffDate:formEffDate,deadline:deadline})
                         }
                         
                     }
@@ -131,7 +132,7 @@ export default {
                 //data cleaning
                 for (const vendor of allSelectedUser){
                     var vendorEmail = vendor.email
-                    var vendorName = vendor.name
+                    var vendorName = vendor.entityName
                     this.allVendor.push({ vendorEmail: vendorEmail, vendorName: vendorName})
                 }
             //   console.log(this.allFormData)
@@ -158,7 +159,7 @@ export default {
             var stage = '';
             if (status == "PENDING_VENDOR"){
                 stage = 'Vendor'
-            }else if (status == "PENDING_REVIEW"){
+            }else if (status == "PENDING_ADMIN"){
                 stage = 'Admin'
             }else if(status == "PENDING_APPROVAL"){
                 stage = 'Approver'
@@ -351,6 +352,7 @@ export default {
                     <th>Stage</th>
                     <th>Status</th>
                     <th>FormEffDate</th>
+                    <th>Deadline</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -364,6 +366,7 @@ export default {
                 <td>{{ item.stage }}</td>
                 <td>{{ item.status }}</td>
                 <td>{{ item.formEffDate }}</td>
+                <td>{{ item.deadline }}</td>
                 <td >
                     <div  class="btn-group dropup">
                         <Button buttonStyle="none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
