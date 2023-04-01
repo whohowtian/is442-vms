@@ -101,11 +101,11 @@ public class FormController {
         } 
     }
 
-    @PostMapping("/submit")
-    public ResponseEntity<?> submitForm(@RequestBody Form submittedForm) {
+    @PostMapping("/action/{action}")
+    public ResponseEntity<?> submitForm(@RequestBody Form submittedForm, @PathVariable String action) {
         try {
             service.editForm(submittedForm);
-            service.submitForm(submittedForm); 
+            service.changeStatus(submittedForm, action); 
             return ResponseHandler.generateResponse("Form edited successfully.", HttpStatus.OK, null);
         } catch (ResourceNotFoundException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
@@ -116,20 +116,20 @@ public class FormController {
         } 
     }
 
-    @PostMapping("/changestatus/{action}")
-    public ResponseEntity<?> changeStatus(@RequestBody Map<String, String> postQuery, @PathVariable String action) {
-        try {
-            service.changeStatus(postQuery, action);
-            return ResponseHandler.generateResponse("Form Status changed successfully.", HttpStatus.OK, null);
-        }
-        catch (ResourceNotFoundException e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
-        }
-    }
+    // @PostMapping("/changestatus/{action}")
+    // public ResponseEntity<?> changeStatus(@RequestBody Map<String, String> postQuery, @PathVariable String action) {
+    //     try {
+    //         service.changeStatus(postQuery, action);
+    //         return ResponseHandler.generateResponse("Form Status changed successfully.", HttpStatus.OK, null);
+    //     }
+    //     catch (ResourceNotFoundException e) {
+    //         return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+    //     }
+    //     catch (Exception e) {
+    //         e.printStackTrace();
+    //         return ResponseHandler.generateResponse("Error Occured: " + e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
+    //     }
+    // }
 
     @PostMapping("/archive")
     public ResponseEntity<?> changeStatus(@RequestBody Map<String, String> postQuery) {
@@ -178,7 +178,4 @@ public class FormController {
         return ResponseHandler.generateResponse("Successful", HttpStatus.OK, formsArr);
         
     }
-
-    // @GetMapping("/user/{UID}")
-    // public
 }
