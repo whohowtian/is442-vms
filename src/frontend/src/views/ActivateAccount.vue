@@ -1,5 +1,7 @@
 <script>
 import NavBar from '../components/Navbar.vue'
+import { BASE_URL } from '../api.js';
+import axios from 'axios';
 
 export default {
         name: "PasswordView",
@@ -18,7 +20,8 @@ export default {
             contains_special_character: false,
             valid_password: false,
             password_match: false,
-            
+            userId:'',
+            userEmail:'',
             menuItems: [
                 { label: 'HOME', route: '/AdminView'  },
                 { label: 'ACCOUNT', route: '/AccountView'  },
@@ -27,9 +30,45 @@ export default {
             ]
             }
         },
+        mounted() {
+            const params = new URLSearchParams(window.location.search);
+            this.userId = params.get('id');
+            this.matchUser();
+        },
         methods: {
-            setPassword() {alert('Password set!');
-                window.location.href = '/AccountView';
+            matchUser() {
+                axios.get(`${BASE_URL}/api/user/id/`+this.userId)
+                .then(response => {
+                    var selectedUser = response.data.data;
+                    this.userEmail = selectedUser.email
+                })
+
+            },
+            setPassword() {
+                console.log(this.userEmail,this.password2 )
+                Swal.fire({
+                title: 'Reset Password',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, reset it!'
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    var url = `${BASE_URL}/api/user/activate-account`
+                    axios.post(url, {
+                        email:this.userEmail,password:this.password2
+                    }).then(response => {
+                        Swal.fire(
+                        'Reset!',
+                        'success'
+                        )
+                    })
+                }
+                })
+
+                // alert('Password set!');
+                // window.location.href = '/AccountView';
             },
             checkPassword() {
                 this.password_length = this.password.length;
@@ -51,7 +90,7 @@ export default {
                 if (this.contains_eight_characters === true &&
                                 this.contains_special_character === true &&
                                 this.contains_uppercase === true &&
-                                this.contains_number === true) {
+                                this.contains_number === true &&this.password_match === true) {
                                     this.valid_password = true;			
                 } else {
                     this.valid_password = false;
@@ -97,9 +136,9 @@ export default {
                 </div>
             
 
-                
+            
             <div class="col">
-                <button v-if="this.checkPassword == true" type="button" class="btn btn-outline-primary px-4 mt-5 float-end" id="createBtn"
+                <button v-if="this.valid_password  == true" type="button" class="btn btn-outline-primary px-4 mt-5 float-end" id="createBtn"
             style="border-radius: 5px;" @click="setPassword()" >Set Password</button>
             
                 </div>

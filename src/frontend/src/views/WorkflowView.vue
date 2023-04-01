@@ -74,7 +74,7 @@ export default {
                     
                     //data cleaning
                     for (const workflow of allWorkflow){
-                        console.log(workflow)
+                        // console.log(workflow)
                         var id = workflow.id
                         var task = workflow.formContent.formName
                         var vendorEmail= workflow.assigned_vendor_email

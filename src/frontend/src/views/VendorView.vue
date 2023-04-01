@@ -35,7 +35,7 @@
         //user session
         const user = JSON.parse(sessionStorage.getItem('user'));
         this.userId = "6426e823533ce37c3e4ddae3"
-        this.userEmail = "yyteng.2019@gmail.com"
+        this.userEmail = "ftneo.2020@scis.smu.edu.sg"
         // if(user == null){
         //     //hardcode pass data
         //     this.userId = "6426e823533ce37c3e4ddae3"
