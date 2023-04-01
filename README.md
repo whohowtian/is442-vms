@@ -9,7 +9,12 @@ Please ensure the following is downloaded before running the application.
 
 ## Steps
 ### Connect to database
-Open src/backend/main/resources/applicationproperties and enter the  connecting string of your MongoDB database. Otherwise, you may use the following database for testing purposes.
+Open src/backend/main/resources/application.properties and enter the connecting string of your MongoDB database in property:
+```
+spring.data.mongodb.uri=
+```
+
+Otherwise, you may use the following database for testing purposes.
 ```
 mongodb+srv://vmsStringbootUsr:XE3HfPeVUMPIqoor@cluster0.ldxjqem.mongodb.net/test?authMechanism=SCRAM-SHA-1
 ```
