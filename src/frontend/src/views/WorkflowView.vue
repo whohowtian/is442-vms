@@ -90,14 +90,18 @@ export default {
                         var Mstatus= this.addStage(status)[1]
                         var formEffDate = new Date(workflow.formEffDate).toLocaleDateString('en-GB')   
                         var deadline = new Date(workflow.deadline).toLocaleDateString('en-GB')  
-                        
                         var archived = workflow.archived
                         var reviewedBy = workflow.reviewedBy
-                        this.allWorkflowData.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline})
+                        var archivedBy = workflow.archivedBy
+                        var approvedBy = workflow.approver
+                        console.log(approvedBy)
+
+
+                        this.allWorkflowData.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline,reviewedBy:reviewedBy,archivedBy:archivedBy,approvedBy:approvedBy})
 
                         //for active workflow
                         if (archived ==false){
-                            this.ActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline})
+                            this.ActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline,reviewedBy:reviewedBy,approvedBy:approvedBy})
 
                             //mytask- todo
                             if(status== 'PENDING_ADMIN'){
@@ -111,7 +115,7 @@ export default {
                             
                         }else{
                             // inactive workflow
-                            this.InActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline})
+                            this.InActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline,reviewedBy:reviewedBy,archivedBy:archivedBy})
                         }
                         
                     }
@@ -339,10 +343,10 @@ export default {
         <!-- sub nav bar [Active / Inactive] -->
         <el-tabs v-model="secNavOption"  type="border-card" >
             <el-tab-pane label="Active" name="ActiveWorkFlow"  >
-                <template #label>Active({{ ActiveWorkflow.length }})</template>
+                <template #label>In Progress ({{ ActiveWorkflow.length }})</template>
             </el-tab-pane>
             <el-tab-pane label="Inactive" name="InActiveworkflowTable"  @tab-click="secNavOption = 'InActiveworkflowTable'">
-                <template #label>Inctive({{ InActiveWorkflow.length }})</template>
+                <template #label>Archived ({{ InActiveWorkflow.length }})</template>
             </el-tab-pane>
 
         <!-- search bar and button (still unable to fit to inline) -->
@@ -373,6 +377,7 @@ export default {
                     <th>Status</th>
                     <th>Vendor Assigned Date</th>
                     <th>Deadline</th>
+                    <th>Reviewed By</th>
                     <th>Approved By</th>
                     <th>Actions</th>
                 </tr>
@@ -386,7 +391,8 @@ export default {
                 <td>{{ item.status }}</td>
                 <td>{{ item.formEffDate }}</td>
                 <td>{{ item.deadline }}</td>
-                <td>{{  }}</td>
+                <td>{{ item.reviewedBy }}</td>
+                <td>{{ item.approvedBy }}</td>
                 <td >
                     <div  class="btn-group dropup">
                         <Button buttonStyle="none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -418,6 +424,7 @@ export default {
                     <th>Last Stage</th>
                     <th>Last Status</th>
                     <th>FormEffDate</th>
+                    <th>Archived By</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -429,6 +436,7 @@ export default {
                 <td>{{ item.stage }}</td>
                 <td>{{ item.status }}</td>
                 <td>{{ item.formEffDate }}</td>
+                <td>{{ item.archivedBy}}</td>
                 <td >
                     <el-icon class="el-input__icon" @click="ViewEachForm(item.formNo)">
                             <View />
