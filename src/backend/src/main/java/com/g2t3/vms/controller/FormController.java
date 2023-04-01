@@ -36,8 +36,15 @@ public class FormController {
     // Returns all Forms
     Logger logger = LogManager.getLogger(FormTemplateController.class);
 
+    // Healthcheck
+    @GetMapping("/")
+    @ResponseBody
+    public ResponeEntity<?> healthCheck() {
+        return ResponseHandler.generateResponse("FormController connected", HttpStatus.OK);
+    }
+
     // Returns all Forms
-    @GetMapping("")
+    @GetMapping("/all")
     @ResponseBody
     public ResponseEntity<?> getAllForm() {
         ArrayList <Form> forms = new ArrayList<>();
@@ -51,7 +58,7 @@ public class FormController {
         return ResponseHandler.generateResponse("Successful", HttpStatus.OK, forms);
     }
 
-    @GetMapping("/{FID}")
+    @GetMapping("{FID}")
     @ResponseBody
     public ResponseEntity<?> getFormById(@PathVariable String FID) {
         Form getForm;

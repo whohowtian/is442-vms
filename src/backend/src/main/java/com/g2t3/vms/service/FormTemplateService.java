@@ -30,7 +30,7 @@ public class FormTemplateService {
         return formTemplates;
     }
 
-    public FormTemplate getFormTemplateByFTID(String formTemplateNo) throws ResourceNotFoundException, Exception {
+    public FormTemplate getFormTemplateByFTNo(String formTemplateNo) throws ResourceNotFoundException, Exception {
         
         FormTemplate getForm = formTemplateRepo.getFormTemplateByNo(formTemplateNo);
         if (getForm == null) {
