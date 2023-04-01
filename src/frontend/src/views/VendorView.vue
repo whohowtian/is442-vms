@@ -105,9 +105,9 @@
         TaskCompleted(){
             window.open('http://i.imgflip.com/31fael.jpg', '_blank');
         },
-        EditEachForm(formNo,formId){
-            localStorage.setItem('formNo', [formNo,formId])
-            window.location.href = "VendorForm";
+        EditEachForm(formId,status){
+            localStorage.setItem('formNo', [formId,status])
+            window.location.href = "Form";
         },
         //table styling  function
         selectAllRows() {
@@ -186,7 +186,7 @@
                 <td>{{ item.formEffDate }}</td>
                 <td>{{ item.deadline }}</td>
                 <td >
-                    <el-icon class="el-input__icon" @click="EditEachForm(item.formNo, item.id)">
+                    <el-icon class="el-input__icon" @click="EditEachForm(item.id, item.status)">
                             <Edit />
                         </el-icon>
                 </td>
@@ -211,11 +211,11 @@
                     <td class="checkbox-col"><input type="checkbox" ></td>
                     <td>{{ item.task }}</td>
                     <td>{{ item.formNo }}</td>
-                    <td>{{ item.company }}</td>
                     <td>{{ item.id }}</td>
+                    <td>{{ item.status }}</td>
                     <td>{{ item.dateAssign }}</td>
                     <td >
-                        <el-icon class="el-input__icon" @click="EditEachForm(item.formNo, item.id)">
+                        <el-icon class="el-input__icon" @click="EditEachForm(item.formNo, item.id, item.status)">
                             <Edit />
                         </el-icon>
                     </td>

@@ -24,7 +24,7 @@
             userName:'',
             activeOption:'taskTable', //default table displaying
             selectedRows: [], //tick checkbox
-        selectAll: false,
+            selectAll: false,
             allToDo:[],
             allCompleted:[],
 
@@ -67,7 +67,7 @@
             return stage
         },        
         async getAllWorkflow(){
-            axios.get(`${BASE_URL}/api/form/formstatus/APPROVED`)
+            axios.get(`${BASE_URL}/api/form/formstatus/PENDING_APPROVAL`)
                 .then(response => {
                     var allWorkflow = response.data.data
                     console.log(allWorkflow)
@@ -77,7 +77,8 @@
                         var formNo = workflow.formContent.formNo
                         var status=workflow.status
                         var stage=this.addStage(status)
-                        this.allToDo.push({ id: id, task: task, formNo: formNo, stage:stage, status: status})
+                        var vendor=workflow.assigned_vendor_email
+                        this.allToDo.push({ id: id, task: task, formNo: formNo, stage:stage, status: status,vendor: vendor})
                 }
                 console.log("todo-->", this.allToDo)
                 })
@@ -85,10 +86,10 @@
                 console.log(error);
                 });
         },
-            //table styling  function
-            selectAllRows() {
-        this.selectedRows = this.selectAll ? [...this.allToDo] : [];
-        },
+        //table styling  function
+        selectAllRows() {
+            this.selectedRows = this.selectAll ? [...this.allToDo] : [];
+            },
         toggleRowSelection(item, event) {
             if (event.target.tagName === 'TD') {
                 const index = this.selectedRows.findIndex(selectedRow => selectedRow.id === item.id);
@@ -101,7 +102,11 @@
         },
         isSelected(item) {
             return this.selectedRows.findIndex(selectedRow => selectedRow.id === item.id) !== -1;
-        }
+        },
+        ApproveEachForm(formNo,formId){
+            localStorage.setItem('formNo', [formNo,formId])
+            window.location.href = "Form";
+        },
         },
     };
 </script>
@@ -133,6 +138,7 @@
                     <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
                     <th>Task</th>
                     <th>Form No</th>
+                    <th>Vendor</th>
                     <th>Stage</th>
                     <th>Status</th>
                     <th>Date Assigned</th>
@@ -144,16 +150,14 @@
                 <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
                 <td>{{ item.task }}</td>
                 <td>{{ item.formNo }}</td>
+                <td>{{ item.vendor }}</td>
                 <td>{{ item.stage }}</td>
                 <td>{{ item.status }}</td>
                 <td>date assigned</td>
                 <td >
-                    <div  class="btn-group dropup">
-                        <Button buttonStyle="none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            ...
-                        </Button>
-                    </div>
-
+                    <el-icon class="el-input__icon" @click="EditEachForm(item.formNo, item.id)">
+                        <Edit />
+                    </el-icon>
                 </td>
                 </tr>
             </tbody>

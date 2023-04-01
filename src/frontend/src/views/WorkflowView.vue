@@ -228,9 +228,9 @@ export default {
                 }
             })
         },     
-        ViewEachForm(formNo){ //GET FormTemplate API
-            localStorage.setItem('formNo', formNo)
-            window.location.href = "VendorForm";
+        ViewEachForm(formID){ //GET FormTemplate API
+            localStorage.setItem('formNo', formID)
+            window.location.href = "Form";
         },
         EditEachForm(formNo){ //GET FormTemplate API
             localStorage.setItem('formNo', formNo)
@@ -307,7 +307,7 @@ export default {
         },
         readyToPrintPdf(formNo,companyName){
             localStorage.setItem('formNo', [formNo, companyName])
-            window.location.href = "VendorForm";
+            window.location.href = "Form";
         },
     },
     computed: {
@@ -399,7 +399,7 @@ export default {
                             ...
                         </Button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" @click="ViewEachForm(item.formNo)">View</a></li>
+                            <li><a class="dropdown-item" @click="ViewEachForm(item.id)">View</a></li>
                             <li v-if="item.stage=='Vendor'"><a class="dropdown-item" href="#">Email</a></li>
                             <li v-if="item.status=='APPROVED'"><a class="dropdown-item"  @click="readyToPrintPdf(item.id,item.task)">PDF</a></li>
                             <li><a class="dropdown-item" @click="deleteWorkflow(item.id, item.vendorID)">Delete</a></li>
@@ -438,7 +438,7 @@ export default {
                 <td>{{ item.formEffDate }}</td>
                 <td>{{ item.archivedBy}}</td>
                 <td >
-                    <el-icon class="el-input__icon" @click="ViewEachForm(item.formNo)">
+                    <el-icon class="el-input__icon" @click="ViewEachForm(item.id)">
                             <View />
                         </el-icon>
                 </td>
@@ -492,7 +492,7 @@ export default {
                 <td>{{ item.status }}</td>
                 <td>{{ item.formEffDate }}</td>
                 <td >
-                    <el-icon class="el-input__icon" @click="ViewEachForm(item.formNo)">
+                    <el-icon class="el-input__icon" @click="ViewEachForm(item.id)">
                             <Edit />
                         </el-icon>
                 </td>

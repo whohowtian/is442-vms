@@ -52,14 +52,14 @@
         }
 
         try {
-          axios.get(`${BASE_URL}/api/user/email/`+ this.email)
+          axios.get(`${BASE_URL}/api/user/`+ this.email)
             .then(response => {
               var userData = response.data.data;
               console.log(userData)
           
           if (userData.password === this.password) {
             alert(`Login as ${userData.userType} successful!`);
-            sessionStorage.setItem('user', JSON.stringify({userId: userData.userId, userEmail: userData.email, name:userData.name}));
+            sessionStorage.setItem('user', JSON.stringify({userId: userData.userId, userEmail: userData.email, name:userData.name, userType:userData.userType}));
             if(userData.userType =="VENDOR"){
               this.$router.push('/VendorView');
             }
