@@ -32,10 +32,34 @@ npm install
 npm run dev
 ```
 
+### Access
+1. [Backend](http://localhost:8080/)
+2. [Frontend](http://localhost:5173/)
+3. [API Documentation](http://localhost:8080/swagger-ui/index.html)
+
+
 ## Functionalities
-### Employee
-- 
+### All Users
+- Login and logout
+- Set and reset password
+
 ### Vendor
+- View my account: View my account
+- View and edit forms assigned to me
+- Check status of forms
+- Download approved forms as PDFs:  Download a single form, download all approved forms as a ZIP file
+
+### Admin
+- View all accounts:  CRUD functions for any accounts, able to change user type
+- Create customisable Form Template: CRUD functions for form templates
+- Assign a Workflow: Start a new workflow by assigning form to vendor or admin, archive workflows
+- Download approved forms as PDFs: Download a single form, download multiple forms from the same vendor as a ZIP file
+- Send email reminder: Send an email reminder manually to any vendor when form submission deadline is near
+
+###Approver
+- Approve and Reject Workflow: Approve workflow and save form in database automatically, reject workflow and include reason for rejection
+- Download approved forms as PDFs:  Download a single form, download multiple forms from the same vendor as a ZIP file
+
 
 ## Frameowrk & Libraries
 ### Backend
