@@ -43,11 +43,11 @@ public class PdfController {
             pdfService.retrievePDFByFileName(fileName);
             return ResponseHandler.generateResponse("Successful", HttpStatus.OK, null);
         } catch (IllegalStateException e) {
-            e.printStackTrace();
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
         } catch (Exception e) {
-            e.printStackTrace();
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
         }
-        return null;
+
     }
 
     @Operation(summary = "Retrieve PDF by vendor UEN, Download all PDFs in a ZIP file under Downloads folder",
@@ -80,7 +80,7 @@ public class PdfController {
         } catch (ResourceAlreadyExistException e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
         } catch (IOException e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
+            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, null);
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.MULTI_STATUS, null);
         }
