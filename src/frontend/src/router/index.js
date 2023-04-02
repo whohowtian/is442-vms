@@ -64,9 +64,9 @@ const router = createRouter({
       component: () => import('../views/form/AdminUpdate/index.vue')
     },
     {
-      path: '/tryApi',
-      name: 'tryApi',
-      component: () => import('../tryApi.vue')
+      path: '/ViewForm',
+      name: 'ViewForm',
+      component: () => import('../views/form/ViewForm.vue')
     },
   ]
 })

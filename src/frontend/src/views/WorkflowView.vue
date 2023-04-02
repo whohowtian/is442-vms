@@ -60,6 +60,7 @@ export default {
         this.getAllFormAvail() //trigger FormTemplate API
         this.getAllWorkflow() //trigger Form API
         this.getAllVendor("VENDOR") // for assigning workflow- vendor
+        console.log(this.userId)
         },
     methods: {
         async getAllWorkflow(){
@@ -223,16 +224,18 @@ export default {
                 }
             })
         },     
-        ViewEachForm(formID){ //GET FormTemplate API
+        ViewEachForm(formID){ //GET Form API
             localStorage.setItem('formNo', formID)
-            window.location.href = "Form";
+            window.location.href = "ViewForm";
         },
-        EditEachForm(formNo){ //GET FormTemplate API
+        EditFormTemplate(formNo){ //GET FormTemplate API
             localStorage.setItem('formNo', formNo)
             window.location.href = "UpdateFormBuilder";
         },
-        TaskCompleted(){
-            window.open('http://i.imgflip.com/31fael.jpg', '_blank');
+        EditEachForm(formNo){ //GET Form API
+            localStorage.setItem('formNo', formNo)
+            window.location.href = "Form";
+
         },
         AddWorkflow() {
             var html = `<div class="align-left"><span style="color:red">* </span>Select a Form: <select id="form"><option value="" disabled selected>Select a form</option>`
@@ -339,8 +342,8 @@ export default {
             return this.selectedRows.findIndex(selectedRow => selectedRow.id === item.id) !== -1;
         },
         readyToPrintPdf(formNo,companyName){
-            localStorage.setItem('formNo', [formNo, companyName])
-            window.location.href = "Form";
+            localStorage.setItem('pdf', [formNo, companyName])
+            window.location.href = "ViewForm";
         },
     },
     computed: {
@@ -434,7 +437,7 @@ export default {
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" @click="ViewEachForm(item.id)">View</a></li>
                             <li v-if="item.stage=='Vendor'"><a class="dropdown-item" @click="sendRemainder(item.VendorName, item.vendorEmail,item.formNo,item.deadline)">Email</a></li>
-                            <li v-if="item.status=='Approved'"><a class="dropdown-item"  @click="readyToPrintPdf(item.id,item.task)">PDF</a></li>
+                            <li v-if="item.status=='Approved'"><a class="dropdown-item"  @click="readyToPrintPdf(item.id,item.companyName)">PDF</a></li>
                             <li><a class="dropdown-item" @click="deleteWorkflow(item.id, item.vendorID)">Delete</a></li>
                         </ul>
                     </div>
@@ -523,7 +526,7 @@ export default {
                 <td>{{ item.status }}</td>
                 <td>{{ item.formEffDate }}</td>
                 <td >
-                    <el-icon class="el-input__icon" @click="ViewEachForm(item.id)">
+                    <el-icon class="el-input__icon" @click="EditEachForm(item.id)">
                             <Edit />
                         </el-icon>
                 </td>
@@ -555,7 +558,7 @@ export default {
                 <td>{{ item.status }}</td>
                 <td>{{ item.formEffDate }}</td>
                 <td >
-                    <el-icon class="el-input__icon" @click="ViewEachForm(item.formNo)">
+                    <el-icon class="el-input__icon" @click="ViewEachForm(item.id)">
                             <View />
                         </el-icon>
                 </td>
@@ -587,7 +590,7 @@ export default {
                     <td>{{ item.editedby }}</td>
                     <td>{{ item.lastEdited }}</td>
                     <td >
-                        <el-icon class="el-input__icon" @click="EditEachForm(item.formNo)">
+                        <el-icon class="el-input__icon" @click="EditFormTemplate(item.formNo)">
                             <Edit />
                         </el-icon>
                     </td>

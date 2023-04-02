@@ -30,30 +30,26 @@
                 </el-col>
               </div>          
           </template>
-
-
-          <!-- pdf function visible only if is approval -->
-          <!-- <button type="button" class="btn btn-primary" @click="exportToPdf">Print</button> -->
-
-          <div v-if="userType === 'VENDOR'">
+        
+          <div v-if="userType === 'VENDOR'" style="margin-top: 30px;">
             <button type="button" class="btn btn-success" @click="submitForm">Submit</button>
-            <button type="button" class="btn btn-light" @click="submitDraft">Save as Draft</button>
+            <button type="button" class="btn btn-dark" style="margin-left: 30px;" @click="submitDraft">Save as Draft</button>
           </div>
 
-          <div v-if="userType === 'APPROVER'">
+          <div v-if="userType === 'APPROVER'" style="margin-top: 30px;">
             <button type="button" class="btn btn-success" @click="ApproverApprove">Approve</button>
-            <button type="button" class="btn btn-danger" @click="showReasonInput = true">Reject</button>
+            <button type="button" class="btn btn-danger" @click="showReasonInput = true"  style="margin-left: 30px;" >Reject</button>
 
             <div v-if="showReasonInput" style="margin: 30px; display: flex; flex-direction: column;">
               <label for="reason">Rejection Reason:</label>
               <textarea id="reason" v-model="rejectReason" style="resize: both; min-height: 100px; max-width: 400px;"></textarea>
-              <button type="button" class="btn btn-dark" @click="ApproverReject" style="align-self: flex-start;">Submit Reject</button>
+              <button type="button" class="btn btn-dark" @click="ApproverReject" style="align-self: flex-start; " >Submit Reject</button>
             </div>
           </div>
 
-          <div v-if="userType === 'ADMIN'">
+          <div v-if="userType === 'ADMIN'" style="margin-top: 30px;">
             <button type="button" class="btn btn-success" @click="AdminApprove">AdminApprove</button>
-            <button type="button" class="btn btn-danger" @click="showReasonInput = true">AdminReject</button>
+            <button type="button" class="btn btn-danger" @click="showReasonInput = true" style="margin-left: 30px;" >AdminReject</button>
 
             <div v-if="showReasonInput" style="margin: 30px; display: flex; flex-direction: column;">
               <label for="reason">Rejection Reason:</label>
@@ -86,6 +82,7 @@
         formData:[],
         formattedData:[], //data structure to match formBuilder component style
         nullField:[],
+        userId:"",
         userEmail:"",
         userName:"",
         userType:"",
@@ -101,13 +98,16 @@
             this.userEmail = "asasas.2019@gmail.com"
             this.userType ="APPROVER"
             this.userName ="FangTingXOXO"
+            this.userId = "6426e823533ce37c3e4ddae3"
         }else{
             this.userEmail = user.userEmail
             this.userType = user.userType
             this.userName = user.name
+            this.userId = user.userId
         }
         console.log("userType-->", this.userType); 
         console.log("userEmail-->",this.userEmail); 
+        console.log("userId-->",this.userId); 
 
     if (localStorage.getItem('formNo')!= null){ //retrieve formNo vendorId passed from VendorView
       const dataValue = localStorage.getItem('formNo');
@@ -229,7 +229,7 @@
       const submitData = {
         id: this.formNo,
         "formContent": {formSections},
-        "reviewedBy": this.userName
+        "reviewedBy": this.userId
         };
 
       console.log("Admin submit-->",submitData)
@@ -320,7 +320,7 @@
       const submitData = {
         id: this.formNo,
         "formContent": {formSections},
-        "reviewedBy": this.userName
+        "reviewedBy": this.userId
         };
 
       console.log("Admin reject-->",submitData)
@@ -430,7 +430,7 @@
       const submitData = {
         id: this.formNo,
         "formContent": {formSections},
-        "approver": this.userName
+        "approver": this.userId
         };
 
       console.log("Admin submit-->",submitData)
@@ -521,7 +521,7 @@
       const submitData = {
         id: this.formNo,
         "formContent": {formSections},
-        "approver": this.userName
+        "approver": this.userId
         };
 
       console.log("Approver reject-->",submitData)
@@ -811,3 +811,13 @@
 }
     </script>
     
+
+<style scoped>
+.main__wrapper {
+    padding-top: 30%;
+    margin: 0 auto;
+    max-width: 900px;
+    padding: 20px;
+    background-color: #f5f5f5;
+  }
+  </style>
