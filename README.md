@@ -24,7 +24,8 @@ To run the entire application, do the following:
 1. From the root folder, cd into src folder.
 2. Run the applications with the following commands on terminal:
 ```
-build.bat
+cd src/frontend && npm install
+cd ../ && runall.bat
 ```
 
 To run the application separately, do the following:
@@ -50,7 +51,6 @@ npm run dev
 - Set and reset password
 
 ### Vendor
-- View my account: View my account
 - View and edit forms assigned to me
 - Check status of forms
 - Download approved forms as PDFs:  Download a single form, download all approved forms as a ZIP file
