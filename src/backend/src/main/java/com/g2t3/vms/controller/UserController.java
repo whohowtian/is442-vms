@@ -259,7 +259,7 @@ public class UserController {
         }
     } 
 
-    @Operation(summary = "Heathcheck")
+    @Operation(summary = "Healthcheck")
     @GetMapping("")
     @ResponseBody
     public ResponseEntity<?> healthCheck() {

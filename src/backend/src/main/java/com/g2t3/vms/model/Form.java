@@ -74,23 +74,33 @@ public class Form {
         this.archivedBy = user;
     }
 
-    public void changeStatusApproved() {
+    public void changeStatusApproved(String approver, String comments) {
+        this.approver = approver;
+        this.adminApproverComments = comments;
         this.status = FormStatus.APPROVED;
+        this.adminApproverComments = "";
     }
 
     public void changeStatusSubmitted() {
         this.status = FormStatus.PENDING_ADMIN;
     }
 
-    public void changeStatusAdminReviewed() {
+    public void changeStatusAdminReviewed(String reviewer, String comments) {
+        this.reviewedBy = reviewer;
+        this.adminApproverComments = comments;
         this.status = FormStatus.PENDING_APPROVAL;
+        this.adminApproverComments = "";
     }
 
-    public void changeStatusAdminRejected() {
-        this.status = FormStatus.PENDING_VENDOR;
+    public void changeStatusAdminRejected(String reviewer, String comments) {
+        this.reviewedBy = reviewer;
+        this.adminApproverComments = comments;
+        this.status = FormStatus.ADMIN_REJECTED;
     }
 
-    public void changeStatusApproverRejected() {
+    public void changeStatusApproverRejected(String approver, String comments) {
+        this.approver = approver;
+        this.adminApproverComments = comments;
         this.status = FormStatus.APPROVER_REJECTED;
     }
 

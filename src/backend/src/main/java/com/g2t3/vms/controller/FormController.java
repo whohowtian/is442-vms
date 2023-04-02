@@ -111,6 +111,11 @@ public class FormController {
         } 
     }
 
+    @Operation(summary = "Moves status/workflow of Forms", responses = {
+        @ApiResponse(responseCode = "200", description = "OK - Available actions: approve, submit, adminreviewed, adminreject, approverreject", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Form.class))),
+        @ApiResponse(responseCode = "404", description = "Action does not exist.", content = @Content)
+    })
+
     @PostMapping("/action/{action}")
     public ResponseEntity<?> submitForm(@RequestBody Form submittedForm, @PathVariable String action) {
         try {
@@ -145,6 +150,10 @@ public class FormController {
         }
     }
 
+    @Operation(summary = "Get form by status ID enum", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Form.class))),
+        @ApiResponse(responseCode = "404", description = "Status ID does not exist.", content = @Content)
+    })
     @GetMapping("/formstatus/{statusID}")
     @ResponseBody
     public ResponseEntity<?> getFormByStatus(@PathVariable String statusID) {
@@ -161,6 +170,10 @@ public class FormController {
         
     }
 
+    @Operation(summary = "Get form by vendor id", responses = {
+        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Form.class))),
+        @ApiResponse(responseCode = "404", description = "Vendor id does not exist.", content = @Content)
+    })
     @GetMapping("/vendor/{vendorID}")
     @ResponseBody
     public ResponseEntity<?> getFormByVendor(@PathVariable String vendorID) {
