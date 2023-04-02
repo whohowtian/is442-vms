@@ -49,6 +49,8 @@ public class FormTemplateService {
             prevFT.setFormSections(formTemplate.getFormSections());
 
             prevFT.setLastEdited(formTemplate.getLastEdited());
+            prevFT.setEditedBy(formTemplate.getEditedBy());
+
 
             formTemplateRepo.save(prevFT); 
 

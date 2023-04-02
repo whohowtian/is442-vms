@@ -101,11 +101,6 @@ public class FormService {
             FormSection currFormSectDB = currFormObjDB.getFormContent().getFormSections().get(currSectID);
             boolean forAdminOnly = currFormSectDB.isAdminUseOnly();
 
-            // TODO: to allow admin to edit forAdminUseOnly sections; currently only allow editing for vendor questions
-            // if (forAdminOnly) {
-            //     continue;
-            // }
-
             HashMap<String, Question> currSectObj = sectionEntry.getValue().getQuestions();
 
             for (Map.Entry<String, Question> qnEntry : currSectObj.entrySet()) {
@@ -130,21 +125,27 @@ public class FormService {
 
         switch(action) {
             case "approve":
-                currFormObjDB.setApprover(form.getApprover());
-                currFormObjDB.changeStatusApproved();
+                // currFormObjDB.setApprover();
+                // currFormObjDB.setAdminApproverComments();
+                currFormObjDB.changeStatusApproved(form.getApprover(), form.getAdminApproverComments());
                 break;
             case "submit":
                 currFormObjDB.changeStatusSubmitted();
                 break;
             case "adminreviewed":
-                currFormObjDB.setReviewedBy(form.getReviewedBy());
-                currFormObjDB.changeStatusAdminReviewed();
+                // currFormObjDB.setReviewedBy(form.getReviewedBy());
+                // currFormObjDB.setAdminApproverComments(form.getAdminApproverComments());
+                currFormObjDB.changeStatusAdminReviewed(form.getReviewedBy(), form.getAdminApproverComments());
                 break;
             case "adminreject":
-                currFormObjDB.changeStatusAdminRejected();
+                // currFormObjDB.changeStatusAdminRejected(form.getReviewedBy(), form.getAdminApproverComments());
+                // currFormObjDB.setReviewedBy(form.getReviewedBy());
+                currFormObjDB.changeStatusAdminRejected(form.getReviewedBy(), form.getAdminApproverComments());
                 break;
             case "approverreject":
-                currFormObjDB.changeStatusApproverRejected();
+                // currFormObjDB.setApprover(form.getApprover());
+                // currFormObjDB.changeStatusApproverRejected(form.getApprover(), form.getAdminApproverComments());
+                currFormObjDB.changeStatusApproverRejected(form.getApprover(), form.getAdminApproverComments());
                 break;
         }
 
