@@ -26,9 +26,10 @@ public class Form {
     private String approver;
     private String reviewedBy;
 
-    // MAYBE USER OBJECT?
     private String archivedBy;
     private boolean isArchived;
+
+    private String adminApproverComments;
 
     private LocalDateTime formEffDate;
     private LocalDateTime deadline;
@@ -58,6 +59,8 @@ public class Form {
         this.formEffDate = dateTimeNow;
         this.deadline = dateTimeNow.plusDays(formContent.getDeadlineDays());
         this.lastStatusChangeDate = dateTimeNow;
+        this.adminApproverComments = "";
+
     }
 
     public void updateStatusChangeDateTime() {
@@ -84,7 +87,7 @@ public class Form {
     }
 
     public void changeStatusAdminRejected() {
-        this.status = FormStatus.PENDING_ADMIN;
+        this.status = FormStatus.PENDING_VENDOR;
     }
 
     public void changeStatusApproverRejected() {
