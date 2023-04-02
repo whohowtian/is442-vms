@@ -135,7 +135,7 @@ public class EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(senderEmail);
         message.setTo(user.getEmail());
-        message.setText(String.format(template.getData(), user.getName()));
+        message.setText(String.format(template.getData(), user.getName(), user.getUserId()));
         message.setSubject(template.getSubject());
 
         mailSender.send(message);

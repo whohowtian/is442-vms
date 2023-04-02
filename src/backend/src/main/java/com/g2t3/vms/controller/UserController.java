@@ -207,7 +207,7 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
         @ApiResponse(responseCode = "404", description = "User does not exist.", content = @Content)
     })
-    @PutMapping("/activate-account")
+    @PostMapping("/activate-account")
     public ResponseEntity<?> setPassword(@RequestBody UserLoginRequest user) {
 
         try {
