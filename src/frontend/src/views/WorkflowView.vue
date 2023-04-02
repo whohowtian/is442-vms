@@ -125,7 +125,7 @@ export default {
             axios.get(`${BASE_URL}/api/formtemplate/all`)
             .then(response => {
                 var allForm = response.data.data;
-                // console.log("Forms-->",allForm);
+                console.log("Forms-->",allForm);
                 //data cleaning
                 for (const form of allForm){
                     var id = form.id
@@ -368,7 +368,7 @@ export default {
     <el-tabs v-model="firstNavOption" >
         <el-tab-pane label="WORKFLOW" name="workflowTable"></el-tab-pane>
         <el-tab-pane label="MY TASK" name="taskTable"></el-tab-pane>
-        <el-tab-pane label="EDIT FORM" name="formTable"></el-tab-pane>
+        <el-tab-pane label="EDIT FORM TEMPLATE" name="formTable"></el-tab-pane>
     </el-tabs>
 
     <!-- 1) workflowTable -->
@@ -502,8 +502,6 @@ export default {
             
         <!-- 2.1) To-do Table content -->
         <div v-if="firstNavOption === 'taskTable' && secNavOption !== 'CompletedtaskTable'">
-            <!-- <Table :data="data3" :headers="headers3" :fields="fields3" icon-class="pen-square" @action-click="TaskToDoAction" /> 
-            -->
             <table class="my-table">
             <thead>
                 <tr>
@@ -536,7 +534,6 @@ export default {
 
         <!-- 2.2) Completed Table content -->
         <div v-if="secNavOption === 'CompletedtaskTable'">
-            <!-- <Table :data="data4" :headers="headers4" :fields="fields4" icon-class="eye" @action-click="TaskCompleted" /> -->
             <table class="my-table">
             <thead>
                 <tr>

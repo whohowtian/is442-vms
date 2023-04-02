@@ -22,6 +22,7 @@
             userEmail:'',
             userName:'',
             Todo:[],
+            Completed:[],
             activeOption:'taskTable', //default table displaying
             selectedRows: [], //tick checkbox
             selectAll: false,
@@ -34,8 +35,6 @@
         created() {
         //user session
         const user = JSON.parse(sessionStorage.getItem('user'));
-        // this.userId = "6426e823533ce37c3e4ddae3"
-        // this.userEmail = "yyteng.2019@gmail.com"
         if(user == null){
             //hardcode pass data
             this.userId = "6426e823533ce37c3e4ddae3"
@@ -47,14 +46,15 @@
         }
         console.log("userId-->", this.userId); 
         console.log("userEmail-->",this.userEmail); 
-        this.getAllFormbyStatus('PENDING_VENDOR')
+        this.getAllForm()
     },
         methods: {
-        async getAllFormbyStatus(status){
-            axios.get(`${BASE_URL}/api/form/formstatus/`+status)
+        async getAllForm(){
+            axios.get(`${BASE_URL}/api/form/all`)
             .then(response => {
-                var AllFormbyStatus = response.data.data;
-                for (const workflow of AllFormbyStatus){
+                var AllForm = response.data.data;
+                console.log(AllForm)
+                for (const workflow of AllForm){
                     console.log(workflow)
                     var id = workflow.id
                     var task = workflow.formContent.formName
@@ -67,12 +67,18 @@
 
                     console.log('test',assigned_vendor_email,this.userEmail)
 
+                    //check if login user == the vendor email
                     if(assigned_vendor_email==this.userEmail){
-                        this.Todo.push({id:id,task:task,stage:stage,status:Mstatus,formEffDate:formEffDate,deadline:deadline}) 
+                        //To Do table
+                        if(stage == 'Vendor'){
+                            this.Todo.push({id:id,task:task,stage:stage,status:Mstatus,formEffDate:formEffDate,deadline:deadline}) 
+                        }else{
+                            // Completed table
+                            this.Completed.push({id:id,task:task,stage:stage,status:Mstatus,formEffDate:formEffDate,deadline:deadline}) 
+                        }
                     }
 
                 }
-                console.log(this.Todo)
             })
         },
         addStage(status){ //add stage, Mstatus according to the status
@@ -160,7 +166,7 @@
             <template #label>To Do({{ this.Todo.length }})</template>
         </el-tab-pane>
         <el-tab-pane label="Completed" name="CompletedtaskTable"  @tab-click="activeOption = 'CompletedtaskTable'">
-            <template #label>Completed({{ data2.length }})</template>
+            <template #label>Completed({{ this.Completed.length }})</template>
         </el-tab-pane>
 
         <!-- 2.1) To-do Table content -->
@@ -172,7 +178,7 @@
                     <th>Task</th>
                     <th>Stage</th>
                     <th>Status</th>
-                    <th>Assigned Date</th>
+                    <th>Vendor Assigned Date</th>
                     <th>Deadline</th>
                     <th>Actions</th>
                 </tr>
@@ -193,42 +199,43 @@
                 </tr>
             </tbody>
             </table>
-            <!-- <table class="my-table">
-            <thead>
-            <tr>
-                <th class="checkbox-col"><input type="checkbox"></th>
-                <th>Task</th>
-                <th>Form No.</th>
-                <th>Stage</th>
-                <th>Status</th>
-                <th>Date Assigned</th>
-                <th>Actions</th>
-            </tr>
-
-            </thead>
-            <tbody>
-                <tr v-for="item in data1" :key="item.id">
-                    <td class="checkbox-col"><input type="checkbox" ></td>
-                    <td>{{ item.task }}</td>
-                    <td>{{ item.formNo }}</td>
-                    <td>{{ item.id }}</td>
-                    <td>{{ item.status }}</td>
-                    <td>{{ item.dateAssign }}</td>
-                    <td >
-                        <el-icon class="el-input__icon" @click="EditEachForm(item.formNo, item.id, item.status)">
-                            <Edit />
-                        </el-icon>
-                    </td>
-                </tr>
-            </tbody>
-        </table> -->
+           
         </div>
         <div v-if="activeOption === 'taskTable' && Todo.length ==0">You have no task for now!</div>
 
         <!-- 2.2) Completed Table content -->
-        <div v-if="activeOption === 'CompletedtaskTable'">
-            <Table :data="data2" :headers="headers2" :fields="fields2" icon-class="eye" @action-click="TaskCompleted" />
+        <div v-if="activeOption === 'CompletedtaskTable' && Completed.length >0">
+        
+            <table class="my-table">
+            <thead>
+                <tr>
+                    <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
+                    <th>Task</th>
+                    <th>Stage</th>
+                    <th>Status</th>
+                    <th>Vendor Assigned Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in Completed" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
+                <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
+                <td>{{ item.task }}</td>
+                <td>{{ item.stage }}</td>
+                <td>{{ item.status }}</td>
+                <td>{{ item.formEffDate }}</td>
+                <td >
+                    <el-icon class="el-input__icon" @click="ViewEachForm(item.formNo)">
+                            <View />
+                        </el-icon>
+                </td>
+                </tr>
+            </tbody>
+            </table>
         </div>
+
+        <div v-if="activeOption === 'CompletedtaskTable' && Completed.length ==0">You have no task for now!</div>
+
     </el-tabs>
     </div>
 
