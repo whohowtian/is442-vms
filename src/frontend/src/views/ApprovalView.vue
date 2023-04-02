@@ -57,6 +57,7 @@
                     axios.get(`${BASE_URL}/api/user/all`)
                     .then(response => {
                         var allUser= response.data.data;
+                        console.log(allWorkflow)
                         for (const workflow of allWorkflow){
                             var id=workflow.id
                             var task = workflow.formContent.formName
@@ -67,8 +68,11 @@
                             var stage=this.addStage(status)[0]
                             var Mstatus = this.addStage(status)[1]
                             var formEffDate=new Date(workflow.formEffDate).toLocaleDateString('en-GB') 
+                            var archived = workflow.archived
                             
-                            this.Todo.push({ id: id, task: task,assigned_vendor_email:assigned_vendor_email,VendorName:VendorName,companyName:companyName, status: Mstatus, stage:stage, formEffDate: formEffDate})
+                            if(archived==false){
+                                this.Todo.push({ id: id, task: task,assigned_vendor_email:assigned_vendor_email,VendorName:VendorName,companyName:companyName, status: Mstatus, stage:stage, formEffDate: formEffDate})
+                            }
 
                         }
                     })

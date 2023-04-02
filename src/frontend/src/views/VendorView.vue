@@ -64,13 +64,14 @@
                     var formEffDate = new Date(workflow.formEffDate).toLocaleDateString('en-GB')   
                     var deadline = new Date(workflow.deadline).toLocaleDateString('en-GB')  
                     var assigned_vendor_email = workflow.assigned_vendor_email
+                    var archived = workflow.archived
 
                     console.log('test',assigned_vendor_email,this.userEmail)
 
                     //check if login user == the vendor email
                     if(assigned_vendor_email==this.userEmail){
                         //To Do table
-                        if(stage == 'Vendor'){
+                        if(stage == 'Vendor' && archived == false){
                             this.Todo.push({id:id,task:task,stage:stage,status:Mstatus,formEffDate:formEffDate,deadline:deadline}) 
                         }else{
                             // Completed table
