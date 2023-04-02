@@ -101,11 +101,6 @@ public class FormService {
             FormSection currFormSectDB = currFormObjDB.getFormContent().getFormSections().get(currSectID);
             boolean forAdminOnly = currFormSectDB.isAdminUseOnly();
 
-            // TODO: to allow admin to edit forAdminUseOnly sections; currently only allow editing for vendor questions
-            // if (forAdminOnly) {
-            //     continue;
-            // }
-
             HashMap<String, Question> currSectObj = sectionEntry.getValue().getQuestions();
 
             for (Map.Entry<String, Question> qnEntry : currSectObj.entrySet()) {
@@ -131,6 +126,7 @@ public class FormService {
         switch(action) {
             case "approve":
                 currFormObjDB.setApprover(form.getApprover());
+                currFormObjDB.setAdminApproverComments(form.getAdminApproverComments());
                 currFormObjDB.changeStatusApproved();
                 break;
             case "submit":
@@ -138,13 +134,17 @@ public class FormService {
                 break;
             case "adminreviewed":
                 currFormObjDB.setReviewedBy(form.getReviewedBy());
+                currFormObjDB.setAdminApproverComments(form.getAdminApproverComments());
                 currFormObjDB.changeStatusAdminReviewed();
                 break;
             case "adminreject":
                 currFormObjDB.changeStatusAdminRejected();
+                currFormObjDB.setReviewedBy(form.getReviewedBy());
+                currFormObjDB.setAdminApproverComments(form.getAdminApproverComments());
                 break;
             case "approverreject":
                 currFormObjDB.changeStatusApproverRejected();
+                currFormObjDB.setAdminApproverComments(form.getAdminApproverComments());
                 break;
         }
 
