@@ -103,8 +103,8 @@
         isSelected(item) {
             return this.selectedRows.findIndex(selectedRow => selectedRow.id === item.id) !== -1;
         },
-        ApproveEachForm(formNo,formId){
-            localStorage.setItem('formNo', [formNo,formId])
+        ApproveEachForm(formId,status){
+            localStorage.setItem('formNo', [formId,status])
             window.location.href = "Form";
         },
         },
@@ -155,7 +155,7 @@
                 <td>{{ item.status }}</td>
                 <td>date assigned</td>
                 <td >
-                    <el-icon class="el-input__icon" @click="EditEachForm(item.formNo, item.id)">
+                    <el-icon class="el-input__icon" @click="ApproveEachForm(item.id, item.status)">
                         <Edit />
                     </el-icon>
                 </td>

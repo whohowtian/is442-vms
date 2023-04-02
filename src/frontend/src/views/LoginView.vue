@@ -3,7 +3,7 @@
     <NavBar items="" />
     
     <div class="login-page row justify-content-center align-items-center">
-      <div class="col-lg-6 " style="margin-top: -15%;">
+      <div class="col-lg-6 ">
         <h1 class="text-center" style="color: white;white-space: nowrap;margin-bottom: 5vw;"> Quantum Vendor Management System (VMS) </h1>
         <h3 class="text-center mb-5"> Login or Sign Up</h3>
         <form>

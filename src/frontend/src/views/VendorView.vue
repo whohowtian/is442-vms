@@ -34,17 +34,17 @@
         created() {
         //user session
         const user = JSON.parse(sessionStorage.getItem('user'));
-        this.userId = "6426e823533ce37c3e4ddae3"
-        this.userEmail = "ftneo.2020@scis.smu.edu.sg"
-        // if(user == null){
-        //     //hardcode pass data
-        //     this.userId = "6426e823533ce37c3e4ddae3"
-        //     this.userEmail = "yyteng.2019@gmail.com"
-        // }else{
-        //     this.userId = user.userId
-        //     this.userEmail = user.userEmail
-        //     this.userName = user.name
-        // }
+        // this.userId = "6426e823533ce37c3e4ddae3"
+        // this.userEmail = "yyteng.2019@gmail.com"
+        if(user == null){
+            //hardcode pass data
+            this.userId = "6426e823533ce37c3e4ddae3"
+            this.userEmail = "yyteng.2019@gmail.com"
+        }else{
+            this.userId = user.userId
+            this.userEmail = user.userEmail
+            this.userName = user.name
+        }
         console.log("userId-->", this.userId); 
         console.log("userEmail-->",this.userEmail); 
         this.getAllFormbyStatus('PENDING_VENDOR')

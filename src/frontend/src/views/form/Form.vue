@@ -32,23 +32,34 @@
           </template>
 
 
-
           <!-- pdf function visible only if is approval -->
-          <button type="button" class="btn btn-primary" @click="exportToPdf">Print</button>
+          <!-- <button type="button" class="btn btn-primary" @click="exportToPdf">Print</button> -->
 
           <div v-if="userType === 'VENDOR'">
-            <button type="button" class="btn btn-primary" @click="submitForm">Save</button>
-            <button type="button" class="btn btn-primary" @click="submitDraft">Draft</button>
+            <button type="button" class="btn btn-success" @click="submitForm">Submit</button>
+            <button type="button" class="btn btn-light" @click="submitDraft">Save as Draft</button>
           </div>
 
           <div v-if="userType === 'APPROVER'">
-            <button type="button" class="btn btn-primary" @click="ApproverApprove">Approve</button>
-            <button type="button" class="btn btn-primary" @click="ApproverReject">Reject</button>
+            <button type="button" class="btn btn-success" @click="ApproverApprove">Approve</button>
+            <button type="button" class="btn btn-danger" @click="showReasonInput = true">Reject</button>
+
+            <div v-if="showReasonInput" style="margin: 30px; display: flex; flex-direction: column;">
+              <label for="reason">Rejection Reason:</label>
+              <textarea id="reason" v-model="rejectReason" style="resize: both; min-height: 100px; max-width: 400px;"></textarea>
+              <button type="button" class="btn btn-dark" @click="ApproverReject" style="align-self: flex-start;">Submit Reject</button>
+            </div>
           </div>
 
           <div v-if="userType === 'ADMIN'">
-            <button type="button" class="btn btn-primary" @click="AdminApprove">AdminApprove</button>
-            <button type="button" class="btn btn-primary" @click="AdminReject">AdminReject</button>
+            <button type="button" class="btn btn-success" @click="AdminApprove">AdminApprove</button>
+            <button type="button" class="btn btn-danger" @click="showReasonInput = true">AdminReject</button>
+
+            <div v-if="showReasonInput" style="margin: 30px; display: flex; flex-direction: column;">
+              <label for="reason">Rejection Reason:</label>
+              <textarea id="reason" v-model="rejectReason" style="resize: both; min-height: 100px; max-width: 400px;"></textarea>
+              <button type="button" class="btn btn-dark" @click="AdminReject" style="align-self: flex-start;">Submit Reject</button>
+            </div>
           </div>
         </el-form>
       </el-main>
@@ -72,14 +83,14 @@
         formNo :'',
         entityUEN:'', //for pdf
         formDeadline:'',
-        assigned_vendor_uid:'',
         formData:[],
         formattedData:[], //data structure to match formBuilder component style
         nullField:[],
         userEmail:"",
+        userName:"",
         userType:"",
-        action:"",
-        status:""
+        showReasonInput: false,
+        rejectReason: ''
       }
     },
     async created(){
@@ -89,9 +100,11 @@
             //hardcode pass data
             this.userEmail = "asasas.2019@gmail.com"
             this.userType ="APPROVER"
+            this.userName ="FangTingXOXO"
         }else{
             this.userEmail = user.userEmail
             this.userType = user.userType
+            this.userName = user.name
         }
         console.log("userType-->", this.userType); 
         console.log("userEmail-->",this.userEmail); 
@@ -184,12 +197,12 @@
           answer: field.input // get value from input property
         };
         questions[j + 1] = question;
-        console.log("question-->",question)
+        // console.log("question-->",question)
       }
       if(allNull.length>0){ //store only if there is error msg
         this.nullField.push({formSection: formSection.sectionTitle, nullQns:allNull})
         }        
-        console.log("allNull-->",allNull)
+        // console.log("allNull-->",allNull)
         const section = {
         sectionName: formSection.sectionTitle,
         adminUseOnly: formSection.AdminUseOnly,
@@ -198,6 +211,7 @@
         questions
       };
       formSections[i + 1] = section;
+    }
     }
     console.log("have null?-->",this.nullField)
     if(this.nullField.length>0){
@@ -211,39 +225,40 @@
           text: nullError.join('\n\n & \n\n')
         });
       }
-      else{
-        const submitData = {
-          id: this.formNo,
-          "formContent": {formSections}
-          };
+    else{
+      const submitData = {
+        id: this.formNo,
+        "formContent": {formSections},
+        "reviewedBy": this.userName
+        };
 
-        console.log("submit-->",submitData)
+      console.log("Admin submit-->",submitData)
         Swal.fire({
-        title: 'Save the Form?',
+        title: 'Are you sure to approve the task?',
         text: "Please check information before saving!",
         icon: "warning",
         showCancelButton: true,
         cancelButtonColor: '#c7c6c5',
         confirmButtonColor: '#6A79F3',
-        confirmButtonText: 'Yes, save it!',
+        confirmButtonText: 'Yes, Approve!',
         cancelButtonText: 'No, Cancel',
         width: 'auto',
     }).then((result) => {
         if (result.isConfirmed) {
           try {
-            const response = axios.post(`${BASE_URL}/api/form/action/submit`, submitData);
+            const response = axios.post(`${BASE_URL}/api/form/action/adminreviewed`, submitData);
             console.log("SUCCESSFULLY POST")
-            console.log(response.data); // 
+            console.log(response.data);  
           
             Swal.fire({
               title: 'Success',
-              text: 'Form saved successfully! It will be reviewed by Admin in the next 7 days ',
+              text: 'Task have been successfully reviewed by you. Sent for Approver Review now',
               icon: 'success',
-              timer: 2000,
+              timer: 3000,
               timerProgressBar: true,
               showConfirmButton: false
             }).then(() => {
-              window.location.href = "/VendorView";
+              window.location.href = "/WorkflowView";
             });
 
           } catch (error) {
@@ -262,14 +277,304 @@
         }
   })
       }
+  },
+  AdminReject(){
+    const formSections = {};
+    for (let i = 0; i < this.formattedData.length; i++) {
+      if(this.formattedData[i]['AdminUseOnly'] == true){
+        const formSection = this.formattedData[i];
+      
+      const questions = {};
+      for (let j = 0; j < formSection.fields.length; j++) {
+        const field = formSection.fields[j];
+        const inputOptions = field.options || null;
+
+        const question = {
+          qnTitle: field.label,
+          inputType: field.fieldType,
+          inputOptions,
+          required: field.isRequired,
+          answer: field.input // get value from input property
+        };
+        questions[j + 1] = question;
+        // console.log("question-->",question)
+      }
+      
+        const section = {
+        sectionName: formSection.sectionTitle,
+        adminUseOnly: formSection.AdminUseOnly,
+        approvalViewOnly: formSection.ApproverUseOnly,
+        doScoreCalculation: false,
+        questions
+      };
+      formSections[i + 1] = section;
     }
+    }
+
+    if(this.rejectReason.trim().length === 0){
+      Swal.fire({
+          icon: 'error',
+          title: 'You have to fill in the rejection reason',
+        });
+    }else{
+      const submitData = {
+        id: this.formNo,
+        "formContent": {formSections},
+        "reviewedBy": this.userName
+        };
+
+      console.log("Admin reject-->",submitData)
+        Swal.fire({
+        title: 'Reject the Task?',
+        text: "Please check information before saving!",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonColor: '#c7c6c5',
+        confirmButtonColor: '#6A79F3',
+        confirmButtonText: 'Yes, Reject!',
+        cancelButtonText: 'No, Cancel',
+        width: 'auto',
+    }).then((result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = axios.post(`${BASE_URL}/api/form/action/adminreject`, submitData);
+            console.log("SUCCESSFULLY POST")
+            console.log(response.data);  
+          
+            Swal.fire({
+              title: 'Success',
+              text: 'Form have been rejected by you. Sent back to Vendor now',
+              icon: 'success',
+              timer: 3000,
+              timerProgressBar: true,
+              showConfirmButton: false
+            }).then(() => {
+              window.location.href = "/WorkflowView";
+            });
+
+          } catch (error) {
+            if (error) {
+              console.error("errrr", error)
+
+              Swal.fire({
+                icon: 'warning',
+                title: error,
+                timer: 2000,
+                timerProgressBar: true,
+                showConfirmButton: false
+              })
+            }
+            }
+        }
+  })
+}
+      
           
 
   
   },
-  ApproverReject(){
+  ApproverApprove(){
+    const formSections = {};
+    this.nullField=[] //initialise
+    for (let i = 0; i < this.formattedData.length; i++) {
+      if(this.formattedData[i]['ApproverUseOnly'] == true){
+        const formSection = this.formattedData[i];
+      
+      const questions = {};
+      const allNull=[]
+      for (let j = 0; j < formSection.fields.length; j++) {
+        const field = formSection.fields[j];
+        const inputOptions = field.options || null;
 
+        if(field.input== null){
+          allNull.push(field.label)
+        }
+
+        const question = {
+          qnTitle: field.label,
+          inputType: field.fieldType,
+          inputOptions,
+          required: field.isRequired,
+          answer: field.input // get value from input property
+        };
+        questions[j + 1] = question;
+        // console.log("question-->",question)
+      }
+      if(allNull.length>0){ //store only if there is error msg
+        this.nullField.push({formSection: formSection.sectionTitle, nullQns:allNull})
+        }        
+        // console.log("allNull-->",allNull)
+        const section = {
+        sectionName: formSection.sectionTitle,
+        adminUseOnly: formSection.AdminUseOnly,
+        approvalViewOnly: formSection.ApproverUseOnly,
+        doScoreCalculation: false,
+        questions
+      };
+      formSections[i + 1] = section;
+    }
+    }
+    console.log("have null?-->",this.nullField)
+    if(this.nullField.length>0){
+        const nullError = this.nullField.map((nullObj) => {
+          return `${nullObj.formSection} - ${nullObj.nullQns.join(', ')}`
+        })
+        this.nullField=[]
+        Swal.fire({
+          icon: 'error',
+          title: 'The following required fields are blank:',
+          text: nullError.join('\n\n & \n\n')
+        });
+      }
+    else{
+      const submitData = {
+        id: this.formNo,
+        "formContent": {formSections},
+        "approver": this.userName
+        };
+
+      console.log("Admin submit-->",submitData)
+        Swal.fire({
+        title: 'Are you sure to approve the task?',
+        text: "Please check information before saving!",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonColor: '#c7c6c5',
+        confirmButtonColor: '#6A79F3',
+        confirmButtonText: 'Yes, Approve!',
+        cancelButtonText: 'No, Cancel',
+        width: 'auto',
+    }).then((result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = axios.post(`${BASE_URL}/api/form/action/approve`, submitData);
+            console.log("SUCCESSFULLY POST")
+            console.log(response.data);  
+          
+            Swal.fire({
+              title: 'Success',
+              text: 'Task have been successfully approved by you',
+              icon: 'success',
+              timer: 3000,
+              timerProgressBar: true,
+              showConfirmButton: false
+            }).then(() => {
+              window.location.href = "/ApprovalView";
+            });
+
+          } catch (error) {
+            if (error) {
+              console.error("errrr", error)
+
+              Swal.fire({
+                icon: 'warning',
+                title: error,
+                timer: 2000,
+                timerProgressBar: true,
+                showConfirmButton: false
+              })
+            }
+            }
+        }
+  })
+      }
   },
+  ApproverReject(){
+    const formSections = {};
+    for (let i = 0; i < this.formattedData.length; i++) {
+      if(this.formattedData[i]['ApproverUseOnly'] == true){
+        const formSection = this.formattedData[i];
+      
+      const questions = {};
+      for (let j = 0; j < formSection.fields.length; j++) {
+        const field = formSection.fields[j];
+        const inputOptions = field.options || null;
+
+        const question = {
+          qnTitle: field.label,
+          inputType: field.fieldType,
+          inputOptions,
+          required: field.isRequired,
+          answer: field.input // get value from input property
+        };
+        questions[j + 1] = question;
+        // console.log("question-->",question)
+      }
+      
+        const section = {
+        sectionName: formSection.sectionTitle,
+        adminUseOnly: formSection.AdminUseOnly,
+        approvalViewOnly: formSection.ApproverUseOnly,
+        doScoreCalculation: false,
+        questions
+      };
+      formSections[i + 1] = section;
+    }
+    }
+
+    if(this.rejectReason.trim().length === 0){
+      Swal.fire({
+          icon: 'error',
+          title: 'You have to fill in the rejection reason',
+        });
+    }else{
+      const submitData = {
+        id: this.formNo,
+        "formContent": {formSections},
+        "approver": this.userName
+        };
+
+      console.log("Approver reject-->",submitData)
+        Swal.fire({
+        title: 'Reject the Task?',
+        text: "Please check information before saving!",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonColor: '#c7c6c5',
+        confirmButtonColor: '#6A79F3',
+        confirmButtonText: 'Yes, Reject!',
+        cancelButtonText: 'No, Cancel',
+        width: 'auto',
+    }).then((result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = axios.post(`${BASE_URL}/api/form/action/approverreject`, submitData);
+            console.log("SUCCESSFULLY POST")
+            console.log(response.data);  
+          
+            Swal.fire({
+              title: 'Success',
+              text: 'Form have been rejected by you. Sent back to Vendor now',
+              icon: 'success',
+              timer: 3000,
+              timerProgressBar: true,
+              showConfirmButton: false
+            }).then(() => {
+              window.location.href = "/ApprovalView";
+            });
+
+          } catch (error) {
+            if (error) {
+              console.error("errrr", error)
+
+              Swal.fire({
+                icon: 'warning',
+                title: error,
+                timer: 2000,
+                timerProgressBar: true,
+                showConfirmButton: false
+              })
+            }
+            }
+        }
+  })
+}
+      
+          
+
+  
+  },
+
   async submitForm() {
   //submit with validation
     const formSections = {};
