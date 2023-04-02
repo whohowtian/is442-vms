@@ -78,6 +78,7 @@ public class Form {
         this.approver = approver;
         this.adminApproverComments = comments;
         this.status = FormStatus.APPROVED;
+        this.adminApproverComments = "";
     }
 
     public void changeStatusSubmitted() {
@@ -88,12 +89,13 @@ public class Form {
         this.reviewedBy = reviewer;
         this.adminApproverComments = comments;
         this.status = FormStatus.PENDING_APPROVAL;
+        this.adminApproverComments = "";
     }
 
     public void changeStatusAdminRejected(String reviewer, String comments) {
         this.reviewedBy = reviewer;
         this.adminApproverComments = comments;
-        this.status = FormStatus.PENDING_VENDOR;
+        this.status = FormStatus.ADMIN_REJECTED;
     }
 
     public void changeStatusApproverRejected(String approver, String comments) {
