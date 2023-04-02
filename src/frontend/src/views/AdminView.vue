@@ -13,13 +13,15 @@ import NavBar from '../components/Navbar.vue';
                 { label: 'ACCOUNT', route: '/AccountView'  },
                 { label: 'WORKFLOW', route: '/WorkflowView'  },
                 { label: 'LOGOUT', route: '/'  }
-            ]
+            ],
+            username:''
             }
         },
         created() {
             //user session
             const user = JSON.parse(sessionStorage.getItem('user'));
-            console.log(user.userId); 
+            this.username = user.name
+            console.log(user); 
             console.log(user.userEmail); 
     }
 }
@@ -30,7 +32,7 @@ import NavBar from '../components/Navbar.vue';
     <NavBar :items="menuItems" />
     <div class="row mt-4 mb-5" id = 'welcome'>
         <div class="line">
-            <p style = "font-weight:600;">WELCOME, JOHN</p>
+            <p style = "font-weight:600;">WELCOME,{{ username }}</p>
         </div>
     </div>
     <div class="row "></div>
