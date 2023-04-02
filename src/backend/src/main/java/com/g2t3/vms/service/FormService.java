@@ -140,12 +140,12 @@ public class FormService {
             case "adminreject":
                 // currFormObjDB.changeStatusAdminRejected(form.getReviewedBy(), form.getAdminApproverComments());
                 // currFormObjDB.setReviewedBy(form.getReviewedBy());
-                currFormObjDB.setAdminApproverComments(form.getReviewedBy(), form.getAdminApproverComments());
+                currFormObjDB.changeStatusAdminRejected(form.getReviewedBy(), form.getAdminApproverComments());
                 break;
             case "approverreject":
                 // currFormObjDB.setApprover(form.getApprover());
                 // currFormObjDB.changeStatusApproverRejected(form.getApprover(), form.getAdminApproverComments());
-                currFormObjDB.setAdminApproverComments(form.getApprover(), form.getAdminApproverComments());
+                currFormObjDB.changeStatusApproverRejected(form.getApprover(), form.getAdminApproverComments());
                 break;
         }
 
