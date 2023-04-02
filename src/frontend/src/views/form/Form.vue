@@ -128,13 +128,32 @@
           const allData = response.data.data;
           this.formData = allData.formContent
           this.formDeadline = allData.deadline.slice(0, allData.deadline.indexOf('T'));
+          var vendorEmail = allData.assigned_vendor_email
           const sectionData = this.formData.formSections
           if(allData.adminApproverComments != null){
             this.adminApproverComments=allData.adminApproverComments
             this.hasComment = true
           }
-          console.log("allData-->",allData)
-          
+          // console.log("allData-->",allData)
+          axios.get(`${BASE_URL}/api/user/all`)
+                .then(response => {
+                  var allUser= response.data.data;
+                    // console.log(allUser)
+          for (const user of allUser){
+                if (vendorEmail == user.email){
+                    if(user.userType==="VENDOR"){
+                        this.entityUEN='admin'
+                    }
+                    if(user.userType==="APPROVER"){
+                        this.entityUEN='approver'
+                    }
+                    else{
+                        this.entityUEN=user.entityUEN
+                    }
+                    
+                }
+              }
+            console.log(this.entityUEN)
           //store questions dict 
           for(let i=1; i<Object.keys(sectionData).length +1; i++){
             let formTitle = sectionData[i]['sectionName']
@@ -180,6 +199,7 @@
           }
         }).catch(error => {
           console.log(error);
+        })
         });
     }
   },
@@ -386,7 +406,7 @@
 
   
   },
-  ApproverApprove(){
+  async ApproverApprove(){
     const formSections = {};
     this.nullField=[] //initialise
     for (let i = 0; i < this.formattedData.length; i++) {
@@ -427,7 +447,7 @@
       formSections[i + 1] = section;
     }
     }
-    console.log("have null?-->",this.nullField)
+    // console.log("have null?-->",this.nullField)
     if(this.nullField.length>0){
         const nullError = this.nullField.map((nullObj) => {
           return `${nullObj.formSection} - ${nullObj.nullQns.join(', ')}`
@@ -457,24 +477,12 @@
         confirmButtonText: 'Yes, Approve!',
         cancelButtonText: 'No, Cancel',
         width: 'auto',
-    }).then((result) => {
+    }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            const response = axios.post(`${BASE_URL}/api/form/action/approve`, submitData);
+            const response = await axios.post(`${BASE_URL}/api/form/action/approve`, submitData);
             console.log("SUCCESSFULLY POST")
             console.log(response.data);  
-          
-            Swal.fire({
-              title: 'Success',
-              text: 'Task have been successfully approved by you',
-              icon: 'success',
-              timer: 3000,
-              timerProgressBar: true,
-              showConfirmButton: false
-            }).then(() => {
-              window.location.href = "/ApprovalView";
-            });
-
           } catch (error) {
             if (error) {
               console.error("errrr", error)
@@ -490,6 +498,8 @@
             }
         }
   })
+    this.exportToPdf()
+
       }
   },
   ApproverReject(){
@@ -799,11 +809,7 @@
       console.error('Error storing PDF file in database:', error.message)
     }
     try{
-      await axios.get(`${BASE_URL}/api/pdf/retrieve`, {
-        params: {
-          fileName: PdfFilename
-        }
-      })
+      await axios.get(`${BASE_URL}/api/pdf/`+ PdfFilename)
       .then(response => {
         console.log(response.data);
       })
@@ -820,6 +826,9 @@
       timerProgressBar: true,
       showConfirmButton: false
     })
+    .then(() => {
+              window.location.href = "/ApprovalView";
+            });
   }
 }
 }
