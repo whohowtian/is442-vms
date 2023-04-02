@@ -1,5 +1,7 @@
 package com.g2t3.vms.request;
 
+import java.time.LocalDate;
+
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
@@ -16,6 +18,6 @@ public class ReminderEmailRequest {
     private String formName;
 
     @NotEmpty
-    private String deadline;
+    private LocalDate deadline;
     
 }

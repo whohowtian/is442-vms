@@ -24,34 +24,43 @@ public class Form {
     private FormTemplate formContent;
 
     private String approver;
+    private String reviewedBy;
 
-    // MAYBE USER OBJECT?
     private String archivedBy;
     private boolean isArchived;
+
+    private String adminApproverComments;
 
     private LocalDateTime formEffDate;
     private LocalDateTime deadline;
 
-    public Form (String assigned_vendor_email, FormTemplate formContent, boolean startFromAdmin) {
+    public Form (String assigned_vendor_email, FormTemplate formContent) {
         this(formContent);
-        doStartFromAdmin(startFromAdmin);
+        this.status = FormStatus.PENDING_VENDOR;
         this.assigned_vendor_email = assigned_vendor_email;
 
     }
 
     public Form (FormTemplate formContent, boolean startFromAdmin) {
         this(formContent);
-        doStartFromAdmin(startFromAdmin);
+        if (startFromAdmin) {
+            this.status = FormStatus.PENDING_ADMIN;
+        } else {
+            this.status = FormStatus.PENDING_VENDOR;
+        }
     }
 
     public Form (FormTemplate formContent) {
         this.formContent = formContent;
         this.approver = "";
+        this.reviewedBy = "";
         this.archivedBy = null;
         LocalDateTime dateTimeNow = LocalDateTime.now();
         this.formEffDate = dateTimeNow;
         this.deadline = dateTimeNow.plusDays(formContent.getDeadlineDays());
         this.lastStatusChangeDate = dateTimeNow;
+        this.adminApproverComments = "";
+
     }
 
     public void updateStatusChangeDateTime() {
@@ -78,39 +87,19 @@ public class Form {
     }
 
     public void changeStatusAdminRejected() {
-        this.status = FormStatus.PENDING_ADMIN;
+        this.status = FormStatus.PENDING_VENDOR;
     }
 
     public void changeStatusApproverRejected() {
         this.status = FormStatus.APPROVER_REJECTED;
     }
 
-    private void doStartFromAdmin(boolean startFromAdmin) {
-        if (startFromAdmin) {
-            this.status = FormStatus.PENDING_ADMIN;
+    // private void doStartFromAdmin(boolean startFromAdmin) {
+    //     if (startFromAdmin) {
+    //         this.status = FormStatus.PENDING_ADMIN;
 
-        } else {
-            this.status = FormStatus.PENDING_VENDOR;
-        }
-    }
-
-    // @PersistenceConstructor
-    // public Form (String assigned_vendor_email, FormTemplate formContent, String approver, LocalDateTime approvalDateTime, String archivedBy, boolean isArchived, FormStatus status) {
-    //     this.status = status;
-    //     this.formContent = formContent;
-    //     this.approver = approver;
-    //     this.approvalDateTime = approvalDateTime;
-    //     this.archivedBy = archivedBy;
-    //     this.isArchived = isArchived;
-    //     this.assigned_vendor_email = assigned_vendor_email;
+    //     } else {
+    //         this.status = FormStatus.PENDING_VENDOR;
+    //     }
     // }
-
-    // @Override
-    // public String toString() {
-    //     return String.format("{ \"assigned_vendor_uid\": '%s', \"status\": '%s', \"approver\": '%s', \"approvalDateTime\": '%s', \"formContent\": %s }", assigned_vendor_uid, status, approver, approvalDateTime, formContent.toString());
-    // }
-
-    // public String getID() {
-    //     return id;
-    // } 
 }

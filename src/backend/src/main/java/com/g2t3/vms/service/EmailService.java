@@ -111,7 +111,7 @@ public class EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("is442g2t3@outlook.com");
         message.setTo(user.getEmail());
-        message.setText(String.format(template.getData(), user.getName()));
+        message.setText(String.format(template.getData(), user.getName(), user.getUserId()));
         message.setSubject(template.getSubject());
 
         mailSender.send(message);

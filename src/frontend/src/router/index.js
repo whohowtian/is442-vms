@@ -49,9 +49,9 @@ const router = createRouter({
       component: () => import('../views/form/index.vue')
     },
     {
-      path: '/VendorForm',
-      name: 'VendorForm',
-      component: () => import('../views/form/VendorForm.vue')
+      path: '/Form',
+      name: 'Form',
+      component: () => import('../views/form/Form.vue')
     },
     {
       path: '/EditAccount',
@@ -64,9 +64,9 @@ const router = createRouter({
       component: () => import('../views/form/AdminUpdate/index.vue')
     },
     {
-      path: '/tryApi',
-      name: 'tryApi',
-      component: () => import('../tryApi.vue')
+      path: '/ViewForm',
+      name: 'ViewForm',
+      component: () => import('../views/form/ViewForm.vue')
     },
   ]
 })

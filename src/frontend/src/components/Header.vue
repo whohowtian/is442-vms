@@ -1,5 +1,5 @@
 <template>
-    <div class="row" style="background:#0079B3; height:40vh">
+    <div class="row" style="background:#0079B3; height:25vh">
         <div class="center">
 
             <p id="Header">

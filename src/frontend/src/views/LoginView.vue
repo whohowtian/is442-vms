@@ -1,36 +1,34 @@
 <!-- JUST A SAMPLE LOGIN FORM TEMPLATE  -->
-<template>
-    <NavBar :items="menuItems" />
-
-    <div class="login-page">
-      <h1>Login</h1>
-      <p>hardcoded function, login by enter {usertype} as Username ; password: pw; login the same usertype</p>
-      <h6>e.g. username: admin ; password: pw ; login as admin</h6>
-      <form @submit.prevent="submitForm">
-        <div>
-          <label for="username">Username:</label>
-          <input type="text" id="username" v-model="username" required>
-        </div>
-        <div>
-          <label for="password">Password:</label>
-          <input type="password" id="password" v-model="password" required>
-        </div>
-        <div>
-          <label for="usertype">Login as:</label>
-          <select id="usertype" v-model="loginAs" required>
-            <option value="">Select user type</option>
-            <option value="admin">Admin</option>
-            <option value="vendor">Vendor</option>
-            <option value="approval">Approval</option>
-          </select>
-        </div>
-        <button type="submit">Login</button>
-      </form>
+<template >
+    <NavBar items="" />
+    
+    <div class="login-page row justify-content-center align-items-center">
+      <div class="col-lg-6 ">
+        <h1 class="text-center" style="color: white;white-space: nowrap;margin-bottom: 5vw;"> Quantum Vendor Management System (VMS) </h1>
+        <h3 class="text-center mb-5"> Login or Sign Up</h3>
+        <form>
+          <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" class="form-control" id="email" v-model="email" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" v-model="password" required>
+          </div>
+          <div class="row justify-content-center">
+            <div class="col-sm-6">
+              <button type="submit" class="btn btn-primary btn-block" @click.prevent="login">Login</button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
-  </template>
+</template>
   
   <script>
   import NavBar from '../components/Navbar.vue';
+  import axios from 'axios';
+    import { BASE_URL } from '../api.js';
     
   export default {
     name: 'LoginView',
@@ -39,40 +37,55 @@
     },
     data() {
       return {
-        username: '',
+        email: '',
         password: '',
-        loginAs: ''
       }
     },
     methods: {
-      submitForm() {
-        if (this.username && this.password && this.loginAs) {
-          if (this.loginAs === 'admin' && this.username === 'admin' && this.password === 'pw') {
-            alert('Login as Admin successful!');
-            this.$router.push('/AdminView');
-          } else if (this.loginAs === 'vendor' && this.username === 'vendor' && this.password === 'pw') {
-            alert('Login as Vendor successful!');
-            this.$router.push('/VendorView');
-          } else if (this.loginAs === 'approval' && this.username === 'approval' && this.password === 'pw') {
-            alert('Login as Approval successful!');
-            this.$router.push('/ApprovalView');
-
-          } else {
-            alert('Invalid username or password.');
-          }
-        } else {
+      async login() {
+        if (!this.email || !this.password) {
           alert('Please fill in all fields.');
+          return;
+        }
+
+        try {
+          axios.get(`${BASE_URL}/api/user/`+ this.email)
+            .then(response => {
+              var userData = response.data.data;
+              console.log(userData)
+          
+          if (userData.password === this.password) {
+            alert(`Login as ${userData.userType} successful!`);
+            sessionStorage.setItem('user', JSON.stringify({userId: userData.userId, userEmail: userData.email, name:userData.name, userType:userData.userType}));
+            if(userData.userType =="VENDOR"){
+              this.$router.push('/VendorView');
+            }
+            if(userData.userType =="ADMIN"){
+              this.$router.push('/AdminView');
+            }
+            if(userData.userType =="APPROVER"){
+              this.$router.push('/ApprovalView');
+            }
+            else{
+              alert('Invalid user type.');
+            }
+          }})
+          .catch(error => {
+          console.log(error);
+          alert('invalid email address & password')
+          });
+        } catch (error) {
+          console.error(error);
+          alert('An error occurred while logging in.');
         }
       }
     }
   }
   </script>
   
-  <style>
-  #app {
-    background-color:rgb(0, 121, 179);
-  }
+<style scoped>
   .login-page {
+    background-color:rgb(0, 121, 179);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -84,9 +97,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 60px;
     padding: 20px;
-    border: 1px solid #fff;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   }
@@ -102,19 +114,6 @@
     border-radius: 5px;
     box-sizing: border-box;
     outline: none;
-  }
-  button {
-    padding: 10px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  button:hover {
-    background-color: #0062cc;
   }
   </style>
   

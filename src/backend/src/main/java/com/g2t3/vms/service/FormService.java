@@ -22,10 +22,15 @@ import com.g2t3.vms.repository.FormTemplateRepo;
 
 @Service
 public class FormService {
+
     @Autowired
     private FormRepo formRepo;
+
     @Autowired
     private FormTemplateRepo formTemplateRepo;
+
+    @Autowired
+    private UserService userService;
 
 
     // Get all created forms/workflows
@@ -59,6 +64,8 @@ public class FormService {
         
         String assigned_vendor_email = newFormInfo.get("assigned_vendor_email");
 
+        // System.out.println(assigned_vendor_email);
+
         System.out.println(newFormInfo.toString());
 
         FormTemplate getFormTempt = formTemplateRepo.getFormTemplateByNo(formNo);
@@ -66,23 +73,17 @@ public class FormService {
             throw new ResourceNotFoundException("Form Template " + formNo + "does not exist.");
         }
 
-        // System.out.println(getFormTempt.toString());
-
-        boolean startFromAdmin = Boolean.parseBoolean(newFormInfo.get("startFromAdmin"));
+        boolean startFromAdmin = (assigned_vendor_email == null || assigned_vendor_email == "") ? true : false;
 
         Form newForm;
 
         if (startFromAdmin) {
             newForm = new Form(getFormTempt, startFromAdmin);
         } else {
-            newForm = new Form(assigned_vendor_email, getFormTempt, startFromAdmin);
+            newForm = new Form(assigned_vendor_email, getFormTempt);
         }
 
         formRepo.save(newForm); 
-
-        
-        // TODO: Check vendor UID exists?
-
     }
 
     public void editForm(Form form) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
@@ -100,11 +101,6 @@ public class FormService {
             FormSection currFormSectDB = currFormObjDB.getFormContent().getFormSections().get(currSectID);
             boolean forAdminOnly = currFormSectDB.isAdminUseOnly();
 
-            // TODO: to allow admin to edit forAdminUseOnly sections; currently only allow editing for vendor questions
-            if (forAdminOnly) {
-                continue;
-            }
-
             HashMap<String, Question> currSectObj = sectionEntry.getValue().getQuestions();
 
             for (Map.Entry<String, Question> qnEntry : currSectObj.entrySet()) {
@@ -118,21 +114,8 @@ public class FormService {
         formRepo.save(currFormObjDB);
     }
 
-    public void submitForm(Form form) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
+    public void changeStatus(Form form, String action) throws ResourceNotFoundException, Exception {
         String formID = form.getId();
-        Form currFormObjDB = formRepo.getFormByID(formID);
-
-        if (currFormObjDB == null) {
-            throw new ResourceNotFoundException("Form " + formID + "does not exist.");
-        }
-
-        currFormObjDB.changeStatusSubmitted();
-        formRepo.save(currFormObjDB);
-
-    }
-
-    public void changeStatus(Map<String, String> postQuery, String action) throws ResourceNotFoundException, Exception {
-        String formID = postQuery.get("formID");
         Form currFormObjDB = formRepo.getFormByID(formID);
         currFormObjDB.updateStatusChangeDateTime();
 
@@ -140,28 +123,28 @@ public class FormService {
             throw new ResourceNotFoundException("Form " + formID + "does not exist.");
         }
 
-        // TODO: restrict certain status change to admin/approvers
         switch(action) {
             case "approve":
+                currFormObjDB.setApprover(form.getApprover());
+                currFormObjDB.setAdminApproverComments(form.getAdminApproverComments());
                 currFormObjDB.changeStatusApproved();
-                currFormObjDB.setApprover(postQuery.get("approver"));
-                // TODO: add approver name and datatime into Form
                 break;
-            // case "submit":
-            //     currFormObjDB.setStatusSubmitted();
-            //     break;
+            case "submit":
+                currFormObjDB.changeStatusSubmitted();
+                break;
             case "adminreviewed":
+                currFormObjDB.setReviewedBy(form.getReviewedBy());
+                currFormObjDB.setAdminApproverComments(form.getAdminApproverComments());
                 currFormObjDB.changeStatusAdminReviewed();
                 break;
-            // case "archive":
-            //     currFormObjDB.setStatus(FormStatus.ARCHIVED);
-            //     currFormObjDB.setArchived(true);
-            //     currFormObjDB.setArchivedBy(postQuery.get("user"));
             case "adminreject":
                 currFormObjDB.changeStatusAdminRejected();
+                currFormObjDB.setReviewedBy(form.getReviewedBy());
+                currFormObjDB.setAdminApproverComments(form.getAdminApproverComments());
                 break;
             case "approverreject":
                 currFormObjDB.changeStatusApproverRejected();
+                currFormObjDB.setAdminApproverComments(form.getAdminApproverComments());
                 break;
         }
 
@@ -170,11 +153,14 @@ public class FormService {
     } 
 
     public void archiveForm(Map<String, String> postQuery) throws ResourceNotFoundException, Exception {
+
+        // check
+        userService.getUserById(postQuery.get("archivedBy"));
+
         String formID = postQuery.get("formID");
         Form currFormObjDB = formRepo.getFormByID(formID);
         currFormObjDB.updateStatusChangeDateTime();
-
-        currFormObjDB.archiveForm(postQuery.get("archivedby"));
+        currFormObjDB.archiveForm(postQuery.get("archivedBy"));
 
         formRepo.save(currFormObjDB);
 

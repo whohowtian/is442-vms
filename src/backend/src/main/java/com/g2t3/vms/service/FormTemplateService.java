@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import com.g2t3.vms.exception.ResourceAlreadyExistException;
 import com.g2t3.vms.exception.ResourceNotFoundException;
 import com.g2t3.vms.model.FormTemplate;
 import com.g2t3.vms.repository.FormTemplateRepo;
@@ -43,27 +44,25 @@ public class FormTemplateService {
 
             String formNo = formTemplate.getFormNo();
             FormTemplate prevFT = getFormTemplateByFTNo(formNo); 
-
-            // prevFT.setFormEffDate(formTemplate.getFormEffDate());
             prevFT.setFormName(formTemplate.getFormName());
-            // prevFT.setArchived(formTemplate.isArchived());
             prevFT.setRevNo(prevFT.getRevNo() + 1);
             prevFT.setFormSections(formTemplate.getFormSections());
 
             prevFT.setLastEdited(formTemplate.getLastEdited());
+            prevFT.setEditedBy(formTemplate.getEditedBy());
+
 
             formTemplateRepo.save(prevFT); 
 
             
     }
 
-    public void createFormTemplate(FormTemplate formTemplate) throws NullPointerException, DataIntegrityViolationException, Exception {
-        // TODO: convert previous formtemplate format into the newer format with HashMap
+    public void createFormTemplate(FormTemplate formTemplate) throws ResourceAlreadyExistException, DataIntegrityViolationException, Exception {
         String formNo = formTemplate.getFormNo();
         FormTemplate getForm = formTemplateRepo.getFormTemplateByNo(formNo);
 
         if (getForm != null) {
-            throw new NullPointerException("Form Template " + formNo + " already exist.");
+            throw new ResourceAlreadyExistException("Form Template " + formNo + " already exist.");
         }
         
         formTemplateRepo.save(formTemplate); 
@@ -72,9 +71,7 @@ public class FormTemplateService {
     }
 
     public void deleteFormTemplate(String FTID) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
-
         FormTemplate formTemplate = getFormTemplateByFTNo(FTID);
-
         formTemplateRepo.deleteFormTemplateByNo(FTID);
 
     }

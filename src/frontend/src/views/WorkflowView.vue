@@ -3,9 +3,7 @@ import NavBar from '../components/Navbar.vue';
 import Header from '../components/Header.vue';
 import Button from '../components/Button.vue';
 import Table from "../components/Table.vue";
-import fakeTaskData from './fakeTaskData';
 import { Search, Edit } from '@element-plus/icons-vue'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { BASE_URL } from '../api.js';
 import axios from 'axios';
 
@@ -23,11 +21,21 @@ export default {
         return {
         selectedRows: [], //tick checkbox
         selectAll: false,
+        userId :'',
+        userEmail:'',
         allFormData:[],
+        allUser:[],
+        allVendor:[],
         allWorkflowData:[],
         ActiveWorkflow:[],
+        FilterActiveWorkflow:[],
         InActiveWorkflow:[],
+        FilterInactiveWorkflow:[],
+        Todo:[],
+        Completed:[],
         SearchCompany:'',
+        SearchCompanyArchived:'',
+        assignForm:'',
         menuItems: [ //for top nav bar
             { label: 'HOME', route: '/AdminView'  },
             { label: 'ACCOUNT', route: '/AccountView'  },
@@ -41,54 +49,56 @@ export default {
         ],
         firstNavOption:'workflowTable', //default table displaying
         secNavOption:'ActiveWorkFlow', //default table displaying
-
-        //fake data -- in future change to api endpoint
-
-        data3:fakeTaskData.todo, 
-        headers3:["Task","Company Name","Form No.","Date Assigned","Actions"],
-        fields3:["task","company","formNo","dateAssign","Actions"],
-
-        data4:fakeTaskData.completed, 
-        headers4:["Task","Company Name","Form No.","Date Assigned","Actions"],
-        fields4:["task","company","formNo","dateAssign","Actions"],
-    search: ""
         }
     },
     created() {
-        this.getAllFormAvail() //trigger FormTemplate API
+        const user = JSON.parse(sessionStorage.getItem('user'));
+        this.userId = user.userId
+        this.userEmail = user.userEmail
         this.getAllWorkflow() //trigger Form API
+        this.getAllVendor("VENDOR") // for assigning workflow- vendor
+        this.FilterActiveWorkflow= this.ActiveWorkflow
+        this.FilterInactiveWorkflow = this.InActiveWorkflow
         },
     methods: {
         async getAllWorkflow(){
-            axios.get(`${BASE_URL}/api/form`)
+            axios.get(`${BASE_URL}/api/form/all`)
             .then(response => {
                 var allWorkflow = response.data.data;
-                axios.get(`${BASE_URL}/api/user`)
+                axios.get(`${BASE_URL}/api/user/all`)
                 .then(response => {
                     var allUser= response.data.data;
+                    // console.log(allUser)
+                    this.allUser=allUser
                     
                     //data cleaning
                     for (const workflow of allWorkflow){
-                        console.log(workflow)
+                        // console.log(workflow)
                         var id = workflow.id
                         var task = workflow.formContent.formName
-                        var vendorID= workflow.assigned_vendor_uid
-                        var VendorName= this.findVendorandCompanyName(vendorID,allUser)[0]
-                        var companyName = this.findVendorandCompanyName(vendorID,allUser)[1]
+                        var vendorEmail= workflow.assigned_vendor_email
+                        var VendorName= this.findVendorandCompanyName(vendorEmail,allUser)[0]
+                        var companyName = this.findVendorandCompanyName(vendorEmail,allUser)[1]
                         var formNo = workflow.formContent.formNo
                         var status=workflow.status
-                        var stage= this.addStage(status)[0]
-                        var Mstatus= this.addStage(status)[1]
+                        var stage= this.addStage(status,vendorEmail)[0]
+                        var Mstatus= this.addStage(status,vendorEmail)[1]
                         var formEffDate = new Date(workflow.formEffDate).toLocaleDateString('en-GB')   
                         var deadline = new Date(workflow.deadline).toLocaleDateString('en-GB')  
-                        
                         var archived = workflow.archived
                         var reviewedBy = workflow.reviewedBy
-                        this.allWorkflowData.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline})
+                        var reviewedByName = this.findUser(reviewedBy, allUser)
+                        var archivedBy = workflow.archivedBy
+                        var archivedByName = this.findUser(archivedBy, allUser)
+                        var approvedBy = workflow.approver
+                        var approvedByName = this.findUser(approvedBy, allUser)
+
+
+                        this.allWorkflowData.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline,reviewedBy:reviewedByName,archivedBy:archivedByName,approvedBy:approvedByName})
 
                         //for active workflow
                         if (archived ==false){
-                            this.ActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline})
+                            this.ActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline,reviewedBy:reviewedByName,approvedBy:approvedByName})
 
                             //mytask- todo
                             if(status== 'PENDING_ADMIN'){
@@ -96,15 +106,18 @@ export default {
                             }
 
                             //mytask- completed - check reviewedBy field
-                            if (reviewedBy !== ''){
+                            if (reviewedBy !== '' && reviewedBy==this.userId && status != "PENDING_ADMIN"){
                                 this.Completed.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate})
                             }
                             
                         }else{
                             // inactive workflow
-                            this.InActiveWorkflow.push({ id:id,task: task, vendorID:vendorID,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: status, dateAssign:dateAssign})
+                            this.InActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline,reviewedBy:reviewedByName,archivedBy:archivedByName})
                         }
+
+                        
                     }
+                    this.getAllFormAvail() //trigger FormTemplate API
                     
                 })
             })
@@ -113,7 +126,7 @@ export default {
             });
         },
         async getAllFormAvail(){
-            axios.get(`${BASE_URL}/api/formtemplate`)
+            axios.get(`${BASE_URL}/api/formtemplate/all`)
             .then(response => {
                 var allForm = response.data.data;
                 //data cleaning
@@ -121,8 +134,12 @@ export default {
                     var id = form.id
                     var formName = form.formName
                     var formNo = form.formNo
-                    var lastEdited=form.formEffDate
-                    this.allFormData.push({ id: id, formName: formName, formNo: formNo, editedby:"", lastEdited: lastEdited})
+                    var lastEdited=form.lastEdited
+                    var editedBy = form.editedBy
+                    
+                    var editedByName = this.findUser(editedBy, this.allUser)
+                    
+                    this.allFormData.push({ id: id, formName: formName, formNo: formNo, editedby:editedByName, lastEdited: lastEdited})
                 }
             //   console.log(this.allFormData)
             })
@@ -130,34 +147,76 @@ export default {
                 console.log(error);
             });
         },
-        findVendorandCompanyName(vendorID,allUser){
+        async getAllVendor(usertype){
+            axios.get(`${BASE_URL}/api/user/type/`+usertype)
+            .then(response => {
+                var allSelectedUser = response.data.data;
+                // console.log(allSelectedUser)
+                //data cleaning
+                for (const vendor of allSelectedUser){
+                    var vendorEmail = vendor.email
+                    var vendorName = vendor.entityName
+                    this.allVendor.push({ vendorEmail: vendorEmail, vendorName: vendorName})
+                }
+            //   console.log(this.allFormData)
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        },
+        findUser(id, allUser){
+            var username= ''
+            for (const user of allUser){
+                if (id == user.userId){
+                    username= user.name
+                    
+                }
+            }
+            return username
+        },
+        findVendorandCompanyName(vendorEmail,allUser){
             var companyName = '';
             var VendorName = '';
+            
             for (const user of allUser){
-                if (vendorID == user.userId){
+                if (vendorEmail == user.email){
                     VendorName= user.name
                     companyName = user.entityName
                     
                 }
             }
+            
             return [VendorName,companyName];
         },
-        addStage(status){ //add stage according to the status
+        addStage(status,assigned_vendor_email){ //add stage, Mstatus according to the status
+            console.log(assigned_vendor_email)
             var stage = '';
+            var Mstatus = '';
             if (status == "PENDING_VENDOR"){
                 stage = 'Vendor'
-            }else if (status == "PENDING_REVIEW"){
+                Mstatus = 'Pending'
+            }else if (status == "PENDING_ADMIN"){
                 stage = 'Admin'
+                Mstatus = 'Pending'
             }else if(status == "PENDING_APPROVAL"){
                 stage = 'Approver'
+                Mstatus = 'Pending'
             }else if(status == "APPROVED"){
                 stage = 'Completed'
+                Mstatus = 'Approved'
             }else if(status =='ADMIN_REJECTED'){
                 stage = 'Vendor'
+                Mstatus = 'Admin Rejected'
             }else if (status == "APPROVER_REJECTED"){
-                stage = 'Vendor'
+                if (assigned_vendor_email ==""|| assigned_vendor_email == null){
+                    stage = 'Admin'
+                }else{
+                    stage = 'Vendor'
+                }
+                
+                Mstatus = 'Approver Rejected'
             }
-            return stage
+            return [stage, Mstatus]
         },
         deleteWorkflow(id,vendorID){
             
@@ -171,9 +230,9 @@ export default {
             confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    var url = `${BASE_URL}/api/form/changestatus/archive`
+                    var url = `${BASE_URL}/api/form/archive`
                     axios.post(url, {
-                        formID:id,assigned_vendor_uid:vendorID
+                        formID:id,archivedBy:this.userId 
                     })
                     .then(response => {
                         Swal.fire(
@@ -186,13 +245,48 @@ export default {
                     })
                 }
             })
+        },    
+        searchActivefunction(){
+            this.FilterActiveWorkflow=[]
+            var addedIds = [];
+            for (var workflow of this.ActiveWorkflow) {
+                if (workflow.companyName.toLowerCase().includes(this.SearchCompany.toLowerCase())) {
+                    if (!addedIds.includes(workflow.id)) {
+                        this.FilterActiveWorkflow.push(workflow);
+                        addedIds.push(workflow.id);
+                    }
+                }
+            }
+            // console.log(this.FilterActiveWorkflow)
+            
         },
-        EditEachForm(formNo){ //GET FormTemplate API
+        searchArchivedfunction(){
+            this.FilterInactiveWorkflow=[]
+            var addedIds = [];
+            for (var workflow of this.InActiveWorkflow) {
+                if (workflow.companyName.toLowerCase().includes(this.SearchCompanyArchived.toLowerCase())) {
+                    if (!addedIds.includes(workflow.id)) {
+                        this.FilterInactiveWorkflow.push(workflow);
+                        addedIds.push(workflow.id);
+                    }
+                }
+            }
+            
+            // console.log(this.FilterInactiveWorkflow)
+            
+        },
+        ViewEachForm(formID){ //GET Form API
+            localStorage.setItem('formNo', formID)
+            window.location.href = "ViewForm";
+        },
+        EditFormTemplate(formNo){ //GET FormTemplate API
             localStorage.setItem('formNo', formNo)
             window.location.href = "UpdateFormBuilder";
         },
-        TaskCompleted(){
-            window.open('http://i.imgflip.com/31fael.jpg', '_blank');
+        EditEachForm(formNo){ //GET Form API
+            localStorage.setItem('formNo', formNo)
+            window.location.href = "Form";
+
         },
         AddWorkflow() {
             var html = `<div class="align-left"><span style="color:red">* </span>Select a Form: <select id="form"><option value="" disabled selected>Select a form</option>`
@@ -221,7 +315,7 @@ export default {
             showCancelButton: true,
             confirmButtonText: 'Assign',
             
-            }).then(function() {
+            }).then((result) => {
                 const selectedform = Swal.getPopup().querySelector('#form').value
                 const selectedvendor = Swal.getPopup().querySelector('#vendors').value
                 console.log(selectedform,selectedvendor)
@@ -230,11 +324,14 @@ export default {
                         axios.post(url, {
                             formNo:selectedform,assigned_vendor_email:selectedvendor
                         }).then(response => {
+                            if (result.isConfirmed) {
+                                Swal.fire('Assigned!','','success'
+                                ).then(function () {
+                                    location.reload();
+                                })
+
+                            }
                             
-                            Swal.fire('Assigned!','','success'
-                            ).then(function () {
-                                location.reload();
-                            })
                         })
                 }else{
                     Swal.fire('You need to select a form', '', 'info')
@@ -243,6 +340,41 @@ export default {
             })
 
         }, 
+        sendReminder(VendorName, vendorEmail,formNo,deadline){
+            console.log("testing",VendorName, vendorEmail,formNo,deadline)
+            var date_list = deadline.split('/')
+            var day = date_list[0]
+            var month = date_list[1]
+            var year = date_list[2]
+            var deadline_format = year+"-"+month+'-'+day
+            console.log(deadline_format)
+            Swal.fire({
+            title: 'Do you want to send a reminder email to the vendor?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, sent it!'
+            }).then((result) => {
+                var url = `${BASE_URL}/api/email/sendReminderEmail`
+                    axios.post(url, {
+                        name:VendorName,email:vendorEmail,formName:formNo,deadline:deadline_format
+                    }).then(response => {
+                        if (result.isConfirmed) {
+                    Swal.fire(
+                    'Sent!',
+                    'The reminder email has been sent.',
+                    'success'
+                    )
+                }
+
+                    })
+
+                
+            })
+
+
+        },
         //table styling  function
         selectAllRows() {
             this.selectedRows = this.selectAll ? [...this.allFormData] : [];
@@ -260,6 +392,55 @@ export default {
         isSelected(item) {
             return this.selectedRows.findIndex(selectedRow => selectedRow.id === item.id) !== -1;
         },
+        readyToPrintPdf(formNo,companyName){
+            localStorage.setItem('pdf', [formNo, companyName])
+            window.location.href = "ViewForm";
+        },
+        async DeleteForm(formNo,formName){
+            Swal.fire({
+        title: `Are you sure to delete  ${formName} ?`,
+        text: "You cannot undo the action!",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonColor: '#c7c6c5',
+        confirmButtonColor: '#6A79F3',
+        confirmButtonText: 'Yes, Delete!',
+        cancelButtonText: 'No, Cancel',
+        width: 'auto',
+    }).then((result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = axios.delete(`${BASE_URL}/api/formtemplate/`+ formNo);
+            console.log("SUCCESSFULLY DELETED")
+            console.log(response.data);  
+          
+            Swal.fire({
+              title: 'Success',
+              text: `${formName} have been successfully deleted`,
+              icon: 'success',
+              timer: 2000,
+              timerProgressBar: true,
+              showConfirmButton: false
+            }).then(() => {
+              window.location.href = "/WorkflowView";
+            });
+
+          } catch (error) {
+            if (error) {
+              console.error("errrr", error)
+
+              Swal.fire({
+                icon: 'warning',
+                title: error,
+                timer: 2000,
+                timerProgressBar: true,
+                showConfirmButton: false
+              })
+            }
+            }
+        }
+  })
+            },
     },
     computed: {
         allRowsSelected() { //table styling function
@@ -286,7 +467,7 @@ export default {
     <el-tabs v-model="firstNavOption" >
         <el-tab-pane label="WORKFLOW" name="workflowTable"></el-tab-pane>
         <el-tab-pane label="MY TASK" name="taskTable"></el-tab-pane>
-        <el-tab-pane label="EDIT FORM" name="formTable"></el-tab-pane>
+        <el-tab-pane label="EDIT FORM TEMPLATE" name="formTable"></el-tab-pane>
     </el-tabs>
 
     <!-- 1) workflowTable -->
@@ -294,16 +475,21 @@ export default {
         <!-- sub nav bar [Active / Inactive] -->
         <el-tabs v-model="secNavOption"  type="border-card" >
             <el-tab-pane label="Active" name="ActiveWorkFlow"  >
-                <template #label>Active({{ ActiveWorkflow.length }})</template>
+                <template #label>In Progress ({{ ActiveWorkflow.length }})</template>
             </el-tab-pane>
             <el-tab-pane label="Inactive" name="InActiveworkflowTable"  @tab-click="secNavOption = 'InActiveworkflowTable'">
-                <template #label>Inctive({{ InActiveWorkflow.length }})</template>
+                <template #label>Archived ({{ InActiveWorkflow.length }})</template>
             </el-tab-pane>
 
         <!-- search bar and button (still unable to fit to inline) -->
         <div class="row" >
             <div class="col-sm-2">
-                <el-input v-model="SearchCompany" placeholder="Search Company Name" style="width:fit-content" size="large">
+                <el-input v-if="firstNavOption === 'workflowTable' && secNavOption !== 'InActiveworkflowTable'" v-model="SearchCompany" @input="searchActivefunction()" placeholder="Search Company Name" style="width:fit-content" size="large">
+                <template #suffix>
+                <el-icon class="el-input__icon"><Search /></el-icon>
+                </template>
+                </el-input>
+                <el-input v-if="secNavOption === 'InActiveworkflowTable'" v-model="SearchCompanyArchived" @input="searchArchivedfunction()" placeholder="Search Company Name" style="width:fit-content" size="large">
                 <template #suffix>
                 <el-icon class="el-input__icon"><Search /></el-icon>
                 </template>
@@ -314,90 +500,91 @@ export default {
             </div>
         </div>
         
-        <!-- 1.1) Active Table content -->
-        <!-- previous way of hardcoding table, to be changed to table component -->
-        
+        <!-- 1.1) Active Table content -->        
         <div v-if="firstNavOption === 'workflowTable' && secNavOption !== 'InActiveworkflowTable'" >
             <table class="my-table">
             <thead>
+                
                 <tr>
                     <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
                     <th>Task</th>
-                    <th>Vendor</th>
                     <th>Company Name</th>
-                    <th>Form No.</th>
                     <th>Stage</th>
                     <th>Status</th>
-                    <th>Date Assigned</th>
+                    <th>Vendor Assigned Date</th>
+                    <th>Deadline</th>
+                    <th>Reviewed By</th>
+                    <th>Approved By</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="item in ActiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
+                <tr v-for="item in FilterActiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
                 <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
                 <td>{{ item.task }}</td>
-                <td>{{ item.VendorName }}</td>
                 <td>{{ item.companyName }}</td>
-                <td>{{ item.formNo }}</td>
                 <td>{{ item.stage }}</td>
                 <td>{{ item.status }}</td>
-                <td>{{ item.dateAssign }}</td>
+                <td>{{ item.formEffDate }}</td>
+                <td>{{ item.deadline }}</td>
+                <td>{{ item.reviewedBy }}</td>
+                <td>{{ item.approvedBy }}</td>
                 <td >
                     <div  class="btn-group dropup">
                         <Button buttonStyle="none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             ...
                         </Button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Edit</a></li>
-                            <li><a class="dropdown-item" href="#">Email</a></li>
-                            <li v-if="item.status=='APPROVED'"><a class="dropdown-item" href="#">PDF</a></li>
+                            <li><a class="dropdown-item" @click="ViewEachForm(item.id)">View</a></li>
+                            <li v-if="item.stage=='Vendor'"><a class="dropdown-item" @click="sendReminder(item.VendorName, item.vendorEmail,item.formNo,item.deadline)">Email</a></li>
+                            <li v-if="item.status=='Approved'"><a class="dropdown-item"  @click="readyToPrintPdf(item.id,item.companyName)">PDF</a></li>
                             <li><a class="dropdown-item" @click="deleteWorkflow(item.id, item.vendorID)">Delete</a></li>
                         </ul>
                     </div>
 
                 </td>
                 </tr>
+                <tr v-if ="FilterActiveWorkflow.length==0" >
+                    <td colspan="10">No result found!</td>
+                </tr>  
+                
             </tbody>
+                
             </table>
         </div>
         
         <!-- 1.2) InActive Table content -->
         <div v-if="secNavOption === 'InActiveworkflowTable'">
-            <!-- <Table :data="data2" :headers="headers2" :fields="fields2" :options="dropdownOptions" /> -->
             <table class="my-table">
             <thead>
                 <tr>
                     <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
                     <th>Task</th>
-                    <th>Vendor</th>
                     <th>Company Name</th>
-                    <th>Form No.</th>
-                    <th>Status</th>
-                    <th>Date Assigned</th>
+                    <th>Last Stage</th>
+                    <th>Last Status</th>
+                    <th>FormEffDate</th>
+                    <th>Archived By</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="item in InActiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
+                <tr v-for="item in FilterInactiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
                 <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
                 <td>{{ item.task }}</td>
-                <td>{{ item.VendorName }}</td>
                 <td>{{ item.companyName }}</td>
-                <td>{{ item.formNo }}</td>
+                <td>{{ item.stage }}</td>
                 <td>{{ item.status }}</td>
-                <td>{{ item.dateAssign }}</td>
+                <td>{{ item.formEffDate }}</td>
+                <td>{{ item.archivedBy}}</td>
                 <td >
-                    <div  class="btn-group dropup">
-                        <Button buttonStyle="none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            ...
-                        </Button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">View</a></li>
-                            <li><a class="dropdown-item" href="#">Activate</a></li>
-                        </ul>
-                    </div>
-
+                    <el-icon class="el-input__icon" @click="ViewEachForm(item.id)">
+                            <View />
+                        </el-icon>
                 </td>
+                </tr>
+                <tr v-if ="FilterInactiveWorkflow.length==0" >
+                    <td colspan="10">No result found!</td>
                 </tr>
             </tbody>
             </table>
@@ -412,25 +599,48 @@ export default {
         <!-- sub nav bar [ToDo / Completed] -->
         <el-tabs v-model="secNavOption"  type="border-card" >
             <el-tab-pane label="To Do" name="ToDoTable" >
-                <template #label>To Do({{ data3.length }})</template>
+                <template #label>To Do({{ this.Todo.length }})</template>
             </el-tab-pane>
             <el-tab-pane label="Completed" name="CompletedtaskTable"  @tab-click="secNavOption = 'CompletedtaskTable'">
                 <template #label>Completed({{ this.Completed.length }})</template>
             </el-tab-pane>
-            <el-input placeholder="Search Company Name" style="width:fit-content" size="large">
-                <template #suffix>
-                <el-icon class="el-input__icon"><Search /></el-icon>
-                </template>
-            </el-input>    
+               
             
         <!-- 2.1) To-do Table content -->
-        <div v-if="firstNavOption === 'taskTable' && secNavOption !== 'CompletedtaskTable'">
-            <Table :data="data3" :headers="headers3" :fields="fields3" icon-class="pen-square" @action-click="TaskToDoAction" />
+        <div v-if="firstNavOption === 'taskTable' && secNavOption !== 'CompletedtaskTable' && Todo.length >0">
+            <table class="my-table">
+            <thead>
+                <tr>
+                    <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
+                    <th>Task</th>
+                    <th>Company Name</th>
+                    <th>Stage</th>
+                    <th>Status</th>
+                    <th>FormEffDate</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in Todo" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
+                <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
+                <td>{{ item.task }}</td>
+                <td>{{ item.companyName }}</td>
+                <td>{{ item.stage }}</td>
+                <td>{{ item.status }}</td>
+                <td>{{ item.formEffDate }}</td>
+                <td >
+                    <el-icon class="el-input__icon" @click="EditEachForm(item.id)">
+                            <Edit />
+                        </el-icon>
+                </td>
+                </tr>
+            </tbody>
+            </table>
         </div>
+        <div v-if="firstNavOption === 'taskTable' && secNavOption !== 'CompletedtaskTable' && Todo.length ==0">You have no task for now!</div>
 
         <!-- 2.2) Completed Table content -->
-        <div v-if="secNavOption === 'CompletedtaskTable'">
-            <!-- <Table :data="data4" :headers="headers4" :fields="fields4" icon-class="eye" @action-click="TaskCompleted" /> -->
+        <div v-if="secNavOption === 'CompletedtaskTable'  && Completed.length >0">
             <table class="my-table">
             <thead>
                 <tr>
@@ -452,7 +662,7 @@ export default {
                 <td>{{ item.status }}</td>
                 <td>{{ item.formEffDate }}</td>
                 <td >
-                    <el-icon class="el-input__icon" @click="ViewEachForm(item.formNo)">
+                    <el-icon class="el-input__icon" @click="ViewEachForm(item.id)">
                             <View />
                         </el-icon>
                 </td>
@@ -460,6 +670,7 @@ export default {
             </tbody>
             </table>
         </div>
+        <div v-if="secNavOption === 'CompletedtaskTable'  && Completed.length ==0">There is no completed task!</div>
     </el-tabs >
     </div>
 
@@ -474,6 +685,7 @@ export default {
                 <th>Edited By</th>
                 <th>Last Edited</th>
                 <th>Actions</th>
+                <th>Delete</th>
             </tr>
 
             </thead>
@@ -484,8 +696,13 @@ export default {
                     <td>{{ item.editedby }}</td>
                     <td>{{ item.lastEdited }}</td>
                     <td >
-                        <el-icon class="el-input__icon" @click="EditEachForm(item.formNo)">
+                        <el-icon class="el-input__icon" @click="EditFormTemplate(item.formNo)">
                             <Edit />
+                        </el-icon>
+                    </td>
+                    <td >
+                        <el-icon class="el-input__icon" @click="DeleteForm(item.formNo,item.formName)">
+                            <Delete />
                         </el-icon>
                     </td>
                 </tr>
@@ -493,3 +710,9 @@ export default {
         </table>
     </div>
 </template>
+
+<style>
+.swal-wide{
+    width:850px;
+}
+</style>

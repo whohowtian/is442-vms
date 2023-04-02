@@ -5,13 +5,19 @@
 Please ensure the following is downloaded before running the application.
 - Install [NodeJS v18.0](https://nodejs.org/en/) or later
 - Install [JDK 17](https://www.oracle.com/java/technologies/downloads/) or later
-- Install [MongoDB Compass](https://www.mongodb.com/products/compass)
 - Install [Java Extension Pack](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack) on Visual Studio Code
 
 ## Steps
 ### Connect to database
-Open MongoDB Compass and input the following under the URI field. Click Connect.
-	mongodb+srv://vmsStringbootUsr:XE3HfPeVUMPIqoor@cluster0.ldxjqem.mongodb.net/test?authMechanism=SCRAM-SHA-1
+Open src/backend/main/resources/application.properties and enter the connecting string of your MongoDB database in property:
+```
+spring.data.mongodb.uri=
+```
+
+Otherwise, you may use the following database for testing purposes.
+```
+mongodb+srv://vmsStringbootUsr:XE3HfPeVUMPIqoor@cluster0.ldxjqem.mongodb.net/test?authMechanism=SCRAM-SHA-1
+```
 
 ### Run backend server and Vue application
 To run the entire application, do the following:
@@ -32,17 +38,38 @@ npm install
 npm run dev
 ```
 
-## Functionalities
-### Employee
-- 
-### Vendor
+### Access
+1. [Backend](http://localhost:8080/)
+2. [Frontend](http://localhost:5173/)
+3. [API Documentation](http://localhost:8080/swagger-ui/index.html)
 
-## Frameowrk & Libraries
+
+## Functionalities
+### All Users
+- Login and logout
+- Set and reset password
+
+### Vendor
+- View my account: View my account
+- View and edit forms assigned to me
+- Check status of forms
+- Download approved forms as PDFs:  Download a single form, download all approved forms as a ZIP file
+
+### Admin
+- View all accounts:  CRUD functions for any accounts, able to change user type
+- Create customisable Form Template: CRUD functions for form templates
+- Assign a Workflow: Start a new workflow by assigning form to vendor or admin, archive workflows
+- Download approved forms as PDFs: Download a single form, download multiple forms from the same vendor as a ZIP file
+- Send email reminder: Send an email reminder manually to any vendor when form submission deadline is near
+
+### Approver
+- Approve and Reject Workflow: Approve workflow and save form in database automatically, reject workflow and include reason for rejection
+- Download approved forms as PDFs:  Download a single form, download multiple forms from the same vendor as a ZIP file
+
+
+## Framework & Libraries
 ### Backend
 - MongoDB
 - Java with Spring Boot
 ### Frontend
 - Vue
-
-
-## 3. User Workflow

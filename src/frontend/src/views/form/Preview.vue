@@ -12,11 +12,11 @@
             <el-row>
               <h6>{{ element.formNo }}</h6>
             </el-row>
-            <!-- <el-row>
-              <h6>{{ element.revNo }}</h6>
-            </el-row> -->
+            <el-row>
+              <h6>Due in {{ element.deadlineDays }} days</h6>
+            </el-row>
             <el-row v-if="element.formName !=''">
-              <i>{{element.formEffDate}}</i>
+              <i>{{element.lastEdited}}</i>
             </el-row>           
           </div>
           </template>
@@ -51,8 +51,20 @@ export default {
     return {
       formInfo: store._state.data.formInfo,
       forms: store._state.data.forms,
+      userId:"",
     }
   },
+  created() {
+    //user session
+    const user = JSON.parse(sessionStorage.getItem('user'));
+    if(user == null){
+        //hardcode pass data
+        this.userId = "6426e823533ce37c3e4ddae3"
+    }else{
+        this.userId = user.userId
+    }
+    console.log("userId-->", this.userId); 
+},
   methods: {
      // GET METHOD
     getData(){
@@ -74,14 +86,14 @@ export default {
             qnTitle: field.label,
             inputType: field.fieldType,
             inputOptions,
-            isRequired: field.isRequired
+            required: field.isRequired
           }
           questions[j + 1] = question
         }
         const section = {
           sectionName: formSection.sectionTitle,
           adminUseOnly: formSection.AdminUseOnly,
-          approvalUseOnly: formSection.ApproverUseOnly,
+          approvalViewOnly: formSection.ApproverUseOnly,
           doScoreCalculation: false,
           questions
         }
@@ -90,8 +102,10 @@ export default {
       const data = {
         formNo: this.formInfo[0].formNo,
         formName: this.formInfo[0].formName,
-        formEffDate: this.formInfo[0].formEffDate,
-        formSections
+        lastEdited: this.formInfo[0].lastEdited,
+        deadlineDays:this.formInfo[0].deadlineDays,
+        formSections,
+        editedBy:this.userId
       }
       // console.log(data)
 
@@ -111,19 +125,29 @@ export default {
                 const response = axios.post(`${BASE_URL}/api/formtemplate/create`, data);
                 console.log("SUCCESSFULLY POST")
                 console.log(response.data); // 
-              } catch (error) {
-                if(error){
-                  console.error("ascas",error)
-                  // alert('Error: ${error}. <br/> Please Try Again Later')
-                  Swal.fire({
-                          icon: 'warning',
-                          title: error,
-                          timer: 2000,
-                          timerProgressBar: true,
-                          showConfirmButton: false
-                      })
-                }else{
+              
+                Swal.fire({
+                  title: 'Success',
+                  text: 'Form saved successfully!',
+                  icon: 'success',
+                  timer: 2000,
+                  timerProgressBar: true,
+                  showConfirmButton: false
+                }).then(() => {
                   window.location.href = "/WorkflowView";
+                });
+
+              } catch (error) {
+                if (error) {
+                  console.error("ascas", error)
+
+                  Swal.fire({
+                    icon: 'warning',
+                    title: error,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                  })
                 }
                 }
             }
