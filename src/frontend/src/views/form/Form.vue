@@ -130,11 +130,10 @@
           this.formDeadline = allData.deadline.slice(0, allData.deadline.indexOf('T'));
           var vendorEmail = allData.assigned_vendor_email
           const sectionData = this.formData.formSections
-          if(allData.adminApproverComments != null){
+          if(allData.adminApproverComments && allData.adminApproverComments.trim().length>0){
             this.adminApproverComments=allData.adminApproverComments
             this.hasComment = true
           }
-          // console.log("allData-->",allData)
           axios.get(`${BASE_URL}/api/user/all`)
                 .then(response => {
                   var allUser= response.data.data;
@@ -164,19 +163,23 @@
 
             //disabled field
             // only for admin use only 
-            let disable_section = true
-            if (this.userType =="ADMIN" && adminUseOnly==true ){
-                disable_section = false
-            }
-
-            // only for approver use only 
-            if (this.userType =="APPROVER" && approvalUseOnly==true ){
-                disable_section = false
-            }
+            let disable_section = false
 
             // for vendors
-            if (this.userType =="VENDOR" && adminUseOnly==false && approvalUseOnly==false){
-              disable_section = false
+            if (this.userType =="VENDOR" && adminUseOnly==true){
+              disable_section = true
+            }
+
+            if (this.userType =="VENDOR" && approvalUseOnly==true){
+              disable_section = true
+            }
+
+            if (this.userType =="ADMIN" && approvalUseOnly==true){
+              disable_section = true
+            }
+
+            if (this.userType =="APPROVER" && adminUseOnly==true){
+              disable_section = true
             }
 
 
@@ -544,7 +547,7 @@
       const submitData = {
         id: this.formNo,
         "formContent": {formSections},
-        "approver": this.userId
+        "adminApproverComments":this.rejectReason
         };
 
       console.log("Approver reject-->",submitData)

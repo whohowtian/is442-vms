@@ -1,7 +1,7 @@
 <template >
     <div class="main__wrapper" id="pdf-content">
         <!-- pdf function visible only if is approval -->
-        <!-- <button type="button" class="btn btn-primary" @click="exportToPdf">Print</button> -->
+        <button type="button" class="btn btn-primary" @click="exportToPdf">Print</button>
 
         <el-container style=" margin-top: 5%;">
         <el-main >
@@ -89,8 +89,29 @@
           const allData = response.data.data;
           this.formData = allData.formContent
           this.formDeadline = allData.deadline.slice(0, allData.deadline.indexOf('T'));
+          var vendorEmail = allData.assigned_vendor_email
           const sectionData = this.formData.formSections
-          console.log("allData-->",allData)
+          // console.log("allData-->",allData)
+
+          axios.get(`${BASE_URL}/api/user/all`)
+                .then(response => {
+                  var allUser= response.data.data;
+                    // console.log(allUser)
+          for (const user of allUser){
+                if (vendorEmail == user.email){
+                    if(user.userType==="VENDOR"){
+                        this.entityUEN='admin'
+                    }
+                    if(user.userType==="APPROVER"){
+                        this.entityUEN='approver'
+                    }
+                    else{
+                        this.entityUEN=user.entityUEN
+                    }
+                    
+                }
+              }
+            // console.log(this.entityUEN)
           
           //store questions dict 
           for(let i=1; i<Object.keys(sectionData).length +1; i++){
@@ -101,7 +122,7 @@
             // console.log(formTitle, adminUseOnly)
 
             //disabled field then css overwrite
-            let disable_section = true
+            let disable_section = false
 
 
             //store questions dict 
@@ -121,6 +142,7 @@
             this.formattedData.push({ fields: allQn, sectionTitle: formTitle, AdminUseOnly:adminUseOnly,  ApproverUseOnly:approvalUseOnly });
 
           }
+        })
         }).catch(error => {
           console.log(error);
         });
@@ -140,6 +162,9 @@
     formData.append('file', pdfBlob)
     formData.append('title', PdfFilename)
 
+    // console.log(PdfFilename)
+    // console.log("-->",formData)
+
     try {
       const response = await axios.post(`${BASE_URL}/api/pdf/save`, formData)
       console.log('PDF file stored in database:', response.data)
@@ -147,11 +172,7 @@
       console.error('Error storing PDF file in database:', error.message)
     }
     try{
-      await axios.get(`${BASE_URL}/api/pdf/retrieve`, {
-        params: {
-          fileName: PdfFilename
-        }
-      })
+      await axios.get(`${BASE_URL}/api/pdf/`+ PdfFilename)
       .then(response => {
         console.log(response.data);
       })

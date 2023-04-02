@@ -19,9 +19,6 @@
             <div class="col-sm-6">
               <button type="submit" class="btn btn-primary btn-block" @click.prevent="login">Login</button>
             </div>
-            <div class="col-sm-6">
-              <button type="submit" class="btn btn-secondary btn-block" @click.prevent="signup" style="white-space: nowrap;">Sign Up</button>
-            </div>
           </div>
         </form>
       </div>
@@ -72,9 +69,7 @@
             else{
               alert('Invalid user type.');
             }
-          } else {
-            alert('Invalid email or password.');
-          } })
+          }})
           .catch(error => {
           console.log(error);
           alert('invalid email address & password')
@@ -83,10 +78,7 @@
           console.error(error);
           alert('An error occurred while logging in.');
         }
-      },
-      signup() {
-      this.$router.push('/CreateAccount');
-    }
+      }
     }
   }
   </script>

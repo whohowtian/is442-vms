@@ -1,7 +1,5 @@
 <script>
     import NavBar from '../components/Navbar.vue';
-    import fakeTaskData from './fakeTaskData';
-    import Table from "../components/Table.vue";
     import { BASE_URL } from '../api.js';
     import axios from 'axios';
 
@@ -9,8 +7,7 @@
     export default {
         name: "VendorView",
         components: {
-            NavBar,
-            Table,
+            NavBar
          },
         data() {
             return {
@@ -27,9 +24,6 @@
             selectedRows: [], //tick checkbox
             selectAll: false,
 
-            data2:fakeTaskData.completed, 
-            headers2:["Task","Form No.","Stage","Status","Date Assigned","Actions"],
-            fields2:["task","formNo","company","id","dateAssign","Actions"],
             }
         },
         created() {
