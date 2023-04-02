@@ -3,9 +3,7 @@ import NavBar from '../components/Navbar.vue';
 import Header from '../components/Header.vue';
 import Button from '../components/Button.vue';
 import Table from "../components/Table.vue";
-import fakeTaskData from './fakeTaskData';
 import { Search, Edit } from '@element-plus/icons-vue'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { BASE_URL } from '../api.js';
 import axios from 'axios';
 
@@ -48,9 +46,6 @@ export default {
         ],
         firstNavOption:'workflowTable', //default table displaying
         secNavOption:'ActiveWorkFlow', //default table displaying
-
-        //fake data -- in future change to api endpoint
-
         }
     },
     created() {
@@ -358,6 +353,51 @@ export default {
             localStorage.setItem('pdf', [formNo, companyName])
             window.location.href = "ViewForm";
         },
+        async DeleteForm(formNo,formName){
+            Swal.fire({
+        title: `Are you sure to delete  ${formName} ?`,
+        text: "You cannot undo the action!",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonColor: '#c7c6c5',
+        confirmButtonColor: '#6A79F3',
+        confirmButtonText: 'Yes, Delete!',
+        cancelButtonText: 'No, Cancel',
+        width: 'auto',
+    }).then((result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = axios.delete(`${BASE_URL}/api/formtemplate/`+ formNo);
+            console.log("SUCCESSFULLY DELETED")
+            console.log(response.data);  
+          
+            Swal.fire({
+              title: 'Success',
+              text: `${formName} have been successfully deleted`,
+              icon: 'success',
+              timer: 2000,
+              timerProgressBar: true,
+              showConfirmButton: false
+            }).then(() => {
+              window.location.href = "/WorkflowView";
+            });
+
+          } catch (error) {
+            if (error) {
+              console.error("errrr", error)
+
+              Swal.fire({
+                icon: 'warning',
+                title: error,
+                timer: 2000,
+                timerProgressBar: true,
+                showConfirmButton: false
+              })
+            }
+            }
+        }
+  })
+            },
     },
     computed: {
         allRowsSelected() { //table styling function
@@ -593,6 +633,7 @@ export default {
                 <th>Edited By</th>
                 <th>Last Edited</th>
                 <th>Actions</th>
+                <th>Delete</th>
             </tr>
 
             </thead>
@@ -605,6 +646,11 @@ export default {
                     <td >
                         <el-icon class="el-input__icon" @click="EditFormTemplate(item.formNo)">
                             <Edit />
+                        </el-icon>
+                    </td>
+                    <td >
+                        <el-icon class="el-input__icon" @click="DeleteForm(item.formNo,item.formName)">
+                            <Delete />
                         </el-icon>
                     </td>
                 </tr>
