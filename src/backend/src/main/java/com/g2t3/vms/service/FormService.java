@@ -125,25 +125,26 @@ public class FormService {
 
         switch(action) {
             case "approve":
-                currFormObjDB.setApprover(form.getApprover());
-                currFormObjDB.setAdminApproverComments(form.getAdminApproverComments());
-                currFormObjDB.changeStatusApproved();
+                // currFormObjDB.setApprover();
+                // currFormObjDB.setAdminApproverComments();
+                currFormObjDB.changeStatusApproved(form.getApprover(), form.getAdminApproverComments());
                 break;
             case "submit":
                 currFormObjDB.changeStatusSubmitted();
                 break;
             case "adminreviewed":
-                currFormObjDB.setReviewedBy(form.getReviewedBy());
-                currFormObjDB.setAdminApproverComments(form.getAdminApproverComments());
-                currFormObjDB.changeStatusAdminReviewed();
+                // currFormObjDB.setReviewedBy(form.getReviewedBy());
+                // currFormObjDB.setAdminApproverComments(form.getAdminApproverComments());
+                currFormObjDB.changeStatusAdminReviewed(form.getReviewedBy(), form.getAdminApproverComments());
                 break;
             case "adminreject":
-                currFormObjDB.changeStatusAdminRejected();
-                currFormObjDB.setReviewedBy(form.getReviewedBy());
+                // currFormObjDB.changeStatusAdminRejected(form.getReviewedBy(), form.getAdminApproverComments());
+                // currFormObjDB.setReviewedBy(form.getReviewedBy());
                 currFormObjDB.setAdminApproverComments(form.getAdminApproverComments());
                 break;
             case "approverreject":
-                currFormObjDB.changeStatusApproverRejected();
+                // currFormObjDB.setApprover(form.getApprover());
+                // currFormObjDB.changeStatusApproverRejected(form.getApprover(), form.getAdminApproverComments());
                 currFormObjDB.setAdminApproverComments(form.getAdminApproverComments());
                 break;
         }

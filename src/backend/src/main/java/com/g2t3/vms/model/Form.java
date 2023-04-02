@@ -74,7 +74,9 @@ public class Form {
         this.archivedBy = user;
     }
 
-    public void changeStatusApproved() {
+    public void changeStatusApproved(String approver, String comments) {
+        this.approver = approver;
+        this.adminApproverComments = comments;
         this.status = FormStatus.APPROVED;
     }
 
@@ -82,15 +84,21 @@ public class Form {
         this.status = FormStatus.PENDING_ADMIN;
     }
 
-    public void changeStatusAdminReviewed() {
+    public void changeStatusAdminReviewed(String reviewer, String comments) {
+        this.reviewedBy = reviewer;
+        this.adminApproverComments = comments;
         this.status = FormStatus.PENDING_APPROVAL;
     }
 
-    public void changeStatusAdminRejected() {
+    public void changeStatusAdminRejected(String reviewer, String comments) {
+        this.reviewedBy = reviewer;
+        this.adminApproverComments = comments;
         this.status = FormStatus.PENDING_VENDOR;
     }
 
-    public void changeStatusApproverRejected() {
+    public void changeStatusApproverRejected(String approver, String comments) {
+        this.approver = approver;
+        this.adminApproverComments = comments;
         this.status = FormStatus.APPROVER_REJECTED;
     }
 
