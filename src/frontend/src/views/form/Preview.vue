@@ -51,8 +51,20 @@ export default {
     return {
       formInfo: store._state.data.formInfo,
       forms: store._state.data.forms,
+      userId:"",
     }
   },
+  created() {
+    //user session
+    const user = JSON.parse(sessionStorage.getItem('user'));
+    if(user == null){
+        //hardcode pass data
+        this.userId = "6426e823533ce37c3e4ddae3"
+    }else{
+        this.userId = user.userId
+    }
+    console.log("userId-->", this.userId); 
+},
   methods: {
      // GET METHOD
     getData(){
@@ -92,7 +104,8 @@ export default {
         formName: this.formInfo[0].formName,
         lastEdited: this.formInfo[0].lastEdited,
         deadlineDays:this.formInfo[0].deadlineDays,
-        formSections
+        formSections,
+        editedBy:this.userId
       }
       // console.log(data)
 

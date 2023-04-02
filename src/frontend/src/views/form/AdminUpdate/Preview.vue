@@ -54,6 +54,7 @@
       return {
         editableFormInfo: store._state.data.editableFormInfo,
         editableForms: store._state.data.editableForms,
+        userId:"",
       }
     },
     async created(){ //remove in the future 
@@ -76,6 +77,15 @@
           console.log(error);
         });
     }
+        //user session
+        const user = JSON.parse(sessionStorage.getItem('user'));
+    if(user == null){
+        //hardcode pass data
+        this.userId = "6426e823533ce37c3e4ddae3"
+    }else{
+        this.userId = user.userId
+    }
+    console.log("userId-->", this.userId); 
     },
     methods: {
        // GET METHOD
@@ -115,7 +125,8 @@
           formName: this.editableFormInfo[0].formName,
           lastEdited: this.editableFormInfo[0].lastEdited,
           deadlineDays:this.editableFormInfo[0].deadlineDays,
-          formSections
+          formSections,
+          editedBy:this.userId
         }
         console.log(data)
 
