@@ -2,7 +2,7 @@
     import NavBar from '../components/Navbar.vue';
     import Header from '../components/Header.vue';
     import Button from '../components/Button.vue';
-    import Table from "../components/Table.vue";
+
     import { Search, More} from '@element-plus/icons-vue'
     import axios from 'axios';
     import { BASE_URL } from '../api.js';
@@ -13,7 +13,6 @@
             NavBar,
             Header,
             Button,
-            Table,
             Search
          },
         data() {

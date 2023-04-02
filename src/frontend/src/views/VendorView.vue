@@ -109,11 +109,9 @@
             }
             return [stage, Mstatus]
         },
-        TaskToDoAction(){
-            window.open('https://media.makeameme.org/created/i-pray-to-5bed2f.jpg', '_blank');
-        },
-        TaskCompleted(){
-            window.open('http://i.imgflip.com/31fael.jpg', '_blank');
+        ViewEachForm(formID){ //GET Form API
+            localStorage.setItem('formNo', formID)
+            window.location.href = "ViewForm";
         },
         EditEachForm(formId,status){
             localStorage.setItem('formNo', [formId,status])
@@ -229,7 +227,7 @@
                 <td>{{ item.status }}</td>
                 <td>{{ item.formEffDate }}</td>
                 <td >
-                    <el-icon class="el-input__icon" @click="ViewEachForm(item.formNo)">
+                    <el-icon class="el-input__icon" @click="ViewEachForm(item.id)">
                             <View />
                         </el-icon>
                 </td>

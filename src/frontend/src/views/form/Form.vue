@@ -547,7 +547,8 @@
       const submitData = {
         id: this.formNo,
         "formContent": {formSections},
-        "adminApproverComments":this.rejectReason
+        "adminApproverComments":this.rejectReason,
+        "approver": this.userId
         };
 
       console.log("Approver reject-->",submitData)

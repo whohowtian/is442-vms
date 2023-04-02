@@ -66,9 +66,6 @@
             if(userData.userType =="APPROVER"){
               this.$router.push('/ApprovalView');
             }
-            else{
-              alert('Invalid user type.');
-            }
           }})
           .catch(error => {
           console.log(error);

@@ -21,6 +21,7 @@
     "awesome-vue-star-rating": "^1.0.9",
     "bootstrap": "^5.2.3",
     "element-plus": "^2.3.0",
+    "html2pdf.js": "^0.10.1",
     "primeicons": "^6.0.1",
     "primevue": "^3.23.0",
     "sweetalert2": "^11.7.3",

@@ -1,7 +1,6 @@
 <script>
     import NavBar from '../components/Navbar.vue';
     import Button from '../components/Button.vue';
-    import Table from "../components/Table.vue";
     import axios from 'axios';
     import { BASE_URL } from '../api.js';
 
@@ -10,7 +9,6 @@
         name: "ApprovalView",
         components: {
             NavBar,
-            Table,
             Button,
          },
         data() {
