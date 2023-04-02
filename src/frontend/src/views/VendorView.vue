@@ -29,6 +29,7 @@
         created() {
         //user session
         const user = JSON.parse(sessionStorage.getItem('user'));
+        console.log(user)
         if(user == null){
             //hardcode pass data
             this.userId = "6426e823533ce37c3e4ddae3"
@@ -53,11 +54,13 @@
                     var id = workflow.id
                     var task = workflow.formContent.formName
                     var status=workflow.status
-                    var stage= this.addStage(status)[0]
-                    var Mstatus= this.addStage(status)[1]
+                    var assigned_vendor_email = workflow.assigned_vendor_email
+                    console.log(assigned_vendor_email)
+                    var stage= this.addStage(status,assigned_vendor_email)[0]
+                    var Mstatus= this.addStage(status,assigned_vendor_email)[1]
                     var formEffDate = new Date(workflow.formEffDate).toLocaleDateString('en-GB')   
                     var deadline = new Date(workflow.deadline).toLocaleDateString('en-GB')  
-                    var assigned_vendor_email = workflow.assigned_vendor_email
+                   
                     var archived = workflow.archived
 
                     console.log('test',assigned_vendor_email,this.userEmail)
@@ -76,9 +79,10 @@
                 }
             })
         },
-        addStage(status){ //add stage, Mstatus according to the status
+        addStage(status,assigned_vendor_email){ //add stage, Mstatus according to the status
             var stage = '';
             var Mstatus = '';
+            console.log(assigned_vendor_email)
             if (status == "PENDING_VENDOR"){
                 stage = 'Vendor'
                 Mstatus = 'Pending'
@@ -95,7 +99,12 @@
                 stage = 'Vendor'
                 Mstatus = 'Admin Rejected'
             }else if (status == "APPROVER_REJECTED"){
-                stage = 'Vendor'
+                if (assigned_vendor_email !='' || assigned_vendor_email != null){
+                    stage = 'Vendor'
+                }else{
+                    stage = 'Admin'
+                }
+                
                 Mstatus = 'Approver Rejected'
             }
             return [stage, Mstatus]
