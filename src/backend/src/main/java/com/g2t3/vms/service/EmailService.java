@@ -128,7 +128,7 @@ public class EmailService {
             throw new ResourceNotValidException(String.format("The sender email (%s) is invalid.", user.getEmail()));
         }
 
-        EmailTemplate template = getTemplateById("6425bf076162e20f5ce1dba3");
+        EmailTemplate template = getTemplateById("6429830f0e15110e001e4900");
         if (template == null) {
             throw new ResourceNotFoundException("Template does not exist.");
         }
@@ -150,7 +150,7 @@ public class EmailService {
             throw new ResourceNotValidException(String.format("The sender email (%s) is invalid.", request.getEmail()));
         }
 
-        EmailTemplate template = getTemplateById("6426facd0869fc2ea8b9aa97");
+        EmailTemplate template = getTemplateById("6429830f0e15110e001e4901");
         if (template == null) {
             throw new ResourceNotFoundException("Template does not exist.");
         }
