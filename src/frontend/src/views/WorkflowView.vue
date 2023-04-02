@@ -89,15 +89,18 @@ export default {
                         var deadline = new Date(workflow.deadline).toLocaleDateString('en-GB')  
                         var archived = workflow.archived
                         var reviewedBy = workflow.reviewedBy
+                        var reviewedByName = this.findUser(reviewedBy, allUser)
                         var archivedBy = workflow.archivedBy
+                        var archivedByName = this.findUser(archivedBy, allUser)
                         var approvedBy = workflow.approver
+                        var approvedByName = this.findUser(approvedBy, allUser)
 
 
-                        this.allWorkflowData.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline,reviewedBy:reviewedBy,archivedBy:archivedBy,approvedBy:approvedBy})
+                        this.allWorkflowData.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline,reviewedBy:reviewedByName,archivedBy:archivedByName,approvedBy:approvedByName})
 
                         //for active workflow
                         if (archived ==false){
-                            this.ActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline,reviewedBy:reviewedBy,approvedBy:approvedBy})
+                            this.ActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline,reviewedBy:reviewedByName,approvedBy:approvedByName})
 
                             //mytask- todo
                             if(status== 'PENDING_ADMIN'){
@@ -105,13 +108,13 @@ export default {
                             }
 
                             //mytask- completed - check reviewedBy field
-                            if (reviewedBy !== ''){
+                            if (reviewedBy !== '' && reviewedBy==this.userId){
                                 this.Completed.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate})
                             }
                             
                         }else{
                             // inactive workflow
-                            this.InActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline,reviewedBy:reviewedBy,archivedBy:archivedBy})
+                            this.InActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline,reviewedBy:reviewedByName,archivedBy:archivedByName})
                         }
                         
                     }
@@ -157,6 +160,16 @@ export default {
             .catch(error => {
                 console.log(error);
             });
+        },
+        findUser(id, allUser){
+            var username= ''
+            for (const user of allUser){
+                if (id == user.userId){
+                    username= user.name
+                    
+                }
+            }
+            return username
         },
         findVendorandCompanyName(vendorEmail,allUser){
             var companyName = '';
