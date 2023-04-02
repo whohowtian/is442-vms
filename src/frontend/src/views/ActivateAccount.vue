@@ -83,9 +83,11 @@ export default {
                 this.contains_uppercase = /[A-Z]/.test(this.password);
                 this.contains_special_character = format.test(this.password);
                 
-                if (this.contains_eight_characters === true && this.contains_special_character === true &&
-                    this.contains_uppercase === true && this.contains_number === true &&this.password_match === true) {
-                    this.valid_password = true;			
+                if (this.contains_eight_characters === true &&
+                                this.contains_special_character === true &&
+                                this.contains_uppercase === true &&
+                                this.contains_number === true &&this.password_match === true) {
+                                    this.valid_password = true;			
                 } else {
                     this.valid_password = false;
                 }
@@ -122,8 +124,8 @@ export default {
                         <h4><label for="password" class="form-label">Password</label> <span style="color:red">*</span></h4>
                         <input id="password" type="password" @input="checkPassword" v-model="password" autocomplete="off" placeholder="Password" />
                     </div>
-                    
                     <div class="col-lg-6 col-md-6"></div>
+
 
                     <div class="col-lg-6 col-md-6">
                         <h4><label for="password" class="form-label">Confirm Password</label> <span style="color:red">*</span></h4>

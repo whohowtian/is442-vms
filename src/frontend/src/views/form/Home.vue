@@ -19,16 +19,14 @@
                 <el-input v-model="element.formNo" placeholder="Form No" style="width: 100%;"></el-input>
               </el-form-item>
             </el-row>
-            <el-row>
-              <el-form-item label="Deadline">
-                <el-input v-model.number="element.deadlineDays" placeholder="Deadline days" style="width: 100%;" type="number">
-                  <template #append>days</template>
-                </el-input>
+            <!-- <el-row>
+              <el-form-item label="Revision No">
+                <el-input v-model="element.revNo" placeholder="Revision" style="width: 100%;"></el-input>
               </el-form-item>
-            </el-row>
+            </el-row> -->
             <el-row>
               <el-form-item label="Date">
-                <el-input v-model="element.lastEdited" disabled  style="width: 100%;"></el-input>
+                <el-input v-model="element.formEffDate" disabled  style="width: 100%;"></el-input>
               </el-form-item>
               
             </el-row>
