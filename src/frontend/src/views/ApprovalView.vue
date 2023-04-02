@@ -25,8 +25,8 @@
             activeOption:'taskTable', //default table displaying
             selectedRows: [], //tick checkbox
             selectAll: false,
-            allToDo:[],
-            allCompleted:[],
+            Todo:[],
+            Completed:[],
 
             }
         },
@@ -48,47 +48,78 @@
         console.log("userEmail-->",this.userEmail, this.userName); 
         this.getAllWorkflow() //trigger Form API/APPROVED
         },
-        methods: {
-        addStage(status){ //add stage according to the status
-            var stage = '';
-            if (status == "PENDING_VENDOR"){
-                stage = 'Vendor'
-            }else if (status == "PENDING_REVIEW"){
-                stage = 'Admin'
-            }else if(status == "PENDING_APPROVAL"){
-                stage = 'Approver'
-            }else if(status == "APPROVED"){
-                stage = 'Completed'
-            }else if(status =='ADMIN_REJECTED'){
-                stage = 'Vendor'
-            }else if (status == "APPROVER_REJECTED"){
-                stage = 'Vendor'
-            }
-            return stage
-        },        
+        methods: {       
         async getAllWorkflow(){
             axios.get(`${BASE_URL}/api/form/formstatus/PENDING_APPROVAL`)
                 .then(response => {
                     var allWorkflow = response.data.data
-                    console.log(allWorkflow)
-                    for (const workflow of allWorkflow){
-                        var id=workflow.id
-                        var task = workflow.formContent.formName
-                        var formNo = workflow.formContent.formNo
-                        var status=workflow.status
-                        var stage=this.addStage(status)
-                        var vendor=workflow.assigned_vendor_email
-                        this.allToDo.push({ id: id, task: task, formNo: formNo, stage:stage, status: status,vendor: vendor})
-                }
-                console.log("todo-->", this.allToDo)
+                    // console.log(allWorkflow)
+                    axios.get(`${BASE_URL}/api/user/all`)
+                    .then(response => {
+                        var allUser= response.data.data;
+                        for (const workflow of allWorkflow){
+                            var id=workflow.id
+                            var task = workflow.formContent.formName
+                            var assigned_vendor_email = workflow.assigned_vendor_email
+                            var VendorName= this.findVendorandCompanyName(assigned_vendor_email,allUser)[0]
+                            var companyName = this.findVendorandCompanyName(assigned_vendor_email,allUser)[1]
+                            var status=workflow.status
+                            var stage=this.addStage(status)[0]
+                            var Mstatus = this.addStage(status)[1]
+                            var formEffDate=new Date(workflow.formEffDate).toLocaleDateString('en-GB') 
+                            
+                            this.Todo.push({ id: id, task: task,assigned_vendor_email:assigned_vendor_email,VendorName:VendorName,companyName:companyName, status: Mstatus, stage:stage, formEffDate: formEffDate})
+
+                        }
+                    })
+                    
+                
                 })
                 .catch(error => {
                 console.log(error);
                 });
         },
+        findVendorandCompanyName(vendorEmail,allUser){
+            var companyName = '';
+            var VendorName = '';
+            
+            for (const user of allUser){
+                if (vendorEmail == user.email){
+                    VendorName= user.name
+                    companyName = user.entityName
+                    
+                }
+            }
+            
+            return [VendorName,companyName];
+        },
+        addStage(status){ //add stage, Mstatus according to the status
+            var stage = '';
+            var Mstatus = '';
+            if (status == "PENDING_VENDOR"){
+                stage = 'Vendor'
+                Mstatus = 'Pending'
+            }else if (status == "PENDING_ADMIN"){
+                stage = 'Admin'
+                Mstatus = 'Pending'
+            }else if(status == "PENDING_APPROVAL"){
+                stage = 'Approver'
+                Mstatus = 'Pending'
+            }else if(status == "APPROVED"){
+                stage = 'Completed'
+                Mstatus = 'Approved'
+            }else if(status =='ADMIN_REJECTED'){
+                stage = 'Vendor'
+                Mstatus = 'Admin Rejected'
+            }else if (status == "APPROVER_REJECTED"){
+                stage = 'Vendor'
+                Mstatus = 'Approver Rejected'
+            }
+            return [stage, Mstatus]
+        },
         //table styling  function
         selectAllRows() {
-            this.selectedRows = this.selectAll ? [...this.allToDo] : [];
+            this.selectedRows = this.selectAll ? [...this.Todo] : [];
             },
         toggleRowSelection(item, event) {
             if (event.target.tagName === 'TD') {
@@ -124,7 +155,7 @@
     <p>Please review the checklist below to complete any assigned tasks.</p>
     <el-tabs v-model="activeOption"  type="border-card">
         <el-tab-pane label="To Do" name="taskTable"  @tab-click="activeOption = 'taskTable'">
-            <template #label>To Do({{ allToDo.length }})</template>
+            <template #label>To Do({{ Todo.length }})</template>
         </el-tab-pane>
         <el-tab-pane label="Completed" name="CompletedtaskTable"  @tab-click="activeOption = 'CompletedtaskTable'">
             <template #label>Completed({{ 0 }})</template>
@@ -137,23 +168,21 @@
                 <tr>
                     <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
                     <th>Task</th>
-                    <th>Form No</th>
-                    <th>Vendor</th>
+                    <th>Company Name</th>
                     <th>Stage</th>
                     <th>Status</th>
-                    <th>Date Assigned</th>
+                    <th>FormEffDate</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="item in allToDo" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
+                <tr v-for="item in Todo" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
                 <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
                 <td>{{ item.task }}</td>
-                <td>{{ item.formNo }}</td>
-                <td>{{ item.vendor }}</td>
+                <td>{{ item.companyName }}</td>
                 <td>{{ item.stage }}</td>
                 <td>{{ item.status }}</td>
-                <td>date assigned</td>
+                <td>{{ item.formEffDate }}</td>
                 <td >
                     <el-icon class="el-input__icon" @click="ApproveEachForm(item.id, item.status)">
                         <Edit />
