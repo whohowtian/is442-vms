@@ -111,7 +111,7 @@
 
 
                         //mytask- completed - check reviewedBy field
-                        if (approvedBy !== '' && approvedBy==this.userId){
+                        if (approvedBy !== '' && approvedBy==this.userId && status !='PENDING_APPROVAL'){
                             this.Completed.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate})
                         }
                             

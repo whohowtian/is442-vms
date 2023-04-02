@@ -106,7 +106,7 @@ export default {
                             }
 
                             //mytask- completed - check reviewedBy field
-                            if (reviewedBy !== '' && reviewedBy==this.userId){
+                            if (reviewedBy !== '' && reviewedBy==this.userId && status != "PENDING_ADMIN"){
                                 this.Completed.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate})
                             }
                             
