@@ -3,14 +3,11 @@ package com.g2t3.vms.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import com.g2t3.vms.enums.FormStatus;
 import com.g2t3.vms.exception.ResourceNotFoundException;
 import com.g2t3.vms.model.Form;
 import com.g2t3.vms.model.FormSection;
@@ -61,10 +58,7 @@ public class FormService {
     public void createForm(Map<String, String> newFormInfo) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
 
         String formNo = newFormInfo.get("formNo"); 
-        
         String assigned_vendor_email = newFormInfo.get("assigned_vendor_email");
-
-        // System.out.println(assigned_vendor_email);
 
         System.out.println(newFormInfo.toString());
 
@@ -98,8 +92,8 @@ public class FormService {
 
         for (Map.Entry<String, FormSection> sectionEntry : newInput.entrySet()) {
             String currSectID = sectionEntry.getKey();
-            FormSection currFormSectDB = currFormObjDB.getFormContent().getFormSections().get(currSectID);
-            boolean forAdminOnly = currFormSectDB.isAdminUseOnly();
+            // FormSection currFormSectDB = currFormObjDB.getFormContent().getFormSections().get(currSectID);
+            // boolean forAdminOnly = currFormSectDB.isAdminUseOnly();
 
             HashMap<String, Question> currSectObj = sectionEntry.getValue().getQuestions();
 
@@ -119,32 +113,20 @@ public class FormService {
         Form currFormObjDB = formRepo.getFormByID(formID);
         currFormObjDB.updateStatusChangeDateTime();
 
-        if (currFormObjDB == null) {
-            throw new ResourceNotFoundException("Form " + formID + "does not exist.");
-        }
-
         switch(action) {
             case "approve":
-                // currFormObjDB.setApprover();
-                // currFormObjDB.setAdminApproverComments();
                 currFormObjDB.changeStatusApproved(form.getApprover(), form.getAdminApproverComments());
                 break;
             case "submit":
                 currFormObjDB.changeStatusSubmitted();
                 break;
             case "adminreviewed":
-                // currFormObjDB.setReviewedBy(form.getReviewedBy());
-                // currFormObjDB.setAdminApproverComments(form.getAdminApproverComments());
                 currFormObjDB.changeStatusAdminReviewed(form.getReviewedBy(), form.getAdminApproverComments());
                 break;
             case "adminreject":
-                // currFormObjDB.changeStatusAdminRejected(form.getReviewedBy(), form.getAdminApproverComments());
-                // currFormObjDB.setReviewedBy(form.getReviewedBy());
                 currFormObjDB.changeStatusAdminRejected(form.getReviewedBy(), form.getAdminApproverComments());
                 break;
             case "approverreject":
-                // currFormObjDB.setApprover(form.getApprover());
-                // currFormObjDB.changeStatusApproverRejected(form.getApprover(), form.getAdminApproverComments());
                 currFormObjDB.changeStatusApproverRejected(form.getApprover(), form.getAdminApproverComments());
                 break;
         }
