@@ -104,8 +104,8 @@
                         var companyName = this.findVendorandCompanyName(vendorEmail,allUser)[1]
                         var formNo = workflow.formContent.formNo
                         var status=workflow.status
-                        var stage= this.addStage(status)[0]
-                        var Mstatus= this.addStage(status)[1]
+                        var stage= this.addStage(status,vendorEmail)[0]
+                        var Mstatus= this.addStage(status,vendorEmail)[1]
                         var formEffDate = new Date(workflow.formEffDate).toLocaleDateString('en-GB')   
                         var approvedBy = workflow.approver
 
@@ -140,7 +140,7 @@
             
             return [VendorName,companyName];
         },
-        addStage(status){ //add stage, Mstatus according to the status
+        addStage(status,assigned_vendor_email){ //add stage, Mstatus according to the status
             var stage = '';
             var Mstatus = '';
             if (status == "PENDING_VENDOR"){
@@ -159,7 +159,12 @@
                 stage = 'Vendor'
                 Mstatus = 'Admin Rejected'
             }else if (status == "APPROVER_REJECTED"){
-                stage = 'Vendor'
+                if (assigned_vendor_email ==""|| assigned_vendor_email == null){
+                    stage = 'Admin'
+                }else{
+                    stage = 'Vendor'
+                }
+                
                 Mstatus = 'Approver Rejected'
             }
             return [stage, Mstatus]
