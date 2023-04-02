@@ -235,7 +235,7 @@
             </table>
         </div>
 
-        <div v-if="activeOption === 'CompletedtaskTable' && Completed.length ==0">You have no task for now!</div>
+        <div v-if="activeOption === 'CompletedtaskTable' && Completed.length ==0">There is no completed task!</div>
 
     </el-tabs>
     </div>

@@ -52,10 +52,8 @@ export default {
         const user = JSON.parse(sessionStorage.getItem('user'));
         this.userId = user.userId
         this.userEmail = user.userEmail
-        this.getAllFormAvail() //trigger FormTemplate API
         this.getAllWorkflow() //trigger Form API
         this.getAllVendor("VENDOR") // for assigning workflow- vendor
-        console.log(this.userId)
         },
     methods: {
         async getAllWorkflow(){
@@ -111,8 +109,10 @@ export default {
                             // inactive workflow
                             this.InActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline,reviewedBy:reviewedByName,archivedBy:archivedByName})
                         }
+
                         
                     }
+                    this.getAllFormAvail() //trigger FormTemplate API
                     
                 })
             })
@@ -131,7 +131,11 @@ export default {
                     var formName = form.formName
                     var formNo = form.formNo
                     var lastEdited=form.lastEdited
-                    this.allFormData.push({ id: id, formName: formName, formNo: formNo, editedby:"", lastEdited: lastEdited})
+                    var editedBy = form.editedBy
+                    
+                    var editedByName = this.findUser(editedBy, this.allUser)
+                    
+                    this.allFormData.push({ id: id, formName: formName, formNo: formNo, editedby:editedByName, lastEdited: lastEdited})
                 }
             //   console.log(this.allFormData)
             })
@@ -297,7 +301,7 @@ export default {
             })
 
         }, 
-        sendRemainder(VendorName, vendorEmail,formNo,deadline){
+        sendReminder(VendorName, vendorEmail,formNo,deadline){
             console.log("testing",VendorName, vendorEmail,formNo,deadline)
             var date_list = deadline.split('/')
             var day = date_list[0]
@@ -452,9 +456,7 @@ export default {
             </div>
         </div>
         
-        <!-- 1.1) Active Table content -->
-        <!-- previous way of hardcoding table, to be changed to table component -->
-        
+        <!-- 1.1) Active Table content -->        
         <div v-if="firstNavOption === 'workflowTable' && secNavOption !== 'InActiveworkflowTable'" >
             <table class="my-table">
             <thead>
@@ -489,7 +491,7 @@ export default {
                         </Button>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" @click="ViewEachForm(item.id)">View</a></li>
-                            <li v-if="item.stage=='Vendor'"><a class="dropdown-item" @click="sendRemainder(item.VendorName, item.vendorEmail,item.formNo,item.deadline)">Email</a></li>
+                            <li v-if="item.stage=='Vendor'"><a class="dropdown-item" @click="sendReminder(item.VendorName, item.vendorEmail,item.formNo,item.deadline)">Email</a></li>
                             <li v-if="item.status=='Approved'"><a class="dropdown-item"  @click="readyToPrintPdf(item.id,item.companyName)">PDF</a></li>
                             <li><a class="dropdown-item" @click="deleteWorkflow(item.id, item.vendorID)">Delete</a></li>
                         </ul>
@@ -503,7 +505,6 @@ export default {
         
         <!-- 1.2) InActive Table content -->
         <div v-if="secNavOption === 'InActiveworkflowTable'">
-            <!-- <Table :data="data2" :headers="headers2" :fields="fields2" :options="dropdownOptions" /> -->
             <table class="my-table">
             <thead>
                 <tr>
@@ -557,7 +558,7 @@ export default {
             </el-input>    
             
         <!-- 2.1) To-do Table content -->
-        <div v-if="firstNavOption === 'taskTable' && secNavOption !== 'CompletedtaskTable'">
+        <div v-if="firstNavOption === 'taskTable' && secNavOption !== 'CompletedtaskTable' && Todo.length >0">
             <table class="my-table">
             <thead>
                 <tr>
@@ -587,9 +588,10 @@ export default {
             </tbody>
             </table>
         </div>
+        <div v-if="firstNavOption === 'taskTable' && secNavOption !== 'CompletedtaskTable' && Todo.length ==0">You have no task for now!</div>
 
         <!-- 2.2) Completed Table content -->
-        <div v-if="secNavOption === 'CompletedtaskTable'">
+        <div v-if="secNavOption === 'CompletedtaskTable'  && Completed.length >0">
             <table class="my-table">
             <thead>
                 <tr>
@@ -619,6 +621,7 @@ export default {
             </tbody>
             </table>
         </div>
+        <div v-if="secNavOption === 'CompletedtaskTable'  && Completed.length ==0">There is no completed task!</div>
     </el-tabs >
     </div>
 
