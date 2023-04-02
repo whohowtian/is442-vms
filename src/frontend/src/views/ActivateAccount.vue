@@ -76,6 +76,8 @@ export default {
                         
                 if (this.password === this.password2 && this.password.length != 0 && this.password2.length != 0){
                     this.password_match = true;
+                }else{
+                    this.password_match = false;
                 }
                 this.contains_number = /\d/.test(this.password);
                 this.contains_uppercase = /[A-Z]/.test(this.password);
