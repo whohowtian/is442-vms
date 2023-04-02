@@ -3,6 +3,12 @@
     <el-container>
       <el-main>
         <el-form>
+          <div v-if="hasComment">
+            <h6 style="color:red">Rejected Reason:</h6>
+            <div class="comment-box">
+              <p>{{ adminApproverComments }}</p>
+            </div>
+          </div>
           <!-- header -->
             <el-row>
               <h3>{{ formData.formName }}</h3>
@@ -87,7 +93,9 @@
         userName:"",
         userType:"",
         showReasonInput: false,
-        rejectReason: ''
+        rejectReason: '',
+        hasComment:false,
+        adminApproverComments:""
       }
     },
     async created(){
@@ -121,6 +129,10 @@
           this.formData = allData.formContent
           this.formDeadline = allData.deadline.slice(0, allData.deadline.indexOf('T'));
           const sectionData = this.formData.formSections
+          if(allData.adminApproverComments != null){
+            this.adminApproverComments=allData.adminApproverComments
+            this.hasComment = true
+          }
           console.log("allData-->",allData)
           
           //store questions dict 
@@ -320,7 +332,8 @@
       const submitData = {
         id: this.formNo,
         "formContent": {formSections},
-        "reviewedBy": this.userId
+        "reviewedBy": this.userId,
+        "adminApproverComments":this.rejectReason
         };
 
       console.log("Admin reject-->",submitData)
@@ -633,7 +646,8 @@
       else{
         const submitData = {
           id: this.formNo,
-          "formContent": {formSections}
+          "formContent": {formSections},
+          adminApproverComments:""  //to check again
           };
 
         console.log("submit-->",submitData)
@@ -820,4 +834,14 @@
     padding: 20px;
     background-color: #f5f5f5;
   }
-  </style>
+
+  .comment-box {
+  border: 2px solid red;
+  background-color: rgb(237, 162, 162);
+  color: black;
+  padding: 10px;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+</style>
