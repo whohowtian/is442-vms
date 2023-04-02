@@ -21,11 +21,4 @@ public class EmailTemplate {
 
     private String data;
 
-    // @PersistenceCreator
-    // public EmailTemplate(String name, String subject, String data) {
-    //     this.name = name;
-    //     this.subject = subject;
-    //     this.data = data;
-    // }
-
 }

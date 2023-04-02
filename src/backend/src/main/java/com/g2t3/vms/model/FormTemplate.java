@@ -1,7 +1,5 @@
 package com.g2t3.vms.model;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
 import org.springframework.data.annotation.Id;

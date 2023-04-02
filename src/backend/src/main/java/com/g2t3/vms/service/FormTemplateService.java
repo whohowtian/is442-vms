@@ -54,7 +54,6 @@ public class FormTemplateService {
 
             formTemplateRepo.save(prevFT); 
 
-            
     }
 
     public void createFormTemplate(FormTemplate formTemplate) throws ResourceAlreadyExistException, DataIntegrityViolationException, Exception {
@@ -71,7 +70,8 @@ public class FormTemplateService {
     }
 
     public void deleteFormTemplate(String FTID) throws ResourceNotFoundException, DataIntegrityViolationException, Exception {
-        FormTemplate formTemplate = getFormTemplateByFTNo(FTID);
+
+        getFormTemplateByFTNo(FTID);
         formTemplateRepo.deleteFormTemplateByNo(FTID);
 
     }
