@@ -28,10 +28,13 @@ export default {
         allVendor:[],
         allWorkflowData:[],
         ActiveWorkflow:[],
+        FilterActiveWorkflow:[],
         InActiveWorkflow:[],
+        FilterInactiveWorkflow:[],
         Todo:[],
         Completed:[],
         SearchCompany:'',
+        SearchCompanyArchived:'',
         assignForm:'',
         menuItems: [ //for top nav bar
             { label: 'HOME', route: '/AdminView'  },
@@ -54,6 +57,8 @@ export default {
         this.userEmail = user.userEmail
         this.getAllWorkflow() //trigger Form API
         this.getAllVendor("VENDOR") // for assigning workflow- vendor
+        this.FilterActiveWorkflow= this.ActiveWorkflow
+        this.FilterInactiveWorkflow = this.InActiveWorkflow
         },
     methods: {
         async getAllWorkflow(){
@@ -124,7 +129,6 @@ export default {
             axios.get(`${BASE_URL}/api/formtemplate/all`)
             .then(response => {
                 var allForm = response.data.data;
-                console.log("Forms-->",allForm);
                 //data cleaning
                 for (const form of allForm){
                     var id = form.id
@@ -235,7 +239,36 @@ export default {
                     })
                 }
             })
-        },     
+        },    
+        searchActivefunction(){
+            this.FilterActiveWorkflow=[]
+            var addedIds = [];
+            for (var workflow of this.ActiveWorkflow) {
+                if (workflow.companyName.toLowerCase().includes(this.SearchCompany.toLowerCase())) {
+                    if (!addedIds.includes(workflow.id)) {
+                        this.FilterActiveWorkflow.push(workflow);
+                        addedIds.push(workflow.id);
+                    }
+                }
+            }
+            // console.log(this.FilterActiveWorkflow)
+            
+        },
+        searchArchivedfunction(){
+            this.FilterInactiveWorkflow=[]
+            var addedIds = [];
+            for (var workflow of this.InActiveWorkflow) {
+                if (workflow.companyName.toLowerCase().includes(this.SearchCompanyArchived.toLowerCase())) {
+                    if (!addedIds.includes(workflow.id)) {
+                        this.FilterInactiveWorkflow.push(workflow);
+                        addedIds.push(workflow.id);
+                    }
+                }
+            }
+            
+            // console.log(this.FilterInactiveWorkflow)
+            
+        },
         ViewEachForm(formID){ //GET Form API
             localStorage.setItem('formNo', formID)
             window.location.href = "ViewForm";
@@ -445,7 +478,12 @@ export default {
         <!-- search bar and button (still unable to fit to inline) -->
         <div class="row" >
             <div class="col-sm-2">
-                <el-input v-model="SearchCompany" placeholder="Search Company Name" style="width:fit-content" size="large">
+                <el-input v-if="firstNavOption === 'workflowTable' && secNavOption !== 'InActiveworkflowTable'" v-model="SearchCompany" @input="searchActivefunction()" placeholder="Search Company Name" style="width:fit-content" size="large">
+                <template #suffix>
+                <el-icon class="el-input__icon"><Search /></el-icon>
+                </template>
+                </el-input>
+                <el-input v-if="secNavOption === 'InActiveworkflowTable'" v-model="SearchCompanyArchived" @input="searchArchivedfunction()" placeholder="Search Company Name" style="width:fit-content" size="large">
                 <template #suffix>
                 <el-icon class="el-input__icon"><Search /></el-icon>
                 </template>
@@ -460,6 +498,7 @@ export default {
         <div v-if="firstNavOption === 'workflowTable' && secNavOption !== 'InActiveworkflowTable'" >
             <table class="my-table">
             <thead>
+                
                 <tr>
                     <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
                     <th>Task</th>
@@ -474,7 +513,7 @@ export default {
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="item in ActiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
+                <tr v-for="item in FilterActiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
                 <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
                 <td>{{ item.task }}</td>
                 <td>{{ item.companyName }}</td>
@@ -499,7 +538,12 @@ export default {
 
                 </td>
                 </tr>
+                <tr v-if ="FilterActiveWorkflow.length==0" >
+                    <td colspan="10">No result found!</td>
+                </tr>  
+                
             </tbody>
+                
             </table>
         </div>
         
@@ -519,7 +563,7 @@ export default {
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="item in InActiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
+                <tr v-for="item in FilterInactiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
                 <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
                 <td>{{ item.task }}</td>
                 <td>{{ item.companyName }}</td>
@@ -532,6 +576,9 @@ export default {
                             <View />
                         </el-icon>
                 </td>
+                </tr>
+                <tr v-if ="FilterInactiveWorkflow.length==0" >
+                    <td colspan="10">No result found!</td>
                 </tr>
             </tbody>
             </table>
@@ -551,11 +598,7 @@ export default {
             <el-tab-pane label="Completed" name="CompletedtaskTable"  @tab-click="secNavOption = 'CompletedtaskTable'">
                 <template #label>Completed({{ this.Completed.length }})</template>
             </el-tab-pane>
-            <el-input placeholder="Search Company Name" style="width:fit-content" size="large">
-                <template #suffix>
-                <el-icon class="el-input__icon"><Search /></el-icon>
-                </template>
-            </el-input>    
+               
             
         <!-- 2.1) To-do Table content -->
         <div v-if="firstNavOption === 'taskTable' && secNavOption !== 'CompletedtaskTable' && Todo.length >0">
