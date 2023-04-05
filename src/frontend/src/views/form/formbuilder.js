@@ -48,7 +48,7 @@ export const FormBuilder ={
       isHelpBlockVisible: false,
       isPlaceholderVisible: true,
       isUnique: false,
-      span: 6,
+      span: 12,
       labelWidth: 100,
       advancedOptions: true,
       showPassword: false,
@@ -91,7 +91,7 @@ export const FormBuilder ={
       isPlaceholderVisible: false,
       isUnique: false,
       disabled: false,
-      span: 6,
+      span: 18,
       labelWidth: 100,
       isFromUrl: false,
       options: [{
@@ -132,7 +132,7 @@ export const FormBuilder ={
       isHelpBlockVisible: false,
       isPlaceholderVisible: false,
       isUnique: false,
-      span: 5,
+      span: 16,
       labelWidth: 100,
       isFromUrl: false,
       dataUrl: '',
@@ -166,7 +166,7 @@ export const FormBuilder ={
       isHelpBlockVisible: false,
       isPlaceholderVisible: false,
       isUnique: false,
-      span: 5,
+      span: 12,
       labelWidth: 100
     },
     {

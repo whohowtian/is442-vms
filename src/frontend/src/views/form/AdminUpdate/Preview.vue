@@ -28,7 +28,6 @@
                 <el-col v-for="field in eachFormObj.fields" v-bind="field" class="form__group">
                   <component :is="field.fieldType" 
                   :currentField="field" 
-                  :required= "field.required"
                   class="form__field">
                   </component>
                 </el-col>
@@ -68,10 +67,12 @@
             {
             formNo:allData['formNo'],
             formName:allData['formName'],
-            lastEdited:allData['lastEdited'],
+            lastEdited:new Date().toLocaleDateString('en-GB'),
             deadlineDays:allData['deadlineDays'],
           }]
           store._state.data.editableFormInfo = this.editableFormInfo
+          console.log("data->",store._state.data.editableFormInfo)
+
         })
         .catch(error => {
           console.log(error);
@@ -107,7 +108,7 @@
               qnTitle: field.label,
               inputType: field.fieldType,
               inputOptions,
-              isRequired: field.isRequired
+              required: field.isRequired
             }
             questions[j + 1] = question
           }
@@ -128,7 +129,7 @@
           formSections,
           editedBy:this.userId
         }
-        console.log(data)
+        console.log("---->",data)
 
         Swal.fire({
             title: 'Save the Edited Form?',
@@ -179,3 +180,16 @@
   }
   </script>
   
+
+  <style scoped>
+.main__wrapper {
+    padding-top: 30%;
+    margin: 0 auto;
+    max-width: 900px;
+    padding: 20px;
+    background-color: #f5f5f5;
+  }
+
+
+
+</style>

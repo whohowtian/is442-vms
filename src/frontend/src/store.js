@@ -2,8 +2,8 @@ import { createStore } from 'vuex'
 
 export const store = createStore({
   state: {
-    formInfo:[{formNo:"",formName:"",formEffDate:new Date().toLocaleDateString()}],
-    editableFormInfo:[{formNo:"",formName:"",formEffDate:new Date().toLocaleDateString()}],
+    formInfo:[{formNo:"",formName:"",lastEdited:new Date().toLocaleDateString('en-GB')}],
+    editableFormInfo:[{formNo:"",formName:"",lastEdited:new Date().toLocaleDateString('en-GB')}],
     forms: [],
     activeField: [],
     activeTabForFields: 'elements',

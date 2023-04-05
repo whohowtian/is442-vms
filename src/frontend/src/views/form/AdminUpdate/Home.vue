@@ -19,14 +19,16 @@
                 <el-input v-model="element.formNo" placeholder="Form No" style="width: 100%;"></el-input>
               </el-form-item>
             </el-row>
-            <!-- <el-row>
-              <el-form-item label="Revision No">
-                <el-input v-model="element.revNo" placeholder="Revision" style="width: 100%;"></el-input>
+            <el-row>
+              <el-form-item label="Deadline">
+                <el-input v-model.number="element.deadlineDays" placeholder="Deadline days" style="width: 100%;" type="number">
+                  <template #append>days</template>
+                </el-input>
               </el-form-item>
-            </el-row> -->
+            </el-row>
             <el-row>
               <el-form-item label="Date">
-                <el-input v-model="element.formEffDate" disabled  style="width: 100%;"></el-input>
+                <el-input v-model="element.lastEdited" disabled  style="width: 100%;"></el-input>
               </el-form-item>
               
             </el-row>
@@ -268,7 +270,9 @@ export default {
             {
             formNo:allData['formNo'],
             formName:allData['formName'],
-            formEffDate:allData['formEffDate'],
+            lastEdited:allData['lastEdited'],
+            deadlineDays:allData['deadlineDays'],
+
           }]
           store._state.data.editableFormInfo = this.editableFormInfo
           console.log("store-->",store._state.data.editableFormInfo)
@@ -285,8 +289,8 @@ export default {
               let qnDict={
                 fieldType:formData[i]['questions'][j]['inputType'],
                 label: formData[i]['questions'][j]['qnTitle'],
-                options : inputOptions
-                //+ isRequired field
+                options : inputOptions,
+                isRequired: formData[i]['questions'][j]['required']
               };
               allQn.push(qnDict)
               // console.log("all Qn-->",allQn)

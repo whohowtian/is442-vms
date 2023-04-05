@@ -107,7 +107,7 @@ export default {
         formSections,
         editedBy:this.userId
       }
-      // console.log(data)
+      console.log(data)
 
       Swal.fire({
             title: 'Save the Form?',
@@ -157,3 +157,16 @@ export default {
 }
 }
 </script>
+
+<style scoped>
+.main__wrapper {
+    padding-top: 30%;
+    margin: 0 auto;
+    max-width: 900px;
+    padding: 20px;
+    background-color: #f5f5f5;
+  }
+
+
+
+</style>

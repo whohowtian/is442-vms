@@ -32,7 +32,39 @@ export default {
         },
         methods: {
         createAcc() {
-            axios.post(`${BASE_URL}/api/user/create`, {
+            // axios.post(`${BASE_URL}/api/user/create`, {
+            //     email: this.email,
+            //     name: this.name,
+            //     number: this.number,
+            //     userType: this.usertype,
+            //     entityUEN: this.companyUEN,
+            //     entityName: this.companyName,
+            //     entityActivities: this.business,
+            //     gstregistered: this.registered,
+            //     gstRegisteredNo: this.gstNum,
+            // })
+            // .then(response => {
+            //         alert(response.data.message);
+            //         window.location.href = 'AccountView';
+            //         })
+            //         .catch(error => {
+            //         alert(error.data.message);
+            //         });
+
+        Swal.fire({
+            title: 'Create account?',
+            text: "Please check information before saving!",
+            icon: "warning",
+            showCancelButton: true,
+            cancelButtonColor: '#c7c6c5',
+            confirmButtonColor: '#6A79F3',
+            confirmButtonText: 'Yes, create account!',
+            cancelButtonText: 'No, Cancel',
+            width: 'auto',
+        }).then((result) => {
+            if (result.isConfirmed) {
+              try {
+                const response = axios.post(`${BASE_URL}/api/user/create`, {
                 email: this.email,
                 name: this.name,
                 number: this.number,
@@ -43,13 +75,35 @@ export default {
                 gstregistered: this.registered,
                 gstRegisteredNo: this.gstNum,
             })
-            .then(response => {
-                    alert(response.data.message);
-                    window.location.href = 'AccountView';
-                    })
-                    .catch(error => {
-                    alert(error.data.message);
-                    });
+                console.log("SUCCESSFULLY POST")
+                console.log(response.data); // 
+              
+                Swal.fire({
+                  title: 'Success',
+                  text: 'Created account successfully!',
+                  icon: 'success',
+                  timer: 2000,
+                  timerProgressBar: true,
+                  showConfirmButton: false
+                }).then(() => {
+                  window.location.href = "/AccountView";
+                });
+
+              } catch (error) {
+                if (error) {
+                  console.error("ascas", error)
+
+                  Swal.fire({
+                    icon: 'warning',
+                    title: error,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                  })
+                }
+                }
+            }
+      })
             },
         },
         computed: {

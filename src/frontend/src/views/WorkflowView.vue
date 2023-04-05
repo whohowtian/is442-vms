@@ -682,7 +682,7 @@ export default {
                 <th>Form</th>
                 <th>Edited By</th>
                 <th>Last Edited</th>
-                <th>Actions</th>
+                <th>View / Edit</th>
                 <th>Delete</th>
             </tr>
 

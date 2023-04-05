@@ -54,8 +54,8 @@
           </div>
 
           <div v-if="userType === 'ADMIN'" style="margin-top: 30px;">
-            <button type="button" class="btn btn-success" @click="AdminApprove">AdminApprove</button>
-            <button type="button" class="btn btn-danger" @click="showReasonInput = true" style="margin-left: 30px;" >AdminReject</button>
+            <button type="button" class="btn btn-success" @click="AdminApprove">Approve</button>
+            <button type="button" class="btn btn-danger" @click="showReasonInput = true" style="margin-left: 30px;" >Reject</button>
 
             <div v-if="showReasonInput" style="margin: 30px; display: flex; flex-direction: column;">
               <label for="reason">Rejection Reason:</label>
