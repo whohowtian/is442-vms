@@ -1,7 +1,7 @@
 <template >
     <div class="main__wrapper" id="pdf-content">
         <!-- pdf function visible only if is approval -->
-        <button type="button" class="btn btn-primary" @click="exportToPdf">Print</button>
+        <!-- <button type="button" class="btn btn-primary" @click="exportToPdf">Print</button> -->
 
         <el-container style=" margin-top: 5%;">
         <el-main >
@@ -122,7 +122,7 @@
             // console.log(formTitle, adminUseOnly)
 
             //disabled field then css overwrite
-            let disable_section = false
+            let disable_section = true
 
 
             //store questions dict 

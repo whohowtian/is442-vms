@@ -54,13 +54,19 @@
           </div>
 
           <div v-if="userType === 'ADMIN'" style="margin-top: 30px;">
-            <button type="button" class="btn btn-success" @click="AdminApprove">Approve</button>
-            <button type="button" class="btn btn-danger" @click="showReasonInput = true" style="margin-left: 30px;" >Reject</button>
+            <div v-if="entityUEN== ''">
+              <button type="button" class="btn btn-success" @click="submitFormToApprover">Submit</button>
+            </div>
+            <div v-else>
 
-            <div v-if="showReasonInput" style="margin: 30px; display: flex; flex-direction: column;">
-              <label for="reason">Rejection Reason:</label>
-              <textarea id="reason" v-model="rejectReason" style="resize: both; min-height: 100px; max-width: 400px;"></textarea>
-              <button type="button" class="btn btn-dark" @click="AdminReject" style="align-self: flex-start;">Submit Reject</button>
+              <button type="button" class="btn btn-success" @click="AdminApprove">Approve</button>
+              <button type="button" class="btn btn-danger" @click="showReasonInput = true" style="margin-left: 30px;" >Reject</button>
+              
+              <div v-if="showReasonInput" style="margin: 30px; display: flex; flex-direction: column;">
+                <label for="reason">Rejection Reason:</label>
+                <textarea id="reason" v-model="rejectReason" style="resize: both; min-height: 100px; max-width: 400px;"></textarea>
+                <button type="button" class="btn btn-dark" @click="AdminReject" style="align-self: flex-start;">Submit Reject</button>
+              </div>
             </div>
           </div>
         </el-form>
@@ -791,6 +797,115 @@
             }
         }
   })
+  },
+  async submitFormToApprover(){
+  //submit with validation
+  const formSections = {};
+    this.nullField=[] //initialise
+    for (let i = 0; i < this.formattedData.length; i++) {
+      const formSection = this.formattedData[i];
+      const questions = {};
+
+      const allNull=[]
+      for (let j = 0; j < formSection.fields.length; j++) {
+        const field = formSection.fields[j];
+        const inputOptions = field.options || null;
+
+        if(field.isRequired){
+          if(field.input== null){
+            allNull.push(field.label)
+          }else{
+            console.log("none")
+          }
+        }
+        const question = {
+          qnTitle: field.label,
+          inputType: field.fieldType,
+          inputOptions,
+          required: field.isRequired,
+          answer: field.input // get value from input property
+        };
+        questions[j + 1] = question;
+        // console.log("question-->",question)
+      }
+      if(allNull.length>0){ //store only if there is error msg
+        this.nullField.push({formSection: formSection.sectionTitle, nullQns:allNull})
+        }        
+        // console.log("allNull-->",allNull)
+        const section = {
+        sectionName: formSection.sectionTitle,
+        adminUseOnly: formSection.AdminUseOnly,
+        approvalViewOnly: formSection.ApproverUseOnly,
+        doScoreCalculation: false,
+        questions
+      };
+      formSections[i + 1] = section;
+    }
+    console.log("have null?-->",this.nullField)
+    if(this.nullField.length>0){
+        const nullError = this.nullField.map((nullObj) => {
+          return `${nullObj.formSection} - ${nullObj.nullQns.join(', ')}`
+        })
+        this.nullField=[]
+        Swal.fire({
+          icon: 'error',
+          title: 'The following required fields are blank:',
+          text: nullError.join('\n\n & \n\n')
+        });
+      }
+      else{
+        const submitData = {
+          id: this.formNo,
+          "formContent": {formSections},
+          adminApproverComments:""  //to check again
+          };
+
+        console.log("submit-->",submitData)
+        Swal.fire({
+        title: 'Save the Form?',
+        text: "Please check information before saving!",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonColor: '#c7c6c5',
+        confirmButtonColor: '#6A79F3',
+        confirmButtonText: 'Yes, save it!',
+        cancelButtonText: 'No, Cancel',
+        width: 'auto',
+    }).then((result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = axios.post(`${BASE_URL}/api/form/action/adminreviewed`, submitData);
+            console.log("SUCCESSFULLY POST")
+            console.log(response.data); // 
+          
+            Swal.fire({
+              title: 'Success',
+              text: 'Form saved successfully! It will be reviewed by Approver in the next 7 days ',
+              icon: 'success',
+              timer: 2000,
+              timerProgressBar: true,
+              showConfirmButton: false
+            }).then(() => {
+              window.location.href = "/WorkflowView";
+            });
+
+          } catch (error) {
+            if (error) {
+              console.error("errrr", error)
+
+              Swal.fire({
+                icon: 'warning',
+                title: error,
+                timer: 2000,
+                timerProgressBar: true,
+                showConfirmButton: false
+              })
+            }
+            }
+        }
+  })
+      }
+          
   },
   async exportToPdf () {
     const PdfFilename= this.entityUEN+"_"+this.formNo

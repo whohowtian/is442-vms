@@ -281,6 +281,7 @@ export default {
           for (let i=1; i<Object.keys(formData).length +1; i++){
             let formTitle = formData[i]['sectionName']
             let adminUseOnly = formData[i]['adminUseOnly']
+            let approvalUseOnly = formData[i]['approvalViewOnly']
             let allQn = []
 
             //store questions dict 
@@ -296,7 +297,7 @@ export default {
               // console.log("all Qn-->",allQn)
             }
           
-            this.editableForms.push({ fields: allQn, sectionTitle: formTitle, AdminUseOnly:adminUseOnly});
+            this.editableForms.push({ fields: allQn, sectionTitle: formTitle, AdminUseOnly:adminUseOnly, ApproverUseOnly:approvalUseOnly});
           }
 
           store._state.data.editableForms = this.editableForms

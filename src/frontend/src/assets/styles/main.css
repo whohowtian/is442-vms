@@ -7,14 +7,22 @@
 #app {
   margin: 0 auto;
 }
-
-a,
+/* 
+ a,
 span,
 .black {
   text-decoration: none;
   color: #020202;
   font-size: 1.2vw;
+}*/
+
+
+ a {
+  text-decoration: none;
+  color: #020202;
+  font-size: 1.2vw;
 }
+
 
 #welcome{
   
@@ -23,7 +31,7 @@ span,
   color: #000000;
   text-align: center;
 
-}
+}  
 
 .line p {
   display: inline-block;
@@ -39,9 +47,9 @@ span,
   bottom: -.5em;
   left: 50%;
   transform: translate(-50%);
-}
+} 
 
-.center {
+ .center {
   margin: auto;
   width: 100%;
   padding: 10px;
@@ -94,14 +102,14 @@ input::placeholder{
 }
 
 .dropdown-item {
-  white-space: nowrap; /* prevent text wrapping */
+  white-space: nowrap;
   margin: 0;
   padding: 0;
 }
 
 .selected {
   background-color: #cedfff;
-}
+} 
 /* @media (hover: hover) {
   a:hover {
     background-color: hsla(160, 100%, 37%, 0.2);

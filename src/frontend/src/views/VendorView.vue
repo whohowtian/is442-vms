@@ -134,6 +134,18 @@
         isSelected(item) {
             return this.selectedRows.findIndex(selectedRow => selectedRow.id === item.id) !== -1;
         },
+        isDeadlinePassed(item) {
+            const today = new Date();
+            const deadlineDate = new Date(item.deadline);
+            if (deadlineDate < today) {
+                return 'highlighted-red';
+            }
+            else if (item.status.toLowerCase().includes('rejected')) {
+                return 'highlighted-yellow';
+            } else {
+                return '';
+            }
+        },
         },
         computed: {
         allRowsSelected() { //table styling function
@@ -186,7 +198,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="item in Todo" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
+                <tr v-for="item in Todo" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item), [isDeadlinePassed(item)]: true }">
                 <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
                 <td>{{ item.task }}</td>
                 <td>{{ item.stage }}</td>
@@ -244,3 +256,13 @@
 
 
 </template>
+
+
+<style>
+.highlighted-red {
+  background-color: #ffb5b5;
+}
+.highlighted-yellow {
+  background-color: #fdff84;
+}
+</style>

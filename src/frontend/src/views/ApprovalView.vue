@@ -192,6 +192,44 @@
             localStorage.setItem('formNo', formID)
             window.location.href = "ViewForm";
         },
+        massPrintPDF(){
+            Swal.fire({
+            title: `Bulk retrieval of Vendor's completed forms`,
+            text:'Please key in the vendor UEN:',
+            input: 'text',
+            showCancelButton: true,
+            confirmButtonText: 'Save PDF',
+            showLoaderOnConfirm: true,
+            preConfirm: async (vendorUEN) => {
+                try {
+                    const response = await axios.get(`${BASE_URL}/api/pdf/vendor/${vendorUEN}`)
+                    console.log("SUCCESSFULLY POST")
+                    console.log(response.data);  
+
+                    Swal.fire({
+                    title: 'Success',
+                    text: `Retrieval of PDF form for ${vendorUEN} has been successfully downloaded. Please check your Downloads folder. `,
+                    icon: 'success',
+                    timer: 5000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                    })
+                } catch (error) {
+                    if (error) {
+                    console.error("errrr", error)
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: error,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showConfirmButton: false
+                    })
+                    }
+                    }
+                    }
+            })
+        }
         },
     };
 </script>
@@ -250,12 +288,15 @@
 
         <!-- 2.2) Completed Table content -->
         <div v-if="activeOption === 'CompletedtaskTable' && Completed.length >0">
-        
+            <div style="text-align: right; margin-right: 5%;">
+                Mass Retrieval of PDF: <el-icon @click="massPrintPDF"><FolderOpened /></el-icon>
+            </div>
         <table class="my-table">
         <thead>
             <tr>
                 <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
                 <th>Task</th>
+                <th>Company Name</th>
                 <th>Stage</th>
                 <th>Status</th>
                 <th>Vendor Assigned Date</th>
@@ -266,6 +307,7 @@
             <tr v-for="item in Completed" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
             <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
             <td>{{ item.task }}</td>
+            <td>{{ item.companyName }}</td>
             <td>{{ item.stage }}</td>
             <td>{{ item.status }}</td>
             <td>{{ item.formEffDate }}</td>

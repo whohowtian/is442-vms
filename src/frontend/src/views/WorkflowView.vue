@@ -100,7 +100,7 @@ export default {
 
                             //mytask- todo
                             if(status== 'PENDING_ADMIN'){
-                                this.Todo.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate})
+                                this.Todo.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline})
                             }
 
                             //mytask- completed - check reviewedBy field
@@ -439,6 +439,18 @@ export default {
         }
   })
             },
+        isDeadlinePassed(item) {
+        const today = new Date();
+        const deadlineDate = new Date(item.deadline);
+        if(deadlineDate < today && item.stage !== 'Completed'){
+            return 'highlighted-red';
+        }            
+        else if (item.stage == 'Completed') {
+            return 'highlighted-green';
+        } else {
+            return '';
+        }
+        }
     },
     computed: {
         allRowsSelected() { //table styling function
@@ -517,7 +529,7 @@ export default {
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="item in FilterActiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
+                <tr v-for="item in FilterActiveWorkflow" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item), [isDeadlinePassed(item)]: true }">
                 <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
                 <td>{{ item.task }}</td>
                 <td>{{ item.companyName }}</td>
@@ -611,10 +623,9 @@ export default {
                 <tr>
                     <th class="checkbox-col"><input type="checkbox" v-model="selectAll" @change="selectAllRows"></th>
                     <th>Task</th>
-                    <th>Company Name</th>
                     <th>Stage</th>
                     <th>Status</th>
-                    <th>FormEffDate</th>
+                    <th>Deadline</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -622,10 +633,9 @@ export default {
                 <tr v-for="item in Todo" :key="item.id" @click="toggleRowSelection(item, $event)" :class="{ 'selected': isSelected(item) }">
                 <td class="checkbox-col"><input type="checkbox" v-model="selectedRows" :value="item" @click.stop></td>
                 <td>{{ item.task }}</td>
-                <td>{{ item.companyName }}</td>
                 <td>{{ item.stage }}</td>
                 <td>{{ item.status }}</td>
-                <td>{{ item.formEffDate }}</td>
+                <td>{{ item.deadline }}</td>
                 <td >
                     <el-icon class="el-input__icon" @click="EditEachForm(item.id)">
                             <Edit />
@@ -713,4 +723,13 @@ export default {
 .swal-wide{
     width:850px;
 }
+
+  .highlighted-red {
+    background-color: #ffdddd;
+  }
+
+  .highlighted-green {
+    background-color: #a5fba7;
+  }
+
 </style>
