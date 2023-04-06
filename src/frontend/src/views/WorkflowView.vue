@@ -90,13 +90,15 @@ export default {
                         var archivedByName = this.findUser(archivedBy, allUser)
                         var approvedBy = workflow.approver
                         var approvedByName = this.findUser(approvedBy, allUser)
+                        var entityUEN = this.findVendorandCompanyName(vendorEmail,allUser)[2]
+
 
 
                         this.allWorkflowData.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline,reviewedBy:reviewedByName,archivedBy:archivedByName,approvedBy:approvedByName})
 
                         //for active workflow
                         if (archived ==false){
-                            this.ActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline,reviewedBy:reviewedByName,approvedBy:approvedByName})
+                            this.ActiveWorkflow.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,deadline:deadline,reviewedBy:reviewedByName,approvedBy:approvedByName, entityUEN: entityUEN})
 
                             //mytask- todo
                             if(status== 'PENDING_ADMIN'){
@@ -175,16 +177,18 @@ export default {
         findVendorandCompanyName(vendorEmail,allUser){
             var companyName = '';
             var VendorName = '';
+            var entityUEN='';
             
             for (const user of allUser){
                 if (vendorEmail == user.email){
                     VendorName= user.name
                     companyName = user.entityName
+                    entityUEN = user.entityUEN
                     
                 }
             }
             
-            return [VendorName,companyName];
+            return [VendorName,companyName,entityUEN];
         },
         addStage(status,assigned_vendor_email){ //add stage, Mstatus according to the status
             console.log(assigned_vendor_email)
@@ -390,9 +394,48 @@ export default {
         isSelected(item) {
             return this.selectedRows.findIndex(selectedRow => selectedRow.id === item.id) !== -1;
         },
-        readyToPrintPdf(formNo,companyName){
-            localStorage.setItem('pdf', [formNo, companyName])
-            window.location.href = "ViewForm";
+        SavePDF(formNo, UEN){
+            var filename = UEN+"_"+ formNo
+
+            Swal.fire({
+            title: 'Do you want to save the form as PDF?',
+            icon: "warning",
+            showCancelButton: true,
+            cancelButtonColor: '#c7c6c5',
+            confirmButtonColor: '#6A79F3',
+            confirmButtonText: 'Yes, Save PDF!',
+            cancelButtonText: 'No, Cancel',
+            width: 'auto',
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                try {
+                    const response = await axios.get(`${BASE_URL}/api/pdf/`+ filename)
+                    console.log("SUCCESSFULLY POST")
+                    console.log(response.data);  
+                
+                    Swal.fire({
+                    title: 'Success',
+                    text: `PDF form had been successfully downloaded. Please check your Downloads folder. `,
+                    icon: 'success',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                    })
+                } catch (error) {
+                    if (error) {
+                    console.error("errrr", error)
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: error,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showConfirmButton: false
+                    })
+                    }
+                    }
+                }
+        })
         },
         async DeleteForm(formNo,formName){
             Swal.fire({
@@ -547,7 +590,7 @@ export default {
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" @click="ViewEachForm(item.id)">View</a></li>
                             <li v-if="item.stage=='Vendor'"><a class="dropdown-item" @click="sendReminder(item.VendorName, item.vendorEmail,item.formNo,item.deadline)">Email</a></li>
-                            <li v-if="item.status=='Approved'"><a class="dropdown-item"  @click="readyToPrintPdf(item.id,item.companyName)">PDF</a></li>
+                            <li v-if="item.status=='Approved'"><a class="dropdown-item"  @click="SavePDF(item.id, item.entityUEN)">Save PDF</a></li>
                             <li><a class="dropdown-item" @click="deleteWorkflow(item.id, item.vendorID)">Delete</a></li>
                         </ul>
                     </div>

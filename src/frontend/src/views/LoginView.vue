@@ -56,7 +56,7 @@
           
           if (userData.password === this.password) {
             alert(`Login as ${userData.userType} successful!`);
-            sessionStorage.setItem('user', JSON.stringify({userId: userData.userId, userEmail: userData.email, name:userData.name, userType:userData.userType}));
+            sessionStorage.setItem('user', JSON.stringify({userId: userData.userId, userEmail: userData.email, name:userData.name, userType:userData.userType, entityName:userData.entityName}));
             if(userData.userType =="VENDOR"){
               this.$router.push('/VendorView');
             }
@@ -66,7 +66,17 @@
             if(userData.userType =="APPROVER"){
               this.$router.push('/ApprovalView');
             }
-          }})
+          }
+          else{
+              Swal.fire({
+                icon: 'warning',
+                title: "Wrong password",
+                timer: 2000,
+                timerProgressBar: true,
+                showConfirmButton: false
+              })
+          }
+        })
           .catch(error => {
           console.log(error);
           alert('invalid email address & password')

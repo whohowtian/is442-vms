@@ -106,11 +106,11 @@
                         var Mstatus= this.addStage(status,vendorEmail)[1]
                         var formEffDate = new Date(workflow.formEffDate).toLocaleDateString('en-GB')   
                         var approvedBy = workflow.approver
-
+                        var entityUEN = this.findVendorandCompanyName(vendorEmail,allUser)[2]
 
                         //mytask- completed - check reviewedBy field
                         if (approvedBy !== '' && approvedBy==this.userId && status !='PENDING_APPROVAL'){
-                            this.Completed.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate})
+                            this.Completed.push({ id:id,task: task, vendorEmail:vendorEmail,VendorName:VendorName,companyName:companyName,formNo: formNo, stage: stage,status: Mstatus, formEffDate:formEffDate,entityUEN:entityUEN})
                         }
                             
                     }
@@ -127,16 +127,19 @@
         findVendorandCompanyName(vendorEmail,allUser){
             var companyName = '';
             var VendorName = '';
+            var entityUEN='';
+
             
             for (const user of allUser){
                 if (vendorEmail == user.email){
                     VendorName= user.name
                     companyName = user.entityName
+                    entityUEN = user.entityUEN
                     
                 }
             }
             
-            return [VendorName,companyName];
+            return [VendorName,companyName,entityUEN];
         },
         addStage(status,assigned_vendor_email){ //add stage, Mstatus according to the status
             var stage = '';
@@ -191,6 +194,49 @@
         ViewEachForm(formID){ //GET Form API
             localStorage.setItem('formNo', formID)
             window.location.href = "ViewForm";
+        },
+        SavePDF(formNo, UEN){
+            var filename = UEN+"_"+ formNo
+
+            Swal.fire({
+            title: 'Do you want to save the form as PDF?',
+            icon: "warning",
+            showCancelButton: true,
+            cancelButtonColor: '#c7c6c5',
+            confirmButtonColor: '#6A79F3',
+            confirmButtonText: 'Yes, Save PDF!',
+            cancelButtonText: 'No, Cancel',
+            width: 'auto',
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                try {
+                    const response = await axios.get(`${BASE_URL}/api/pdf/`+ filename)
+                    console.log("SUCCESSFULLY POST")
+                    console.log(response.data);  
+                
+                    Swal.fire({
+                    title: 'Success',
+                    text: `PDF form had been successfully downloaded. Please check your Downloads folder. `,
+                    icon: 'success',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                    })
+                } catch (error) {
+                    if (error) {
+                    console.error("errrr", error)
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: error,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showConfirmButton: false
+                    })
+                    }
+                    }
+                }
+        })
         },
         massPrintPDF(){
             Swal.fire({
@@ -289,7 +335,7 @@
         <!-- 2.2) Completed Table content -->
         <div v-if="activeOption === 'CompletedtaskTable' && Completed.length >0">
             <div style="text-align: right; margin-right: 5%;">
-                Mass Retrieval of PDF: <el-icon @click="massPrintPDF"><FolderOpened /></el-icon>
+                Mass Retrieval of PDF: <el-icon @click="massPrintPDF"><FolderChecked /></el-icon>
             </div>
         <table class="my-table">
         <thead>
@@ -300,7 +346,8 @@
                 <th>Stage</th>
                 <th>Status</th>
                 <th>Vendor Assigned Date</th>
-                <th>Actions</th>
+                <th>View</th>
+                <th>Save PDF</th>
             </tr>
         </thead>
         <tbody>
@@ -315,6 +362,11 @@
                 <el-icon class="el-input__icon" @click="ViewEachForm(item.id)">
                         <View />
                     </el-icon>
+                </td>
+            <td>
+                <el-icon class="el-input__icon"  @click="SavePDF(item.id, item.entityUEN)">
+                    <FolderChecked />
+                </el-icon>
             </td>
             </tr>
         </tbody>

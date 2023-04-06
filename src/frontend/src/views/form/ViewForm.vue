@@ -1,4 +1,14 @@
 <template >
+      <nav class="row navbar navbar-expand-lg ">
+      <div class="container-fluid">
+
+        <a class="navbar-brand" href="#"><img src="../../assets/icons/CompanyLogo.png" alt="Logo" class="logo" ></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+      </div>
+    </nav>
     <div class="main__wrapper" id="pdf-content">
         <!-- pdf function visible only if is approval -->
         <!-- <button type="button" class="btn btn-primary" @click="exportToPdf">Print</button> -->
@@ -147,51 +157,7 @@
           console.log(error);
         });
     }
-  },methods:{
-    async exportToPdf () {
-    const PdfFilename= this.entityUEN+"_"+this.formNo
-    const options = {
-      margin: 1,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    }
-    const element = document.getElementById('pdf-content')
-    const pdfBlob = await html2pdf().set(options).from(element).output('blob')
-    const formData = new FormData()
-    formData.append('file', pdfBlob)
-    formData.append('title', PdfFilename)
-
-    // console.log(PdfFilename)
-    // console.log("-->",formData)
-
-    try {
-      const response = await axios.post(`${BASE_URL}/api/pdf/save`, formData)
-      console.log('PDF file stored in database:', response.data)
-    } catch (error) {
-      console.error('Error storing PDF file in database:', error.message)
-    }
-    try{
-      await axios.get(`${BASE_URL}/api/pdf/`+ PdfFilename)
-      .then(response => {
-        console.log(response.data);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-    }catch(error){
-      console.log("nani")
-    }
-    Swal.fire({
-      icon: 'success',
-      title: "PDF have been downloaded to your PC Downloads folder",
-      timer: 5000,
-      timerProgressBar: true,
-      showConfirmButton: false
-    })
   }
-  }
-
   }
 
 </script>
@@ -215,5 +181,22 @@
 #form{
   opacity: 1; 
 }
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height:8vh;
+    background-color:#fff;
+  }
+  .logo {
+  height: 50px;
+  margin: 0px 30px;
+  }
+  @media (max-width: 767px) {
+    .logo {
+      height: 40px;
+      margin: 0px;
+    }
+  }
+
 
 </style>

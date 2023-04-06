@@ -1,4 +1,14 @@
 <template>
+  <nav class="row navbar navbar-expand-lg ">
+    <div class="container-fluid">
+
+      <a class="navbar-brand" href="#"><img src="../../assets/icons/CompanyLogo.png" alt="Logo" class="logo" ></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+
+    </div>
+  </nav>
   <div class="main__wrapper" id="pdf-content">
     <el-container>
       <el-main>
@@ -971,5 +981,21 @@
   font-size: 16px;
   margin-bottom: 20px;
 }
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height:8vh;
+    background-color:#fff;
+  }
+  .logo {
+  height: 50px;
+  margin: 0px 30px;
+  }
+  @media (max-width: 767px) {
+    .logo {
+      height: 40px;
+      margin: 0px;
+    }
+  }
 
 </style>

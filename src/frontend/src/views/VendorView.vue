@@ -23,6 +23,7 @@
             activeOption:'taskTable', //default table displaying
             selectedRows: [], //tick checkbox
             selectAll: false,
+            entityName:"",
 
             }
         },
@@ -38,6 +39,7 @@
             this.userId = user.userId
             this.userEmail = user.userEmail
             this.userName = user.name
+            this.entityName = user.entityName
         }
         console.log("userId-->", this.userId); 
         console.log("userEmail-->",this.userEmail); 
@@ -48,9 +50,14 @@
             axios.get(`${BASE_URL}/api/form/all`)
             .then(response => {
                 var AllForm = response.data.data;
-                console.log(AllForm)
+                axios.get(`${BASE_URL}/api/user/all`)
+                .then(response => {
+                    var allUser= response.data.data;
+                    // console.log(allUser)
+                    this.allUser=allUser
+
                 for (const workflow of AllForm){
-                    console.log(workflow)
+                    // console.log(workflow)
                     var id = workflow.id
                     var task = workflow.formContent.formName
                     var status=workflow.status
@@ -62,8 +69,9 @@
                     var deadline = new Date(workflow.deadline).toLocaleDateString('en-GB')  
                    
                     var archived = workflow.archived
+                    var entityUEN = this.findEntityUEN(assigned_vendor_email,allUser)[0]
 
-                    console.log('test',assigned_vendor_email,this.userEmail)
+                    // console.log('test',assigned_vendor_email,this.userEmail,entityUEN)
 
                     //check if login user == the vendor email
                     if(assigned_vendor_email==this.userEmail){
@@ -72,12 +80,67 @@
                             this.Todo.push({id:id,task:task,stage:stage,status:Mstatus,formEffDate:formEffDate,deadline:deadline}) 
                         }else{
                             // Completed table
-                            this.Completed.push({id:id,task:task,stage:stage,status:Mstatus,formEffDate:formEffDate,deadline:deadline}) 
+                            this.Completed.push({id:id,task:task,stage:stage,status:Mstatus,formEffDate:formEffDate,deadline:deadline,entityUEN:entityUEN}) 
                         }
                     }
 
                 }
             })
+        })
+        },
+        findEntityUEN(vendorEmail,allUser){
+            var entityUEN='';
+            for (const user of allUser){
+                if (vendorEmail == user.email){
+                    entityUEN = user.entityUEN
+
+                }
+            }
+            
+            return [entityUEN];
+        },
+        SavePDF(formNo, UEN){
+            var filename = UEN+"_"+ formNo
+
+            Swal.fire({
+            title: 'Do you want to save the form as PDF?',
+            icon: "warning",
+            showCancelButton: true,
+            cancelButtonColor: '#c7c6c5',
+            confirmButtonColor: '#6A79F3',
+            confirmButtonText: 'Yes, Save PDF!',
+            cancelButtonText: 'No, Cancel',
+            width: 'auto',
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                try {
+                    const response = await axios.get(`${BASE_URL}/api/pdf/`+ filename)
+                    console.log("SUCCESSFULLY POST")
+                    console.log(response.data);  
+                
+                    Swal.fire({
+                    title: 'Success',
+                    text: `PDF form had been successfully downloaded. Please check your Downloads folder. `,
+                    icon: 'success',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                    })
+                } catch (error) {
+                    if (error) {
+                    console.error("errrr", error)
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: error,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showConfirmButton: false
+                    })
+                    }
+                    }
+                }
+        })
         },
         addStage(status,assigned_vendor_email){ //add stage, Mstatus according to the status
             var stage = '';
@@ -171,6 +234,9 @@
             <p style = "font-weight:600;">WELCOME, {{ this.userName.toUpperCase() }}</p>
         </div>
     </div>
+    <div style="text-align: center;font-weight:300;">
+        <p>Company :   {{ this.entityName }}</p>
+    </div>
     
     <div>
     <h2>My Task</h2>
@@ -228,7 +294,8 @@
                     <th>Stage</th>
                     <th>Status</th>
                     <th>Vendor Assigned Date</th>
-                    <th>Actions</th>
+                    <th>View</th>
+                    <th>Save pdf</th>
                 </tr>
             </thead>
             <tbody>
@@ -241,6 +308,11 @@
                 <td >
                     <el-icon class="el-input__icon" @click="ViewEachForm(item.id)">
                             <View />
+                        </el-icon>
+                </td>
+                <td >
+                    <el-icon class="el-input__icon" @click="SavePDF(item.id, item.entityUEN)">
+                        <FolderChecked />
                         </el-icon>
                 </td>
                 </tr>
